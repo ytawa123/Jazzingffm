@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>JazzingFfm</title>
+	<link rel="icon" type="image/png" href="logo.png">
+	<link rel="shortcut icon" type="image/png" href="logo.png">
+	<link rel="apple-touch-icon" href="logo.png">
+
+  <style>
+    :root {
+      --bg: #edf3f5;
+      --ink: #050505;
+      --muted: #6f7477;
+      --footer: #000;
+      --footerText: #f5f5f5;
+      --accent: #0f565a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Courier New", Courier, monospace;
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    input,
+    button {
+      font: inherit;
+    }
+
+    /* =========================
+       HEADER
+    ========================== */
+
+    .top-header {
+      background: var(--bg);
+    }
+
+    .masthead {
+      height: 158px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 0 42px;
+      position: relative;
+    }
+
+    .header-logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.18s ease;
+    }
+
+    .header-logo-link:hover {
+      opacity: 0.68;
+    }
+
+    .header-logo {
+      width: min(760px, 78vw);
+      height: auto;
+      max-height: 112px;
+      object-fit: contain;
+    }
+
+    .header-instagram-link {
+      position: absolute;
+      left: 42px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      transition: opacity 0.18s ease;
+    }
+
+    .header-instagram-link:hover {
+      opacity: 0.62;
+    }
+
+    .header-instagram-link svg {
+      width: 31px;
+      height: 31px;
+      stroke: currentColor;
+    }
+
+    .language-switch {
+      position: absolute;
+      right: 42px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .language-switch button {
+      border: 1.5px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 5px 13px;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, opacity 0.18s ease;
+    }
+
+    .language-switch button:hover {
+      opacity: 0.65;
+    }
+
+    .language-switch button.active {
+      background: var(--ink);
+      color: var(--bg);
+      opacity: 1;
+    }
+
+    .nav-row {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--bg);
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1.5px solid var(--ink);
+      height: 130px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 0 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      font-size: 27px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      padding: 7px 19px;
+      border-radius: 999px;
+      transition: background 0.18s ease, color 0.18s ease, opacity 0.18s ease;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.55;
+    }
+
+    .nav-links a.active {
+      background: var(--ink);
+      color: var(--bg);
+      opacity: 1;
+    }
+
+    /* =========================
+       GENERAL LAYOUT
+    ========================== */
+
+    main {
+      min-height: 60vh;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 44px));
+      margin: 0 auto;
+    }
+
+    .thin-line {
+      border: 0;
+      border-top: 1.5px solid var(--ink);
+      margin: 38px 0;
+    }
+
+    .eyebrow {
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 24px;
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 30px;
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .button:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* =========================
+       HOME
+    ========================== */
+
+    .hero {
+      padding: 92px 0 72px;
+    }
+
+    .hero h1 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(54px, 9vw, 132px);
+      line-height: 0.92;
+      letter-spacing: -6px;
+      margin: 0;
+      max-width: 1100px;
+    }
+
+    .hero p {
+      max-width: 740px;
+      font-size: 23px;
+      margin-top: 34px;
+    }
+
+    .home-feature {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 44px;
+      padding: 0 0 86px;
+      align-items: start;
+    }
+
+    .feature-visual {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-image {
+      min-height: 520px;
+      background:
+        linear-gradient(135deg, rgba(15,86,90,.15), rgba(0,0,0,.05)),
+        repeating-linear-gradient(
+          45deg,
+          rgba(0,0,0,.08) 0 1px,
+          transparent 1px 18px
+        );
+      border: 1.5px solid var(--ink);
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .feature-photo-text {
+      max-width: 720px;
+      margin: 18px 0 0;
+      font-size: 18px;
+      line-height: 1.68;
+      color: var(--ink);
+    }
+
+    .feature-copy {
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 36px 0;
+    }
+
+    .feature-copy h2 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(42px, 5vw, 74px);
+      line-height: 0.98;
+      letter-spacing: -3px;
+      margin: 0 0 28px;
+    }
+
+    .feature-copy p {
+      font-size: 22px;
+      margin: 0 0 28px;
+    }
+
+    /* =========================
+       LISTING PAGES
+    ========================== */
+
+    .listing {
+      padding: 76px 0 100px;
+    }
+
+    .listing-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 44px;
+    }
+
+    .section-title {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(40px, 6vw, 82px);
+      letter-spacing: -3px;
+      line-height: 0.95;
+      margin: 0;
+    }
+
+    .listing-header p {
+      max-width: 540px;
+      font-size: 20px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .article-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+
+    .article-card {
+      border-top: 1.5px solid var(--ink);
+      padding-top: 22px;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: inherit;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .card-thumb {
+      height: 250px;
+      border: 1.5px solid var(--ink);
+      background:
+        linear-gradient(135deg, rgba(0,0,0,.09), rgba(15,86,90,.20)),
+        repeating-linear-gradient(
+          -30deg,
+          rgba(0,0,0,.10) 0 1px,
+          transparent 1px 14px
+        );
+      margin-bottom: 22px;
+      display: flex;
+      align-items: flex-end;
+      padding: 18px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .article-card h2 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: -1.4px;
+      margin: 0 0 16px;
+    }
+
+    .article-meta {
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .article-card p {
+      margin: 0 0 20px;
+      font-size: 18px;
+    }
+
+    .read-more {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 19px;
+      border-bottom: 1.5px solid var(--ink);
+      width: fit-content;
+    }
+
+    /* =========================
+       ARTICLE PAGE
+    ========================== */
+
+    .article-page {
+      padding: 74px 0 110px;
+    }
+
+    .article-shell {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+.article-category {
+  display: block;
+  width: fit-content;
+  margin: 0 0 28px;
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 5px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.article-back-top {
+  display: block;
+  width: fit-content;
+  margin: 0 0 40px -42px;
+  font-size: 19px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+    .article-title {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(48px, 7vw, 104px);
+      line-height: 0.94;
+      letter-spacing: -5px;
+      margin: 0;
+    }
+
+    .byline {
+      font-size: 19px;
+      margin: 28px 0;
+      color: var(--muted);
+    }
+
+    .article-hero-image {
+      height: 560px;
+      border: 1.5px solid var(--ink);
+      background:
+        radial-gradient(circle at 25% 25%, rgba(15,86,90,.22), transparent 32%),
+        linear-gradient(135deg, rgba(0,0,0,.08), rgba(0,0,0,.02)),
+        repeating-linear-gradient(
+          45deg,
+          rgba(0,0,0,.09) 0 1px,
+          transparent 1px 20px
+        );
+      display: flex;
+      align-items: flex-end;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 15px;
+      margin: 12px 0 42px;
+    }
+
+    .article-body {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      line-height: 1.72;
+    }
+
+    .article-body p {
+      margin: 0 0 28px;
+    }
+
+    .question {
+      font-family: "Courier New", Courier, monospace;
+      font-weight: 900;
+      font-size: 21px;
+      line-height: 1.55;
+      margin-top: 38px;
+    }
+
+.back-link {
+  display: inline-block;
+  width: fit-content;
+  font-size: 19px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+    /* =========================
+       CONTACT PAGE
+    ========================== */
+
+    .contact-box {
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 42px 0;
+      margin: 40px 0 100px;
+      max-width: 780px;
+    }
+
+    .contact-box p {
+      font-size: 24px;
+      margin: 0 0 20px;
+    }
+
+    .contact-box a {
+      border-bottom: 1.5px solid var(--ink);
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    .site-footer {
+      background: var(--footer);
+      color: var(--footerText);
+      padding: 24px 0;
+      border-radius: 0;
+    }
+
+    .footer-main {
+      width: min(1460px, calc(100% - 44px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .footer-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+.hidden {
+  display: none !important;
+}
+
+    .copyright {
+      color: #8c8c8c;
+      font-size: 18px;
+      text-transform: uppercase;
+    }
+
+    .copyright p {
+      margin: 0 0 6px;
+    }
+
+    .copyright p:last-child {
+      margin-bottom: 0;
+    }
+
+    .socials {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .socials a {
+      border: 1.5px solid var(--footerText);
+      border-radius: 999px;
+      padding: 6px 30px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .socials .support {
+      background: var(--footerText);
+      color: var(--footer);
+      border-color: var(--footerText);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 1050px) {
+      .masthead {
+        height: 128px;
+        padding: 0 24px;
+      }
+
+      .header-logo {
+        width: min(620px, 84vw);
+        max-height: 92px;
+      }
+
+      .language-switch {
+        right: 24px;
+        font-size: 16px;
+      }
+
+      .header-instagram-link {
+        left: 24px;
+        width: 42px;
+        height: 42px;
+      }
+
+      .language-switch button {
+        padding: 4px 11px;
+      }
+
+      .nav-row {
+        height: auto;
+        padding: 26px 0;
+      }
+
+      .nav-inner {
+        padding: 0 24px;
+      }
+
+      .nav-links {
+        gap: 12px;
+        font-size: 22px;
+      }
+
+      .nav-links a {
+        padding: 6px 16px;
+      }
+
+      .home-feature {
+        grid-template-columns: 1fr;
+      }
+
+      .article-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-main {
+        gap: 16px;
+        align-items: center;
+      }
+
+      .socials {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .masthead {
+        height: 116px;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 10px;
+      }
+
+      .header-logo {
+        width: min(410px, 88vw);
+        max-height: 62px;
+      }
+
+      .header-instagram-link {
+        left: 18px;
+        top: auto;
+        bottom: 17px;
+        transform: none;
+        width: 38px;
+        height: 38px;
+      }
+
+      .header-instagram-link svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      .language-switch {
+        position: static;
+        transform: none;
+        font-size: 15px;
+      }
+
+      .nav-links {
+        font-size: 18px;
+      }
+
+      .nav-links a {
+        padding: 5px 13px;
+      }
+
+      .hero {
+        padding: 58px 0;
+      }
+
+      .hero h1,
+      .article-title {
+        letter-spacing: -2.5px;
+      }
+
+      .article-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .article-hero-image,
+      .feature-image {
+        height: 380px;
+        min-height: 380px;
+      }
+
+      .article-body {
+        font-size: 20px;
+      }
+
+      .socials a {
+        font-size: 22px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       TOP BANNER
+  ========================== -->
+
+  <header class="top-header">
+    <div class="masthead">
+      <a class="header-instagram-link" href="https://www.instagram.com/jazzingffm/" target="_blank" rel="noopener" aria-label="JazzingFfm on Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+      </a>
+
+      <a class="header-logo-link" href="#/" aria-label="JazzingFfm home">
+        <img class="header-logo" src="header.png" alt="JazzingFfm" />
+      </a>
+
+      <div class="language-switch" aria-label="Language switch">
+        <button type="button" data-lang-button="en">EN</button>
+        <button type="button" data-lang-button="de">DE</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-row" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-links">
+        <a href="#/" data-route="home" data-nav-key="home">JazzingFfm</a>
+        <a href="#/interviews" data-route="interviews" data-nav-key="interviews">Interviews</a>
+        <a href="#/features" data-route="features" data-nav-key="highlights">Features</a>
+        <a href="#/contact" data-route="contact" data-nav-key="contact">Contact us</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- =========================
+         HOME PAGE
+    ========================== -->
+
+    <section id="page-home" class="page active">
+      <div class="container">
+        <section class="hero">
+          <div id="homeEyebrow" class="eyebrow">Frankfurt Jazz Interviews</div>
+          <h1 id="homeTitle">Conversations with musicians shaping the local sound.</h1>
+          <p id="homeText">
+            JazzingFfm is a text-based interview magazine for jazz musicians,
+            concerts, records, scenes and late-night conversations around Frankfurt.
+          </p>
+        </section>
+
+        <section class="home-feature">
+          <div class="feature-visual">
+            <div id="featureImageText" class="feature-image">
+              Replace this block with your own photo later.
+            </div>
+            <p id="homePhotoText" class="feature-photo-text">
+              Placeholder paragraph for a short note below the photo. This space can hold
+              context about JazzingFfm, the local music scene, listening notes, upcoming
+              conversations and the feeling behind the magazine.
+            </p>
+          </div>
+
+          <div class="feature-copy">
+            <div id="latestEyebrow" class="eyebrow">Latest Interview</div>
+            <h2 id="latestTitle">Leo Mori on sound, space and listening between the notes</h2>
+            <p id="latestText">
+              A short-form interview about saxophone language, practice,
+              improvisation and what makes Frankfurt’s jazz community alive.
+            </p>
+            <a id="latestButton" class="button" href="#/article/leo-mori">read interview ↗</a>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- =========================
+         LISTING PAGE
+    ========================== -->
+
+    <section id="page-listing" class="page">
+      <div class="container listing">
+        <div class="listing-header">
+          <h1 id="listingTitle" class="section-title">Interviews</h1>
+          <p id="listingDescription">
+            Long-form and short-form conversations with musicians,
+            artists and scene-builders in and around Frankfurt.
+          </p>
+        </div>
+
+        <hr class="thin-line" />
+
+        <div id="articleGrid" class="article-grid"></div>
+      </div>
+    </section>
+
+    <!-- =========================
+         ARTICLE DETAIL PAGE
+    ========================== -->
+
+ <section id="page-article" class="page">
+  <div class="container article-page">
+    <article class="article-shell">
+
+      <a id="articleBackLink" class="back-link article-back-top" href="#/interviews">← back to interviews</a>
+
+      <a id="articleCategory" class="article-category" href="#/interviews">Interviews</a>
+
+      <h1 id="articleTitle" class="article-title"></h1>
+      <p id="articleByline" class="byline"></p>
+
+      <hr class="thin-line" />
+
+      <div id="articleImage" class="article-hero-image"></div>
+      <p id="articleCaption" class="caption"></p>
+
+      <div id="articleBody" class="article-body"></div>
+
+    </article>
+  </div>
+</section>
+
+    <!-- =========================
+         CONTACT PAGE
+    ========================== -->
+
+    <section id="page-contact" class="page">
+      <div class="container hero">
+        <div id="contactEyebrow" class="eyebrow">Contact us</div>
+        <h1 id="contactTitle">Send sounds, stories, photos and questions.</h1>
+
+        <div class="contact-box">
+          <p id="contactText">
+            For interview requests, collaboration ideas, concert tips or corrections,
+            contact JazzingFfm here:
+          </p>
+          <p>
+            <a href="mailto:jazzingffm@gmail.com">jazzingffm@gmail.com</a>
+          </p>
+          <p>
+            Instagram:
+            <a href="https://www.instagram.com/jazzingffm/" target="_blank" rel="noopener">@JazzingFfm</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-left">
+        <div class="copyright">
+          <p>© 2026 JAZZINGFFM. ALL RIGHTS RESERVED</p>
+          <p id="footerLove">MADE WITH LOVE IN FRANKFURT</p>
+        </div>
+      </div>
+
+      <div class="socials">
+        <a id="supportLink" class="support hidden" href="#/contact">support JazzingFfm</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /*
+      FILES NEEDED IN THE SAME FOLDER:
+      index.html
+      header.png
+      logo.png
+    */
+
+    const I18N = {
+      en: {
+        nav: {
+          home: "JazzingFfm",
+          highlights: "Features",
+          interviews: "Interviews",
+          liveReviews: "Live reviews",
+          contact: "Contact us"
+        },
+        home: {
+          eyebrow: "Frankfurt Jazz Interviews",
+          title: "Conversations with musicians shaping the local sound.",
+          text: "JazzingFfm is a text-based interview magazine for jazz musicians, concerts, records, scenes and late-night conversations around Frankfurt.",
+          featureImage: "Replace this block with your own photo later.",
+          photoText: "This paragraph is a flexible space for a short introduction below the photo. Use it for a few lines about the people, places and listening moments that shape JazzingFfm. It can point readers toward interviews, features, concerts and notes from Frankfurt's jazz community.",
+          latestEyebrow: "Latest Interview",
+          latestTitle: "Leo Mori on sound, space and listening between the notes",
+          latestText: "A short-form interview about saxophone language, practice, improvisation and what makes Frankfurt’s jazz community alive.",
+          latestButton: "read interview ↗"
+        },
+        pages: {
+          highlights: {
+            title: "Features",
+            description: "Selected portraits, essays and scene notes from the Frankfurt jazz community."
+          },
+          interviews: {
+            title: "Interviews",
+            description: "Long-form and short-form conversations with musicians, artists and scene-builders."
+          },
+          "live-reviews": {
+            title: "Live reviews",
+            description: "Notes from concerts, sessions and rooms where the music is happening."
+          }
+        },
+        article: {
+          by: "By",
+          backTo: "← back to",
+          readMore: "read more ↗",
+          noPosts: "No posts here yet."
+        },
+        contact: {
+          eyebrow: "Contact us",
+          title: "Send sounds, stories, photos and questions.",
+          text: "For interview requests, collaboration ideas, concert tips or corrections, contact JazzingFfm here:"
+        },
+        footer: {
+          love: "MADE WITH LOVE IN FRANKFURT",
+          support: "support JazzingFfm"
+        }
+      },
+
+      de: {
+        nav: {
+          home: "JazzingFfm",
+          highlights: "Features",
+          interviews: "Interviews",
+          liveReviews: "Live-Kritiken",
+          contact: "Kontakt"
+        },
+        home: {
+          eyebrow: "Frankfurter Jazz-Interviews",
+          title: "Gespräche mit Musiker:innen, die den lokalen Sound prägen.",
+          text: "JazzingFfm ist ein textbasiertes Interview-Magazin für Jazzmusiker:innen, Konzerte, Platten, Szenen und nächtliche Gespräche rund um Frankfurt.",
+          featureImage: "Dieses Feld später durch ein eigenes Foto ersetzen.",
+          photoText: "Dieser Absatz ist ein flexibler Platz für eine kurze Einführung unter dem Foto. Er kann ein paar Zeilen über die Menschen, Orte und Hörmomente erzählen, die JazzingFfm prägen. Hier ist Raum für Hinweise auf Interviews, Features, Konzerte und Notizen aus der Frankfurter Jazzszene.",
+          latestEyebrow: "Neuestes Interview",
+          latestTitle: "Leo Mori über Klang, Raum und das Hören zwischen den Noten",
+          latestText: "Ein kurzes Interview über Saxophon-Sprache, Üben, Improvisation und darüber, was die Frankfurter Jazzszene lebendig macht.",
+          latestButton: "Interview lesen ↗"
+        },
+        pages: {
+          highlights: {
+            title: "Features",
+            description: "Ausgewählte Porträts, Essays und Szenenotizen aus der Frankfurter Jazz-Community."
+          },
+          interviews: {
+            title: "Interviews",
+            description: "Längere und kürzere Gespräche mit Musiker:innen, Künstler:innen und Menschen, die die Szene mitgestalten."
+          },
+          "live-reviews": {
+            title: "Live-Kritiken",
+            description: "Notizen von Konzerten, Sessions und Räumen, in denen Musik gerade passiert."
+          }
+        },
+        article: {
+          by: "Von",
+          backTo: "← zurück zu",
+          readMore: "mehr lesen ↗",
+          noPosts: "Hier gibt es noch keine Beiträge."
+        },
+        contact: {
+          eyebrow: "Kontakt",
+          title: "Schick uns Sounds, Geschichten, Fotos und Fragen.",
+          text: "Für Interview-Anfragen, Kooperationsideen, Konzerttipps oder Korrekturen erreichst du JazzingFfm hier:"
+        },
+        footer: {
+          love: "MADE WITH LOVE IN FRANKFURT",
+          support: "support JazzingFfm"
+        }
+      }
+    };
+
+    const ARTICLES = [
+      {
+        slug: "leo-mori",
+        category: "interviews",
+        categoryLabel: {
+          en: "Interviews",
+          de: "Interviews"
+        },
+        title: {
+          en: "Interview | Leo Mori on sound, space and listening between the notes",
+          de: "Interview | Leo Mori über Klang, Raum und das Hören zwischen den Noten"
+        },
+        author: "JazzingFfm",
+        date: "July 2026",
+        caption: {
+          en: "Leo Mori photographed in Frankfurt. Photo placeholder.",
+          de: "Leo Mori, fotografiert in Frankfurt. Foto-Platzhalter."
+        },
+        excerpt: {
+          en: "A conversation about saxophone sound, improvisation, local scenes and the discipline of listening.",
+          de: "Ein Gespräch über Saxophonklang, Improvisation, lokale Szenen und die Disziplin des Zuhörens."
+        },
+        imageLabel: {
+          en: "Photo placeholder: Leo Mori",
+          de: "Foto-Platzhalter: Leo Mori"
+        },
+        body: {
+          en: `
+            <p>
+              Leo Mori is a saxophonist whose playing moves between lyricism, texture
+              and sharp rhythmic instinct. In this conversation, we spoke about sound,
+              practice, Frankfurt’s jazz scene and the strange balance between control
+              and surrender in improvised music.
+            </p>
+
+            <p class="question">JazzingFfm: When you think about your own sound, what do you listen for first?</p>
+            <p>
+              Leo Mori: I listen for the center of the sound. Not just whether the note
+              is correct, but whether it has weight, air and intention. The sound has to
+              feel alive before the phrase can say anything.
+            </p>
+
+            <p class="question">JazzingFfm: How much of improvisation is freedom, and how much is structure?</p>
+            <p>
+              Leo Mori: For me, freedom only becomes interesting when there is something
+              pushing against it. Harmony, rhythm, form, even the room itself — these
+              things give the music resistance. Without resistance, freedom can become vague.
+            </p>
+
+            <p class="question">JazzingFfm: What makes Frankfurt interesting as a place for jazz?</p>
+            <p>
+              Leo Mori: It is not too big and not too small. You can meet people, hear
+              what they are working on, and build something slowly. There are musicians
+              coming from different backgrounds, and that creates a lot of possible sounds.
+            </p>
+          `,
+          de: `
+            <p>
+              Leo Mori ist Saxophonist. Sein Spiel bewegt sich zwischen Lyrik, Textur
+              und einem klaren rhythmischen Instinkt. In diesem Gespräch geht es um Klang,
+              Üben, die Frankfurter Jazzszene und die Balance zwischen Kontrolle und Loslassen
+              in improvisierter Musik.
+            </p>
+
+            <p class="question">JazzingFfm: Wenn du an deinen eigenen Sound denkst, worauf hörst du zuerst?</p>
+            <p>
+              Leo Mori: Ich höre zuerst auf das Zentrum des Tons. Nicht nur, ob die Note
+              richtig ist, sondern ob sie Gewicht, Luft und Absicht hat. Der Klang muss
+              lebendig sein, bevor die Phrase überhaupt etwas sagen kann.
+            </p>
+
+            <p class="question">JazzingFfm: Wie viel an Improvisation ist Freiheit, und wie viel ist Struktur?</p>
+            <p>
+              Leo Mori: Für mich wird Freiheit erst interessant, wenn es etwas gibt,
+              das ihr Widerstand gibt. Harmonie, Rhythmus, Form, sogar der Raum selbst —
+              all das gibt der Musik eine Reibung. Ohne Reibung kann Freiheit schnell vage werden.
+            </p>
+
+            <p class="question">JazzingFfm: Was macht Frankfurt als Ort für Jazz interessant?</p>
+            <p>
+              Leo Mori: Die Stadt ist nicht zu groß und nicht zu klein. Man kann Menschen treffen,
+              hören, woran sie arbeiten, und langsam etwas aufbauen. Musiker:innen kommen aus
+              unterschiedlichen Richtungen, und daraus entstehen viele mögliche Sounds.
+            </p>
+          `
+        }
+      },
+      {
+        slug: "nora-hahn",
+        category: "interviews",
+        categoryLabel: {
+          en: "Interviews",
+          de: "Interviews"
+        },
+        title: {
+          en: "Interview | Nora Hahn on voice, risk and finding a shared pulse",
+          de: "Interview | Nora Hahn über Stimme, Risiko und einen gemeinsamen Puls"
+        },
+        author: "JazzingFfm",
+        date: "July 2026",
+        caption: {
+          en: "Nora Hahn after rehearsal in Frankfurt. Photo placeholder.",
+          de: "Nora Hahn nach der Probe in Frankfurt. Foto-Platzhalter."
+        },
+        excerpt: {
+          en: "A conversation about vocal improvisation, band trust and the courage to leave space open.",
+          de: "Ein Gespräch über vokale Improvisation, Vertrauen in der Band und den Mut, Raum offen zu lassen."
+        },
+        imageLabel: {
+          en: "Photo placeholder: Nora Hahn",
+          de: "Foto-Platzhalter: Nora Hahn"
+        },
+        body: {
+          en: `
+            <p>
+              Nora Hahn uses the voice as melody, texture and sometimes as pure rhythm.
+              Her work sits between song form and open improvisation, always close to
+              the feeling of a room and the people listening inside it.
+            </p>
+
+            <p class="question">JazzingFfm: What makes a vocal phrase feel honest to you?</p>
+            <p>
+              Nora Hahn: It has to have a reason to arrive. I like phrases that sound
+              as if they were found in the moment, even when the material is composed.
+              The voice reveals very quickly when something is only decorative.
+            </p>
+
+            <p class="question">JazzingFfm: How do you build trust with a band?</p>
+            <p>
+              Nora Hahn: By listening before I add anything. If everyone is trying to
+              prove something, the music gets crowded. Trust begins when the band can
+              leave space and still feel connected.
+            </p>
+          `,
+          de: `
+            <p>
+              Nora Hahn nutzt die Stimme als Melodie, Textur und manchmal als reinen
+              Rhythmus. Ihre Arbeit bewegt sich zwischen Songform und offener Improvisation,
+              immer nah am Raum und an den Menschen, die darin zuhören.
+            </p>
+
+            <p class="question">JazzingFfm: Wann fühlt sich eine gesungene Phrase für dich ehrlich an?</p>
+            <p>
+              Nora Hahn: Sie muss einen Grund haben, aufzutauchen. Ich mag Phrasen,
+              die wirken, als wären sie im Moment gefunden worden, selbst wenn das
+              Material komponiert ist. Die Stimme zeigt sehr schnell, wenn etwas nur Dekoration ist.
+            </p>
+
+            <p class="question">JazzingFfm: Wie entsteht Vertrauen in einer Band?</p>
+            <p>
+              Nora Hahn: Indem man zuhört, bevor man etwas hinzufügt. Wenn alle etwas
+              beweisen wollen, wird die Musik eng. Vertrauen beginnt, wenn die Band
+              Raum lassen kann und trotzdem verbunden bleibt.
+            </p>
+          `
+        }
+      },
+      {
+        slug: "samir-weber",
+        category: "interviews",
+        categoryLabel: {
+          en: "Interviews",
+          de: "Interviews"
+        },
+        title: {
+          en: "Interview | Samir Weber on bass lines, patience and city rhythm",
+          de: "Interview | Samir Weber über Basslinien, Geduld und Stadtrhythmus"
+        },
+        author: "JazzingFfm",
+        date: "July 2026",
+        caption: {
+          en: "Samir Weber with double bass. Photo placeholder.",
+          de: "Samir Weber mit Kontrabass. Foto-Platzhalter."
+        },
+        excerpt: {
+          en: "On groove, responsibility, quiet practice and how Frankfurt shapes musical timing.",
+          de: "Über Groove, Verantwortung, leises Üben und wie Frankfurt musikalisches Timing prägt."
+        },
+        imageLabel: {
+          en: "Photo placeholder: Samir Weber",
+          de: "Foto-Platzhalter: Samir Weber"
+        },
+        body: {
+          en: `
+            <p>
+              Bassist Samir Weber thinks of the bass as a social instrument. In his
+              playing, time is not only counted - it is shared, negotiated and shaped
+              by the musicians around him.
+            </p>
+
+            <p class="question">JazzingFfm: What is the bass responsible for in a band?</p>
+            <p>
+              Samir Weber: The bass gives direction without needing to stand in front.
+              It can hold the music together, but it can also suggest where the music
+              might go next. That balance is what I love.
+            </p>
+
+            <p class="question">JazzingFfm: Does the city affect your sense of rhythm?</p>
+            <p>
+              Samir Weber: Definitely. Frankfurt has a very particular pace. Trains,
+              rivers, small clubs, people moving through different scenes - all of that
+              becomes part of how you feel time.
+            </p>
+          `,
+          de: `
+            <p>
+              Der Bassist Samir Weber denkt den Bass als soziales Instrument. In seinem
+              Spiel wird Zeit nicht nur gezählt - sie wird geteilt, verhandelt und von
+              den Musiker:innen um ihn herum geformt.
+            </p>
+
+            <p class="question">JazzingFfm: Wofür ist der Bass in einer Band verantwortlich?</p>
+            <p>
+              Samir Weber: Der Bass gibt Richtung, ohne vorne stehen zu müssen. Er kann
+              die Musik zusammenhalten, aber auch andeuten, wohin sie als Nächstes gehen
+              könnte. Diese Balance liebe ich.
+            </p>
+
+            <p class="question">JazzingFfm: Beeinflusst die Stadt dein Rhythmusgefühl?</p>
+            <p>
+              Samir Weber: Auf jeden Fall. Frankfurt hat ein sehr eigenes Tempo. Bahnen,
+              Flüsse, kleine Clubs, Menschen, die sich durch verschiedene Szenen bewegen -
+              all das wird Teil davon, wie man Zeit empfindet.
+            </p>
+          `
+        }
+      },
+      {
+        slug: "mira-klein",
+        category: "highlights",
+        categoryLabel: {
+          en: "Features",
+          de: "Features"
+        },
+        title: {
+          en: "Highlight | Mira Klein on piano, silence and the shape of a set",
+          de: "Highlight | Mira Klein über Klavier, Stille und die Form eines Sets"
+        },
+        author: "JazzingFfm",
+        date: "July 2026",
+        caption: {
+          en: "Mira Klein in rehearsal. Photo placeholder.",
+          de: "Mira Klein bei der Probe. Foto-Platzhalter."
+        },
+        excerpt: {
+          en: "On building a concert set, trusting silence and finding a personal harmonic language.",
+          de: "Über den Aufbau eines Konzertsets, das Vertrauen in Stille und eine persönliche harmonische Sprache."
+        },
+        imageLabel: {
+          en: "Photo placeholder: Mira Klein",
+          de: "Foto-Platzhalter: Mira Klein"
+        },
+        body: {
+          en: `
+            <p>
+              Pianist Mira Klein approaches music as architecture: sound, space,
+              tension, release and the emotional logic that holds a set together.
+            </p>
+
+            <p class="question">JazzingFfm: How do you build the shape of a concert?</p>
+            <p>
+              Mira Klein: I think about energy first. Not every piece needs to impress
+              immediately. Some pieces are doors. Some are windows. Some are there to
+              change the temperature of the room.
+            </p>
+
+            <p class="question">JazzingFfm: What role does silence play in your music?</p>
+            <p>
+              Mira Klein: Silence is not empty. It is where the listener completes the
+              phrase. I try to leave enough space so the music can breathe.
+            </p>
+          `,
+          de: `
+            <p>
+              Die Pianistin Mira Klein denkt Musik oft architektonisch: Klang, Raum,
+              Spannung, Entladung und die emotionale Logik, die ein Set zusammenhält.
+            </p>
+
+            <p class="question">JazzingFfm: Wie baust du die Form eines Konzerts auf?</p>
+            <p>
+              Mira Klein: Ich denke zuerst an Energie. Nicht jedes Stück muss sofort beeindrucken.
+              Manche Stücke sind Türen. Manche sind Fenster. Manche verändern einfach die Temperatur
+              im Raum.
+            </p>
+
+            <p class="question">JazzingFfm: Welche Rolle spielt Stille in deiner Musik?</p>
+            <p>
+              Mira Klein: Stille ist nicht leer. Dort vervollständigt das Publikum die Phrase.
+              Ich versuche, genug Raum zu lassen, damit die Musik atmen kann.
+            </p>
+          `
+        }
+      },
+      {
+        slug: "daniel-rossi",
+        category: "live-reviews",
+        categoryLabel: {
+          en: "Live reviews",
+          de: "Live-Kritiken"
+        },
+        title: {
+          en: "Live Review | Daniel Rossi Quartet at a Frankfurt basement session",
+          de: "Live-Kritik | Daniel Rossi Quartet bei einer Frankfurter Basement-Session"
+        },
+        author: "JazzingFfm",
+        date: "July 2026",
+        caption: {
+          en: "Daniel Rossi after soundcheck. Photo placeholder.",
+          de: "Daniel Rossi nach dem Soundcheck. Foto-Platzhalter."
+        },
+        excerpt: {
+          en: "A live set shaped by groove, responsibility and the chemistry of a band on stage.",
+          de: "Ein Live-Set, geprägt von Groove, Verantwortung und der Chemie einer Band auf der Bühne."
+        },
+        imageLabel: {
+          en: "Photo placeholder: Daniel Rossi",
+          de: "Foto-Platzhalter: Daniel Rossi"
+        },
+        body: {
+          en: `
+            <p>
+              Daniel Rossi thinks about drums less as an instrument of volume and more
+              as an instrument of direction. His playing is physical, but the center of it
+              is listening.
+            </p>
+
+            <p class="question">JazzingFfm: What is good time?</p>
+            <p>
+              Daniel Rossi: Good time is not a metronome. It is shared trust. The band
+              has to feel that the floor is there, even when the music gets loose.
+            </p>
+
+            <p class="question">JazzingFfm: What do you listen to on stage?</p>
+            <p>
+              Daniel Rossi: Bass first, then melody, then the room. The room tells you
+              a lot. Sometimes you need to play less because the sound is already full.
+            </p>
+          `,
+          de: `
+            <p>
+              Daniel Rossi denkt Schlagzeug weniger als Instrument der Lautstärke,
+              sondern eher als Instrument der Richtung. Sein Spiel ist körperlich,
+              aber im Zentrum steht das Zuhören.
+            </p>
+
+            <p class="question">JazzingFfm: Was ist gutes Timing?</p>
+            <p>
+              Daniel Rossi: Gutes Timing ist kein Metronom. Es ist geteiltes Vertrauen.
+              Die Band muss spüren, dass der Boden da ist, auch wenn die Musik offener wird.
+            </p>
+
+            <p class="question">JazzingFfm: Worauf hörst du auf der Bühne?</p>
+            <p>
+              Daniel Rossi: Zuerst auf den Bass, dann auf die Melodie, dann auf den Raum.
+              Der Raum sagt einem viel. Manchmal muss man weniger spielen, weil der Sound
+              schon voll ist.
+            </p>
+          `
+        }
+      }
+    ];
+
+    let currentLang = localStorage.getItem("jazzingffm-lang") || "en";
+
+    const pages = {
+      home: document.getElementById("page-home"),
+      listing: document.getElementById("page-listing"),
+      article: document.getElementById("page-article"),
+      contact: document.getElementById("page-contact")
+    };
+
+    const navLinks = document.querySelectorAll(".nav-links a");
+    const langButtons = document.querySelectorAll("[data-lang-button]");
+
+    const homeEyebrow = document.getElementById("homeEyebrow");
+    const homeTitle = document.getElementById("homeTitle");
+    const homeText = document.getElementById("homeText");
+    const featureImageText = document.getElementById("featureImageText");
+    const homePhotoText = document.getElementById("homePhotoText");
+    const latestEyebrow = document.getElementById("latestEyebrow");
+    const latestTitle = document.getElementById("latestTitle");
+    const latestText = document.getElementById("latestText");
+    const latestButton = document.getElementById("latestButton");
+
+    const listingTitle = document.getElementById("listingTitle");
+    const listingDescription = document.getElementById("listingDescription");
+    const articleGrid = document.getElementById("articleGrid");
+
+    const articleCategory = document.getElementById("articleCategory");
+    const articleTitle = document.getElementById("articleTitle");
+    const articleByline = document.getElementById("articleByline");
+    const articleImage = document.getElementById("articleImage");
+    const articleCaption = document.getElementById("articleCaption");
+    const articleBody = document.getElementById("articleBody");
+    const articleBackLink = document.getElementById("articleBackLink");
+
+    const contactEyebrow = document.getElementById("contactEyebrow");
+    const contactTitle = document.getElementById("contactTitle");
+    const contactText = document.getElementById("contactText");
+
+    const footerLove = document.getElementById("footerLove");
+    const supportLink = document.getElementById("supportLink");
+
+    function t() {
+      return I18N[currentLang];
+    }
+
+    function cleanRouteFromHash() {
+      let hash = window.location.hash || "#/";
+
+      if (hash === "#" || hash === "#/") {
+        return "";
+      }
+
+      return hash
+        .replace(/^#\/?/, "")
+        .replace(/\/$/, "");
+    }
+
+    function hidePages() {
+      Object.values(pages).forEach(function(page) {
+        if (page) {
+          page.classList.remove("active");
+        }
+      });
+    }
+
+    function scrollTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function getArticleBySlug(slug) {
+      return ARTICLES.find(function(item) {
+        return item.slug === slug;
+      });
+    }
+
+    function getActiveRoute(route) {
+      if (route === "") {
+        return "home";
+      }
+
+      if (route === "contact") {
+        return "contact";
+      }
+
+      if (
+        route === "features" ||
+        route === "highlights" ||
+        route === "interviews" ||
+        route === "live-reviews"
+      ) {
+        return route === "highlights" ? "features" : route;
+      }
+
+      if (route.startsWith("article/")) {
+        const slug = route.split("/")[1];
+        const article = getArticleBySlug(slug);
+
+        if (!article) {
+          return "interviews";
+        }
+
+        return article.category === "highlights" ? "features" : article.category;
+      }
+
+      return "interviews";
+    }
+
+    function setActiveNav(activeRoute) {
+      navLinks.forEach(function(link) {
+        const linkRoute = link.getAttribute("data-route");
+
+        if (linkRoute === activeRoute) {
+          link.classList.add("active");
+        } else {
+          link.classList.remove("active");
+        }
+      });
+    }
+
+    function setActiveLanguageButton() {
+      langButtons.forEach(function(button) {
+        if (button.getAttribute("data-lang-button") === currentLang) {
+          button.classList.add("active");
+        } else {
+          button.classList.remove("active");
+        }
+      });
+    }
+
+    function localizeStaticText() {
+      const copy = t();
+
+      document.documentElement.lang = currentLang;
+
+      navLinks.forEach(function(link) {
+        const key = link.getAttribute("data-nav-key");
+        link.textContent = copy.nav[key];
+      });
+
+      homeEyebrow.textContent = copy.home.eyebrow;
+      homeTitle.textContent = copy.home.title;
+      homeText.textContent = copy.home.text;
+      featureImageText.textContent = copy.home.featureImage;
+      homePhotoText.textContent = copy.home.photoText;
+      latestEyebrow.textContent = copy.home.latestEyebrow;
+      latestTitle.textContent = copy.home.latestTitle;
+      latestText.textContent = copy.home.latestText;
+      latestButton.textContent = copy.home.latestButton;
+
+      contactEyebrow.textContent = copy.contact.eyebrow;
+      contactTitle.textContent = copy.contact.title;
+      contactText.textContent = copy.contact.text;
+
+      footerLove.textContent = copy.footer.love;
+      supportLink.textContent = copy.footer.support;
+
+      setActiveLanguageButton();
+    }
+
+    function renderListing(category) {
+      const copy = t();
+      const info = copy.pages[category] || copy.pages.interviews;
+
+      listingTitle.textContent = info.title;
+      listingDescription.textContent = info.description;
+
+      let posts;
+
+      posts = ARTICLES.filter(function(article) {
+        return article.category === category;
+      });
+
+      if (posts.length === 0) {
+        articleGrid.innerHTML = `
+          <div>
+            <p style="font-size: 24px;">${copy.article.noPosts}</p>
+          </div>
+        `;
+        return;
+      }
+
+      articleGrid.innerHTML = posts.map(function(article) {
+        return `
+          <a class="article-card" href="#/article/${article.slug}">
+            <div>
+              <div class="card-thumb">${article.imageLabel[currentLang]}</div>
+              <div class="article-meta">${article.categoryLabel[currentLang]} / ${article.date}</div>
+              <h2>${article.title[currentLang]}</h2>
+              <p>${article.excerpt[currentLang]}</p>
+            </div>
+            <span class="read-more">${copy.article.readMore}</span>
+          </a>
+        `;
+      }).join("");
+    }
+
+    function renderArticle(slug) {
+      const copy = t();
+      const article = getArticleBySlug(slug);
+
+      if (!article) {
+        renderListing("interviews");
+        hidePages();
+        pages.listing.classList.add("active");
+        setActiveNav("interviews");
+        return;
+      }
+
+      articleCategory.textContent = article.categoryLabel[currentLang];
+      const articleCategoryRoute = article.category === "highlights" ? "features" : article.category;
+
+      articleCategory.href = "#/" + articleCategoryRoute;
+
+      articleTitle.textContent = article.title[currentLang];
+      articleByline.textContent = copy.article.by + " " + article.author + " / " + article.date;
+      articleImage.textContent = article.imageLabel[currentLang];
+      articleCaption.textContent = article.caption[currentLang];
+      articleBody.innerHTML = article.body[currentLang];
+
+      articleBackLink.textContent = copy.article.backTo + " " + article.categoryLabel[currentLang].toLowerCase();
+      articleBackLink.href = "#/" + articleCategoryRoute;
+    }
+
+    function router() {
+      const route = cleanRouteFromHash();
+      const activeRoute = getActiveRoute(route);
+
+      localizeStaticText();
+      hidePages();
+
+      if (route === "") {
+        pages.home.classList.add("active");
+      } else if (route === "contact") {
+        pages.contact.classList.add("active");
+      } else if (route.startsWith("article/")) {
+        const slug = route.split("/")[1];
+        renderArticle(slug);
+        pages.article.classList.add("active");
+      } else if (
+        route === "features" ||
+        route === "highlights" ||
+        route === "interviews" ||
+        route === "live-reviews"
+      ) {
+        renderListing(route === "features" ? "highlights" : route);
+        pages.listing.classList.add("active");
+      } else {
+        renderListing("interviews");
+        pages.listing.classList.add("active");
+      }
+
+      setActiveNav(activeRoute);
+      scrollTop();
+    }
+
+    langButtons.forEach(function(button) {
+      button.addEventListener("click", function() {
+        currentLang = button.getAttribute("data-lang-button");
+        localStorage.setItem("jazzingffm-lang", currentLang);
+        router();
+      });
+    });
+
+    window.addEventListener("hashchange", router);
+    window.addEventListener("DOMContentLoaded", router);
+  </script>
+
+</body>
+</html>
