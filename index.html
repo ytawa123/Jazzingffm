@@ -101,8 +101,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 46px;
-      height: 46px;
+      width: 58px;
+      height: 58px;
       transition: opacity 0.18s ease;
     }
 
@@ -111,8 +111,8 @@
     }
 
     .header-instagram-link svg {
-      width: 31px;
-      height: 31px;
+      width: 42px;
+      height: 42px;
       stroke: currentColor;
     }
 
@@ -308,8 +308,6 @@
     }
 
     .feature-copy {
-      border-top: 1.5px solid var(--ink);
-      border-bottom: 1.5px solid var(--ink);
       padding: 36px 0;
       display: flex;
       flex-direction: column;
@@ -339,10 +337,12 @@
 
     .home-about {
       border-top: 1.5px solid var(--ink);
-      display: grid;
-      grid-template-columns: 0.55fr 1.45fr;
-      gap: 44px;
+      display: block;
       padding: 72px 0 104px;
+    }
+
+    .home-about > .eyebrow {
+      margin-bottom: 30px;
     }
 
     .home-about h1 {
@@ -424,8 +424,6 @@
     }
 
     .article-card {
-      border-top: 1.5px solid var(--ink);
-      padding-top: 22px;
       min-height: 420px;
       display: flex;
       flex-direction: column;
@@ -573,20 +571,77 @@
        CONTACT PAGE
     ========================== */
 
-    .contact-box {
+    .hero .contact-intro {
+      font-size: 22px;
+      margin: 34px 0 0;
+      max-width: 760px;
+    }
+
+    .contact-form {
       border-top: 1.5px solid var(--ink);
-      border-bottom: 1.5px solid var(--ink);
-      padding: 42px 0;
-      margin: 40px 0 100px;
-      max-width: 780px;
+      display: grid;
+      gap: 24px;
+      margin: 48px 0 36px;
+      max-width: 900px;
+      padding-top: 42px;
     }
 
-    .contact-box p {
-      font-size: 24px;
-      margin: 0 0 20px;
+    .contact-form-row {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1fr 1fr;
     }
 
-    .contact-box a {
+    .contact-field {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .contact-field label {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .contact-field input,
+    .contact-field textarea {
+      background: transparent;
+      border: 1.5px solid var(--ink);
+      border-radius: 0;
+      color: var(--ink);
+      font: inherit;
+      font-size: 18px;
+      padding: 15px 17px;
+      width: 100%;
+    }
+
+    .contact-field input:focus,
+    .contact-field textarea:focus {
+      outline: 3px solid rgba(255,255,255,.28);
+      outline-offset: 3px;
+    }
+
+    .contact-field textarea {
+      min-height: 210px;
+      resize: vertical;
+    }
+
+    .contact-submit {
+      color: var(--ink);
+      justify-self: start;
+      margin-top: 8px;
+    }
+
+    .hero .contact-direct {
+      color: var(--muted);
+      font-size: 17px;
+      margin: 0 0 100px;
+    }
+
+    .hero .contact-direct a {
+      color: var(--ink);
       border-bottom: 1.5px solid var(--ink);
     }
 
@@ -679,8 +734,13 @@
 
       .header-instagram-link {
         left: 24px;
-        width: 42px;
-        height: 42px;
+        width: 48px;
+        height: 48px;
+      }
+
+      .header-instagram-link svg {
+        width: 34px;
+        height: 34px;
       }
 
       .language-switch button {
@@ -817,6 +877,10 @@
       }
 
       .article-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-form-row {
         grid-template-columns: 1fr;
       }
 
@@ -972,20 +1036,42 @@
       <div class="container hero">
         <div id="contactEyebrow" class="eyebrow">Contact us</div>
         <h1 id="contactTitle">Send sounds, stories, photos and questions.</h1>
+        <p id="contactText" class="contact-intro">
+          For interview requests, collaboration ideas, concert tips or corrections,
+          send JazzingFfm a message here.
+        </p>
 
-        <div class="contact-box">
-          <p id="contactText">
-            For interview requests, collaboration ideas, concert tips or corrections,
-            contact JazzingFfm here:
-          </p>
-          <p>
-            <a href="mailto:jazzingffm@gmail.com">jazzingffm@gmail.com</a>
-          </p>
-          <p>
-            Instagram:
-            <a href="https://www.instagram.com/jazzingffm/" target="_blank" rel="noopener">@JazzingFfm</a>
-          </p>
-        </div>
+        <form id="contactForm" class="contact-form" action="mailto:jazzingffm@gmail.com" method="post" enctype="text/plain">
+          <div class="contact-form-row">
+            <div class="contact-field">
+              <label id="contactNameLabel" for="contactName">Name</label>
+              <input id="contactName" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="contact-field">
+              <label id="contactEmailLabel" for="contactEmail">Email</label>
+              <input id="contactEmail" name="email" type="email" autocomplete="email" required />
+            </div>
+          </div>
+
+          <div class="contact-field">
+            <label id="contactSubjectLabel" for="contactSubject">Subject</label>
+            <input id="contactSubject" name="subject" type="text" required />
+          </div>
+
+          <div class="contact-field">
+            <label id="contactMessageLabel" for="contactMessage">Message</label>
+            <textarea id="contactMessage" name="message" required></textarea>
+          </div>
+
+          <button id="contactSubmit" class="button contact-submit" type="submit">send message ↗</button>
+        </form>
+
+        <p class="contact-direct">
+          <span id="contactDirectText">Or email directly:</span>
+          <a href="mailto:jazzingffm@gmail.com">jazzingffm@gmail.com</a>
+          · Instagram:
+          <a href="https://www.instagram.com/jazzingffm/" target="_blank" rel="noopener">@JazzingFfm</a>
+        </p>
       </div>
     </section>
 
@@ -1057,7 +1143,14 @@
         contact: {
           eyebrow: "Contact us",
           title: "Send sounds, stories, photos and questions.",
-          text: "For interview requests, collaboration ideas, concert tips or corrections, contact JazzingFfm here:"
+          text: "For interview requests, collaboration ideas, concert tips or corrections, send JazzingFfm a message here.",
+          name: "Name",
+          email: "Email",
+          subject: "Subject",
+          message: "Message",
+          send: "send message ↗",
+          direct: "Or email directly:",
+          defaultSubject: "Message for JazzingFfm"
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
@@ -1103,7 +1196,14 @@
         contact: {
           eyebrow: "Kontakt",
           title: "Schick uns Sounds, Geschichten, Fotos und Fragen.",
-          text: "Für Interview-Anfragen, Kooperationsideen, Konzerttipps oder Korrekturen erreichst du JazzingFfm hier:"
+          text: "Für Interview-Anfragen, Kooperationsideen, Konzerttipps oder Korrekturen kannst du JazzingFfm hier eine Nachricht schicken.",
+          name: "Name",
+          email: "E-Mail",
+          subject: "Betreff",
+          message: "Nachricht",
+          send: "Nachricht senden ↗",
+          direct: "Oder direkt per E-Mail:",
+          defaultSubject: "Nachricht an JazzingFfm"
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
@@ -1514,6 +1614,17 @@
     const contactEyebrow = document.getElementById("contactEyebrow");
     const contactTitle = document.getElementById("contactTitle");
     const contactText = document.getElementById("contactText");
+    const contactForm = document.getElementById("contactForm");
+    const contactNameLabel = document.getElementById("contactNameLabel");
+    const contactEmailLabel = document.getElementById("contactEmailLabel");
+    const contactSubjectLabel = document.getElementById("contactSubjectLabel");
+    const contactMessageLabel = document.getElementById("contactMessageLabel");
+    const contactName = document.getElementById("contactName");
+    const contactEmail = document.getElementById("contactEmail");
+    const contactSubject = document.getElementById("contactSubject");
+    const contactMessage = document.getElementById("contactMessage");
+    const contactSubmit = document.getElementById("contactSubmit");
+    const contactDirectText = document.getElementById("contactDirectText");
 
     const footerLove = document.getElementById("footerLove");
     const supportLink = document.getElementById("supportLink");
@@ -1664,6 +1775,12 @@
       contactEyebrow.textContent = copy.contact.eyebrow;
       contactTitle.textContent = copy.contact.title;
       contactText.textContent = copy.contact.text;
+      contactNameLabel.textContent = copy.contact.name;
+      contactEmailLabel.textContent = copy.contact.email;
+      contactSubjectLabel.textContent = copy.contact.subject;
+      contactMessageLabel.textContent = copy.contact.message;
+      contactSubmit.textContent = copy.contact.send;
+      contactDirectText.textContent = copy.contact.direct;
 
       footerLove.textContent = copy.footer.love;
       supportLink.textContent = copy.footer.support;
@@ -1778,6 +1895,26 @@
         localStorage.setItem("jazzingffm-lang", currentLang);
         router();
       });
+    });
+
+    contactForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (!contactForm.reportValidity()) {
+        return;
+      }
+
+      const copy = t();
+      const subject = contactSubject.value.trim() || copy.contact.defaultSubject;
+      const body = [
+        copy.contact.name + ": " + contactName.value.trim(),
+        copy.contact.email + ": " + contactEmail.value.trim(),
+        "",
+        contactMessage.value.trim()
+      ].join("\n");
+
+      window.location.href = "mailto:jazzingffm@gmail.com?subject=" +
+        encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     });
 
     window.addEventListener("hashchange", router);
