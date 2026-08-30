@@ -540,6 +540,24 @@
       color: var(--muted);
     }
 
+    .article-gallery {
+      position: relative;
+    }
+
+    .article-gallery-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      touch-action: pan-x pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .article-gallery-track::-webkit-scrollbar {
+      display: none;
+    }
+
     .article-hero-image {
       height: 560px;
       border: 1.5px solid var(--ink);
@@ -551,11 +569,78 @@
           rgba(255,255,255,.10) 0 1px,
           transparent 1px 20px
         );
-      display: flex;
-      align-items: flex-end;
-      padding: 24px;
       color: var(--muted);
+      display: flex;
+      flex: 0 0 100%;
+      align-items: flex-end;
       font-size: 16px;
+      overflow: hidden;
+      padding: 24px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .article-hero-image img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .article-hero-image.has-photo {
+      padding: 0;
+    }
+
+    .gallery-control {
+      align-items: center;
+      background: rgba(5, 5, 5, 0.78);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 34px;
+      height: 52px;
+      justify-content: center;
+      line-height: 1;
+      padding: 0 0 4px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      z-index: 2;
+    }
+
+    .gallery-control:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .gallery-control.previous {
+      left: 18px;
+    }
+
+    .gallery-control.next {
+      right: 18px;
+    }
+
+    .gallery-status {
+      background: rgba(5, 5, 5, 0.78);
+      border: 1px solid var(--ink);
+      bottom: 18px;
+      color: var(--ink);
+      font-size: 15px;
+      padding: 5px 11px;
+      pointer-events: none;
+      position: absolute;
+      right: 18px;
+      z-index: 2;
+    }
+
+    .gallery-control[hidden],
+    .gallery-status[hidden] {
+      display: none;
     }
 
     .caption {
@@ -1040,7 +1125,12 @@
 
       <hr class="thin-line" />
 
-      <div id="articleImage" class="article-hero-image"></div>
+      <div id="articleGallery" class="article-gallery">
+        <div id="articleGalleryTrack" class="article-gallery-track"></div>
+        <button id="galleryPrevious" class="gallery-control previous" type="button" aria-label="Previous photo">‹</button>
+        <button id="galleryNext" class="gallery-control next" type="button" aria-label="Next photo">›</button>
+        <div id="galleryStatus" class="gallery-status" aria-live="polite"></div>
+      </div>
       <p id="articleCaption" class="caption"></p>
 
       <div id="articleBody" class="article-body"></div>
@@ -1143,7 +1233,9 @@
           by: "By",
           readMore: "read more ↗",
           noPosts: "No posts here yet.",
-          bioTitle: "Musician bio"
+          bioTitle: "Musician bio",
+          previousPhoto: "Previous photo",
+          nextPhoto: "Next photo"
         },
         contact: {
           eyebrow: "Contact us",
@@ -1190,7 +1282,9 @@
           by: "Von",
           readMore: "mehr lesen ↗",
           noPosts: "Hier gibt es noch keine Beiträge.",
-          bioTitle: "Biografie"
+          bioTitle: "Biografie",
+          previousPhoto: "Vorheriges Foto",
+          nextPhoto: "Nächstes Foto"
         },
         contact: {
           eyebrow: "Kontakt",
@@ -1225,6 +1319,12 @@
           de: "über Klang, Raum und das Hören zwischen den Noten"
         },
         date: { en: "31st July 2026", de: "31. Juli 2026" },
+        images: [
+          "kenny1.jpg",
+          "kenny2.jpg",
+          "kenny3.jpg",
+          "kenny4.jpg"
+        ],
         caption: {
           en: "Leo Mori photographed in Frankfurt. Photo placeholder.",
           de: "Leo Mori, fotografiert in Frankfurt. Foto-Platzhalter."
@@ -1658,7 +1758,10 @@
     const articleCategory = document.getElementById("articleCategory");
     const articleTitle = document.getElementById("articleTitle");
     const articleByline = document.getElementById("articleByline");
-    const articleImage = document.getElementById("articleImage");
+    const articleGalleryTrack = document.getElementById("articleGalleryTrack");
+    const galleryPrevious = document.getElementById("galleryPrevious");
+    const galleryNext = document.getElementById("galleryNext");
+    const galleryStatus = document.getElementById("galleryStatus");
     const articleCaption = document.getElementById("articleCaption");
     const articleBody = document.getElementById("articleBody");
     const articleBioTitle = document.getElementById("articleBioTitle");
@@ -1720,14 +1823,17 @@
 
       const articleUrl = "#/article/" + latestArticle.slug;
       const featureTitle = latestArticle.title[currentLang].replace(/^[^|]+\|\s*/, "");
-      const hasPhoto = Boolean(latestArticle.image);
+      const featuredPhoto =
+        (Array.isArray(latestArticle.images) && latestArticle.images[0]) ||
+        latestArticle.image;
+      const hasPhoto = Boolean(featuredPhoto);
 
       featureImageText.textContent = latestArticle.imageLabel[currentLang];
       featureImageFrame.classList.toggle("has-photo", hasPhoto);
       featureImage.hidden = !hasPhoto;
 
       if (hasPhoto) {
-        featureImage.src = latestArticle.image;
+        featureImage.src = featuredPhoto;
         featureImage.alt = latestArticle.caption[currentLang];
       } else {
         featureImage.removeAttribute("src");
@@ -1863,6 +1969,93 @@
       }).join("");
     }
 
+    function renderArticleGallery(article, copy) {
+      const galleryImages =
+        Array.isArray(article.images) && article.images.length
+          ? article.images
+          : article.image
+            ? [article.image]
+            : [];
+
+      articleGalleryTrack.innerHTML = "";
+
+      if (galleryImages.length) {
+        galleryImages.forEach(function(imagePath, index) {
+          const slide = document.createElement("div");
+          const image = document.createElement("img");
+
+          slide.className = "article-hero-image has-photo";
+          image.src = imagePath;
+          image.alt =
+            article.cardTitle[currentLang] +
+            " — photo " +
+            (index + 1) +
+            " of " +
+            galleryImages.length;
+          image.loading = index === 0 ? "eager" : "lazy";
+
+          image.addEventListener("error", function() {
+            slide.classList.remove("has-photo");
+            slide.textContent =
+              article.imageLabel[currentLang] + " (" + imagePath + ")";
+            image.remove();
+          });
+
+          slide.appendChild(image);
+          articleGalleryTrack.appendChild(slide);
+        });
+      } else {
+        const placeholder = document.createElement("div");
+        placeholder.className = "article-hero-image";
+        placeholder.textContent = article.imageLabel[currentLang];
+        articleGalleryTrack.appendChild(placeholder);
+      }
+
+      const slideCount = Math.max(galleryImages.length, 1);
+      const hasMultiplePhotos = slideCount > 1;
+
+      galleryPrevious.hidden = !hasMultiplePhotos;
+      galleryNext.hidden = !hasMultiplePhotos;
+      galleryStatus.hidden = !hasMultiplePhotos;
+      galleryStatus.textContent = "1 / " + slideCount;
+      galleryPrevious.setAttribute("aria-label", copy.article.previousPhoto);
+      galleryNext.setAttribute("aria-label", copy.article.nextPhoto);
+
+      articleGalleryTrack.scrollTo({ left: 0, behavior: "auto" });
+
+      function currentGalleryIndex() {
+        const slideWidth = articleGalleryTrack.clientWidth || 1;
+        return Math.max(
+          0,
+          Math.min(slideCount - 1, Math.round(articleGalleryTrack.scrollLeft / slideWidth))
+        );
+      }
+
+      function updateGalleryStatus() {
+        galleryStatus.textContent = currentGalleryIndex() + 1 + " / " + slideCount;
+      }
+
+      function moveGallery(direction) {
+        const nextIndex = Math.max(
+          0,
+          Math.min(slideCount - 1, currentGalleryIndex() + direction)
+        );
+
+        articleGalleryTrack.scrollTo({
+          left: nextIndex * articleGalleryTrack.clientWidth,
+          behavior: "smooth"
+        });
+      }
+
+      articleGalleryTrack.onscroll = updateGalleryStatus;
+      galleryPrevious.onclick = function() {
+        moveGallery(-1);
+      };
+      galleryNext.onclick = function() {
+        moveGallery(1);
+      };
+    }
+
     function renderArticle(slug) {
       const copy = t();
       const article = getArticleBySlug(slug);
@@ -1883,15 +2076,7 @@
       articleTitle.textContent =
         article.cardTitle[currentLang] + " " + article.cardSubtitle[currentLang];
       articleByline.textContent = article.date[currentLang];
-      if (article.image) {
-        articleImage.textContent = "";
-        articleImage.style.backgroundImage = `url("${article.image}")`;
-        articleImage.style.backgroundPosition = "center";
-        articleImage.style.backgroundSize = "cover";
-      } else {
-        articleImage.removeAttribute("style");
-        articleImage.textContent = article.imageLabel[currentLang];
-      }
+      renderArticleGallery(article, copy);
       articleCaption.textContent = article.caption[currentLang];
       articleBody.innerHTML = article.body[currentLang];
 
