@@ -315,7 +315,7 @@
     }
 
     .feature-copy h2 {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: clamp(42px, 5vw, 74px);
       line-height: 0.98;
       letter-spacing: -3px;
@@ -350,7 +350,7 @@
     }
 
     .home-about h1 {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: clamp(46px, 7vw, 96px);
       line-height: 0.94;
       letter-spacing: -4px;
@@ -376,7 +376,7 @@
     }
 
     .hero h1 {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: clamp(54px, 9vw, 132px);
       line-height: 0.92;
       letter-spacing: -6px;
@@ -407,7 +407,7 @@
     }
 
     .section-title {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: clamp(40px, 6vw, 82px);
       letter-spacing: -3px;
       line-height: 0.95;
@@ -456,7 +456,7 @@
     }
 
     .article-card h2 {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: 34px;
       line-height: 1;
       letter-spacing: -1.4px;
@@ -474,6 +474,11 @@
     .article-card p {
       margin: 0 0 20px;
       font-size: 18px;
+    }
+
+    .article-card .card-subtitle {
+      font-size: 20px;
+      line-height: 1.45;
     }
 
     .read-more {
@@ -516,7 +521,7 @@
 }
 
     .article-title {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: clamp(48px, 7vw, 104px);
       line-height: 0.94;
       letter-spacing: -5px;
@@ -1165,6 +1170,14 @@
           en: "Interview | Leo Mori on sound, space and listening between the notes",
           de: "Interview | Leo Mori über Klang, Raum und das Hören zwischen den Noten"
         },
+        cardTitle: {
+          en: "Leo Mori",
+          de: "Leo Mori"
+        },
+        cardSubtitle: {
+          en: "on sound, space and listening between the notes",
+          de: "über Klang, Raum und das Hören zwischen den Noten"
+        },
         author: "JazzingFfm",
         date: "July 2026",
         caption: {
@@ -1251,6 +1264,14 @@
           en: "Interview | Nora Hahn on voice, risk and finding a shared pulse",
           de: "Interview | Nora Hahn über Stimme, Risiko und einen gemeinsamen Puls"
         },
+        cardTitle: {
+          en: "Nora Hahn",
+          de: "Nora Hahn"
+        },
+        cardSubtitle: {
+          en: "on voice, risk and finding a shared pulse",
+          de: "über Stimme, Risiko und einen gemeinsamen Puls"
+        },
         author: "JazzingFfm",
         date: "July 2026",
         caption: {
@@ -1320,6 +1341,14 @@
         title: {
           en: "Interview | Samir Weber on bass lines, patience and city rhythm",
           de: "Interview | Samir Weber über Basslinien, Geduld und Stadtrhythmus"
+        },
+        cardTitle: {
+          en: "Samir Weber",
+          de: "Samir Weber"
+        },
+        cardSubtitle: {
+          en: "on bass lines, patience and city rhythm",
+          de: "über Basslinien, Geduld und Stadtrhythmus"
         },
         author: "JazzingFfm",
         date: "July 2026",
@@ -1391,6 +1420,14 @@
           en: "Highlight | Mira Klein on piano, silence and the shape of a set",
           de: "Highlight | Mira Klein über Klavier, Stille und die Form eines Sets"
         },
+        cardTitle: {
+          en: "Mira Klein",
+          de: "Mira Klein"
+        },
+        cardSubtitle: {
+          en: "on piano, silence and the shape of a set",
+          de: "über Klavier, Stille und die Form eines Sets"
+        },
         author: "JazzingFfm",
         date: "July 2026",
         caption: {
@@ -1456,6 +1493,14 @@
         title: {
           en: "Live Review | Daniel Rossi Quartet at a Frankfurt basement session",
           de: "Live-Kritik | Daniel Rossi Quartet bei einer Frankfurter Basement-Session"
+        },
+        cardTitle: {
+          en: "Daniel Rossi Quartet",
+          de: "Daniel Rossi Quartet"
+        },
+        cardSubtitle: {
+          en: "at a Frankfurt basement session",
+          de: "bei einer Frankfurter Basement-Session"
         },
         author: "JazzingFfm",
         date: "July 2026",
@@ -1743,8 +1788,8 @@
             <div>
               <div class="card-thumb">${article.imageLabel[currentLang]}</div>
               <div class="article-meta">${article.categoryLabel[currentLang]} / ${article.date}</div>
-              <h2>${article.title[currentLang]}</h2>
-              <p>${article.excerpt[currentLang]}</p>
+              <h2>${article.cardTitle[currentLang]}</h2>
+              <p class="card-subtitle">${article.cardSubtitle[currentLang]}</p>
             </div>
             <span class="read-more">${copy.article.readMore}</span>
           </a>
