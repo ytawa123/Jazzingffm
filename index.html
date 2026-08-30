@@ -360,16 +360,11 @@
     }
 
     .home-about-copy > p {
-      font-size: 23px;
-      margin: 22px 0 0;
-      max-width: 820px;
-    }
-
-    .home-about-copy .feature-photo-text {
       color: var(--muted);
-      font-size: 18px;
-      line-height: 1.68;
-      max-width: 760px;
+      font-size: 19px;
+      line-height: 1.65;
+      margin: 18px 0 0;
+      max-width: 860px;
     }
 
     .hero {
@@ -1082,14 +1077,11 @@
         <section class="home-about" aria-labelledby="homeTitle">
           <div id="homeEyebrow" class="eyebrow">About JazzingFfm</div>
           <div class="home-about-copy">
-            <h1 id="homeTitle">Conversations with musicians shaping the local sound.</h1>
+            <h1 id="homeTitle">Ffm is jazzing.</h1>
             <p id="homeText">
-              JazzingFfm is a text-based interview magazine for jazz musicians,
-              concerts, records, scenes and late-night conversations around Frankfurt.
-            </p>
-            <p id="homePhotoText" class="feature-photo-text">
-              Through portraits and conversations, JazzingFfm documents musicians from
-              Frankfurt and the Rhine-Main region whose work stands out.
+              JazzingFfm captures local musicians beyond jazz, artists and thought leaders
+              shaping Frankfurt’s culture. Documenting the real and the best from the scene
+              today. Portraits in noir and interviews about music, life, and more.
             </p>
           </div>
         </section>
@@ -1213,9 +1205,8 @@
         },
         home: {
           eyebrow: "About JazzingFfm",
-          title: "Conversations with musicians shaping the local sound.",
-          text: "JazzingFfm is a text-based interview magazine for jazz musicians, concerts, records, scenes and late-night conversations around Frankfurt.",
-          photoText: "Through portraits and conversations, JazzingFfm documents musicians from Frankfurt and the Rhine-Main region whose work stands out. The magazine follows the music beyond the stage—from rehearsals and records to the ideas, places and encounters behind it.",
+          title: "Ffm is jazzing.",
+          text: "JazzingFfm captures local musicians beyond jazz, artists and thought leaders shaping Frankfurt’s culture. Documenting the real and the best from the scene today. Portraits in noir and interviews about music, life, and more.",
           latestEyebrow: "Latest Interview",
           latestButton: "read interview ↗"
         },
@@ -1262,9 +1253,8 @@
         },
         home: {
           eyebrow: "Über JazzingFfm",
-          title: "Gespräche mit Musiker:innen, die den lokalen Sound prägen.",
-          text: "JazzingFfm ist ein textbasiertes Interview-Magazin für Jazzmusiker:innen, Konzerte, Platten, Szenen und nächtliche Gespräche rund um Frankfurt.",
-          photoText: "Mit Porträts und Gesprächen dokumentiert JazzingFfm Musiker:innen aus Frankfurt und der Rhein-Main-Region, deren Arbeit heraussticht. Das Magazin folgt der Musik über die Bühne hinaus – von Proben und Platten bis zu den Ideen, Orten und Begegnungen dahinter.",
+          title: "Ffm is jazzing.",
+          text: "JazzingFfm porträtiert lokale Musiker:innen über den Jazz hinaus, Künstler:innen und Vordenker:innen, die Frankfurts Kultur prägen. Dokumentiert wird das Echte und Beste aus der Szene von heute. Porträts in Noir und Interviews über Musik, Leben und mehr.",
           latestEyebrow: "Neuestes Interview",
           latestButton: "Interview lesen ↗"
         },
@@ -1747,7 +1737,6 @@
     const featureImage = document.getElementById("featureImage");
     const featureImageText = document.getElementById("featureImageText");
     const latestImageLink = document.getElementById("latestImageLink");
-    const homePhotoText = document.getElementById("homePhotoText");
     const latestEyebrow = document.getElementById("latestEyebrow");
     const latestMeta = document.getElementById("latestMeta");
     const latestTitle = document.getElementById("latestTitle");
@@ -1929,7 +1918,6 @@
       homeEyebrow.textContent = copy.home.eyebrow;
       homeTitle.textContent = copy.home.title;
       homeText.textContent = copy.home.text;
-      homePhotoText.textContent = copy.home.photoText;
       latestEyebrow.textContent = copy.home.latestEyebrow;
       renderHomeFeature();
 
