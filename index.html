@@ -315,7 +315,7 @@
     }
 
     .feature-copy h2 {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(42px, 5vw, 74px);
       line-height: 0.98;
       letter-spacing: -3px;
@@ -325,6 +325,10 @@
     .feature-copy p {
       font-size: 22px;
       margin: 0 0 28px;
+    }
+
+    .latest-button-mobile {
+      display: none;
     }
 
     .feature-meta {
@@ -346,7 +350,7 @@
     }
 
     .home-about h1 {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(46px, 7vw, 96px);
       line-height: 0.94;
       letter-spacing: -4px;
@@ -372,7 +376,7 @@
     }
 
     .hero h1 {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(54px, 9vw, 132px);
       line-height: 0.92;
       letter-spacing: -6px;
@@ -403,7 +407,7 @@
     }
 
     .section-title {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(40px, 6vw, 82px);
       letter-spacing: -3px;
       line-height: 0.95;
@@ -452,7 +456,7 @@
     }
 
     .article-card h2 {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: 34px;
       line-height: 1;
       letter-spacing: -1.4px;
@@ -512,7 +516,7 @@
 }
 
     .article-title {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(48px, 7vw, 104px);
       line-height: 0.94;
       letter-spacing: -5px;
@@ -660,6 +664,12 @@
     /* =========================
        RESPONSIVE
     ========================== */
+
+    @media (min-width: 1051px) {
+      .home-feature .feature-visual {
+        transform: translateY(36px);
+      }
+    }
 
     @media (max-width: 1050px) {
       .masthead {
@@ -814,6 +824,7 @@
       }
 
       .home-feature {
+        gap: 28px;
         padding: 58px 0 68px;
       }
 
@@ -823,6 +834,16 @@
 
       .home-feature .feature-visual {
         order: 2;
+      }
+
+      .home-feature .feature-copy #latestButton {
+        display: none;
+      }
+
+      .latest-button-mobile {
+        display: inline-flex;
+        justify-self: start;
+        order: 3;
       }
 
       .home-about {
@@ -921,6 +942,7 @@
             </p>
             <a id="latestButton" class="button" href="#/article/leo-mori">read interview ↗</a>
           </div>
+          <a id="latestButtonMobile" class="button latest-button-mobile" href="#/article/leo-mori">read interview ↗</a>
         </section>
 
         <section class="home-about" aria-labelledby="homeTitle">
@@ -1518,6 +1540,7 @@
     const latestTitle = document.getElementById("latestTitle");
     const latestText = document.getElementById("latestText");
     const latestButton = document.getElementById("latestButton");
+    const latestButtonMobile = document.getElementById("latestButtonMobile");
 
     const listingTitle = document.getElementById("listingTitle");
     const listingDescription = document.getElementById("listingDescription");
@@ -1607,6 +1630,8 @@
       latestText.textContent = latestArticle.excerpt[currentLang];
       latestButton.textContent = copy.home.latestButton;
       latestButton.href = articleUrl;
+      latestButtonMobile.textContent = copy.home.latestButton;
+      latestButtonMobile.href = articleUrl;
     }
 
     function getActiveRoute(route) {
