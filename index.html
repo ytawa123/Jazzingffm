@@ -559,7 +559,7 @@
     }
 
     .article-body {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Courier New", Courier, monospace;
       font-size: 23px;
       line-height: 1.72;
     }
@@ -569,11 +569,37 @@
     }
 
     .question {
-      font-family: "Courier New", Courier, monospace;
-      font-weight: 900;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
       font-size: 21px;
       line-height: 1.55;
       margin-top: 38px;
+    }
+
+    .artist-bio {
+      aspect-ratio: 1 / 1;
+      border: 1.5px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin: 68px 0 0 auto;
+      padding: 36px;
+      width: min(100%, 440px);
+    }
+
+    .artist-bio h2 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 34px;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin: 0 0 30px;
+    }
+
+    .artist-bio p {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
     }
 
     /* =========================
@@ -939,7 +965,7 @@
 
           <div class="feature-copy">
             <div id="latestEyebrow" class="eyebrow">Latest Interview</div>
-            <div id="latestMeta" class="feature-meta">Interviews / July 2026</div>
+            <div id="latestMeta" class="feature-meta">31st July 2026</div>
             <h2 id="latestTitle">Leo Mori on sound, space and listening between the notes</h2>
             <p id="latestText">
               A short-form interview about saxophone language, practice,
@@ -1005,6 +1031,11 @@
       <p id="articleCaption" class="caption"></p>
 
       <div id="articleBody" class="article-body"></div>
+
+      <aside id="articleBio" class="artist-bio" aria-labelledby="articleBioTitle">
+        <h2 id="articleBioTitle">Musician bio</h2>
+        <p id="articleBioText"></p>
+      </aside>
 
     </article>
   </div>
@@ -1098,7 +1129,8 @@
         article: {
           by: "By",
           readMore: "read more ↗",
-          noPosts: "No posts here yet."
+          noPosts: "No posts here yet.",
+          bioTitle: "Musician bio"
         },
         contact: {
           eyebrow: "Contact us",
@@ -1144,7 +1176,8 @@
         article: {
           by: "Von",
           readMore: "mehr lesen ↗",
-          noPosts: "Hier gibt es noch keine Beiträge."
+          noPosts: "Hier gibt es noch keine Beiträge.",
+          bioTitle: "Biografie"
         },
         contact: {
           eyebrow: "Kontakt",
@@ -1178,8 +1211,7 @@
           en: "on sound, space and listening between the notes",
           de: "über Klang, Raum und das Hören zwischen den Noten"
         },
-        author: "JazzingFfm",
-        date: "July 2026",
+        date: { en: "31st July 2026", de: "31. Juli 2026" },
         caption: {
           en: "Leo Mori photographed in Frankfurt. Photo placeholder.",
           de: "Leo Mori, fotografiert in Frankfurt. Foto-Platzhalter."
@@ -1272,8 +1304,7 @@
           en: "on voice, risk and finding a shared pulse",
           de: "über Stimme, Risiko und einen gemeinsamen Puls"
         },
-        author: "JazzingFfm",
-        date: "July 2026",
+        date: { en: "24th July 2026", de: "24. Juli 2026" },
         caption: {
           en: "Nora Hahn after rehearsal in Frankfurt. Photo placeholder.",
           de: "Nora Hahn nach der Probe in Frankfurt. Foto-Platzhalter."
@@ -1350,8 +1381,7 @@
           en: "on bass lines, patience and city rhythm",
           de: "über Basslinien, Geduld und Stadtrhythmus"
         },
-        author: "JazzingFfm",
-        date: "July 2026",
+        date: { en: "17th July 2026", de: "17. Juli 2026" },
         caption: {
           en: "Samir Weber with double bass. Photo placeholder.",
           de: "Samir Weber mit Kontrabass. Foto-Platzhalter."
@@ -1428,8 +1458,7 @@
           en: "on piano, silence and the shape of a set",
           de: "über Klavier, Stille und die Form eines Sets"
         },
-        author: "JazzingFfm",
-        date: "July 2026",
+        date: { en: "10th July 2026", de: "10. Juli 2026" },
         caption: {
           en: "Mira Klein in rehearsal. Photo placeholder.",
           de: "Mira Klein bei der Probe. Foto-Platzhalter."
@@ -1502,8 +1531,7 @@
           en: "at a Frankfurt basement session",
           de: "bei einer Frankfurter Basement-Session"
         },
-        author: "JazzingFfm",
-        date: "July 2026",
+        date: { en: "3rd July 2026", de: "3. Juli 2026" },
         caption: {
           en: "Daniel Rossi after soundcheck. Photo placeholder.",
           de: "Daniel Rossi nach dem Soundcheck. Foto-Platzhalter."
@@ -1560,6 +1588,29 @@
       }
     ];
 
+    const ARTICLE_BIOS = {
+      "leo-mori": {
+        en: "Leo Mori is a saxophonist whose playing moves between lyricism, texture and sharp rhythmic instinct. His work explores sound, improvisation and the balance between control and openness.",
+        de: "Leo Mori ist Saxophonist. Sein Spiel bewegt sich zwischen Lyrik, Textur und einem klaren rhythmischen Instinkt. Seine Arbeit erkundet Klang, Improvisation und die Balance zwischen Kontrolle und Offenheit."
+      },
+      "nora-hahn": {
+        en: "Nora Hahn is a vocalist working between song form and open improvisation. She uses the voice as melody, texture and rhythm, with a strong focus on listening and shared musical space.",
+        de: "Nora Hahn ist Sängerin und arbeitet zwischen Songform und offener Improvisation. Sie nutzt die Stimme als Melodie, Textur und Rhythmus – mit einem besonderen Fokus auf Zuhören und gemeinsamen musikalischen Raum."
+      },
+      "samir-weber": {
+        en: "Samir Weber is a double bassist interested in groove, musical responsibility and the social role of the bass. His playing treats time as something shared and shaped by the whole ensemble.",
+        de: "Samir Weber ist Kontrabassist und beschäftigt sich mit Groove, musikalischer Verantwortung und der sozialen Rolle des Basses. In seinem Spiel wird Zeit vom gesamten Ensemble gemeinsam gestaltet."
+      },
+      "mira-klein": {
+        en: "Mira Klein is a pianist whose work explores sound, silence and the architecture of a concert set. Her music connects harmonic detail with a strong sense of space and dramatic shape.",
+        de: "Mira Klein ist Pianistin. Ihre Arbeit erkundet Klang, Stille und die Architektur eines Konzertsets. Ihre Musik verbindet harmonische Details mit einem ausgeprägten Gespür für Raum und Dramaturgie."
+      },
+      "daniel-rossi": {
+        en: "Daniel Rossi is a drummer who approaches rhythm as direction rather than volume. His playing is rooted in listening, band chemistry and the shared trust that gives music its pulse.",
+        de: "Daniel Rossi ist Schlagzeuger und versteht Rhythmus eher als Richtung denn als Lautstärke. Sein Spiel basiert auf Zuhören, Bandchemie und dem gemeinsamen Vertrauen, das der Musik ihren Puls gibt."
+      }
+    };
+
     let currentLang = localStorage.getItem("jazzingffm-lang") || "en";
 
     const pages = {
@@ -1597,6 +1648,8 @@
     const articleImage = document.getElementById("articleImage");
     const articleCaption = document.getElementById("articleCaption");
     const articleBody = document.getElementById("articleBody");
+    const articleBioTitle = document.getElementById("articleBioTitle");
+    const articleBioText = document.getElementById("articleBioText");
 
     const contactEyebrow = document.getElementById("contactEyebrow");
     const contactTitle = document.getElementById("contactTitle");
@@ -1670,7 +1723,7 @@
 
       latestImageLink.href = articleUrl;
       latestImageLink.setAttribute("aria-label", copy.home.latestButton);
-      latestMeta.textContent = latestArticle.categoryLabel[currentLang] + " / " + latestArticle.date;
+      latestMeta.textContent = latestArticle.date[currentLang];
       latestTitle.textContent = featureTitle;
       latestText.textContent = latestArticle.excerpt[currentLang];
       latestButton.textContent = copy.home.latestButton;
@@ -1784,15 +1837,15 @@
 
       articleGrid.innerHTML = posts.map(function(article) {
         return `
-          <a class="article-card" href="#/article/${article.slug}">
+          <article class="article-card">
             <div>
               <div class="card-thumb">${article.imageLabel[currentLang]}</div>
-              <div class="article-meta">${article.categoryLabel[currentLang]} / ${article.date}</div>
+              <div class="article-meta">${article.date[currentLang]}</div>
               <h2>${article.cardTitle[currentLang]}</h2>
               <p class="card-subtitle">${article.cardSubtitle[currentLang]}</p>
             </div>
-            <span class="read-more">${copy.article.readMore}</span>
-          </a>
+            <a class="read-more" href="#/article/${article.slug}">${copy.article.readMore}</a>
+          </article>
         `;
       }).join("");
     }
@@ -1815,7 +1868,7 @@
       articleCategory.href = "#/" + articleCategoryRoute;
 
       articleTitle.textContent = article.title[currentLang];
-      articleByline.textContent = copy.article.by + " " + article.author + " / " + article.date;
+      articleByline.textContent = article.date[currentLang];
       if (article.image) {
         articleImage.textContent = "";
         articleImage.style.backgroundImage = `url("${article.image}")`;
@@ -1827,6 +1880,8 @@
       }
       articleCaption.textContent = article.caption[currentLang];
       articleBody.innerHTML = article.body[currentLang];
+      articleBioTitle.textContent = copy.article.bioTitle;
+      articleBioText.textContent = ARTICLE_BIOS[article.slug][currentLang];
     }
 
     function router() {
