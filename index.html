@@ -327,6 +327,10 @@
       margin: 0 0 28px;
     }
 
+    .latest-button-mobile {
+      display: none;
+    }
+
     .feature-meta {
       color: var(--muted);
       font-size: 16px;
@@ -661,6 +665,12 @@
        RESPONSIVE
     ========================== */
 
+    @media (min-width: 1051px) {
+      .home-feature .feature-visual {
+        transform: translateY(36px);
+      }
+    }
+
     @media (max-width: 1050px) {
       .masthead {
         height: 128px;
@@ -814,6 +824,7 @@
       }
 
       .home-feature {
+        gap: 28px;
         padding: 58px 0 68px;
       }
 
@@ -823,6 +834,16 @@
 
       .home-feature .feature-visual {
         order: 2;
+      }
+
+      .home-feature .feature-copy #latestButton {
+        display: none;
+      }
+
+      .latest-button-mobile {
+        display: inline-flex;
+        justify-self: start;
+        order: 3;
       }
 
       .home-about {
@@ -921,6 +942,7 @@
             </p>
             <a id="latestButton" class="button" href="#/article/leo-mori">read interview ↗</a>
           </div>
+          <a id="latestButtonMobile" class="button latest-button-mobile" href="#/article/leo-mori">read interview ↗</a>
         </section>
 
         <section class="home-about" aria-labelledby="homeTitle">
@@ -1518,6 +1540,7 @@
     const latestTitle = document.getElementById("latestTitle");
     const latestText = document.getElementById("latestText");
     const latestButton = document.getElementById("latestButton");
+    const latestButtonMobile = document.getElementById("latestButtonMobile");
 
     const listingTitle = document.getElementById("listingTitle");
     const listingDescription = document.getElementById("listingDescription");
@@ -1607,6 +1630,8 @@
       latestText.textContent = latestArticle.excerpt[currentLang];
       latestButton.textContent = copy.home.latestButton;
       latestButton.href = articleUrl;
+      latestButtonMobile.textContent = copy.home.latestButton;
+      latestButtonMobile.href = articleUrl;
     }
 
     function getActiveRoute(route) {
