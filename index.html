@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>JazzingFfm</title>
-	<link rel="icon" type="image/png" href="logo.png">
-	<link rel="shortcut icon" type="image/png" href="logo.png">
-	<link rel="apple-touch-icon" href="logo.png">
+	<link rel="icon" type="image/png" href="header.png">
+	<link rel="shortcut icon" type="image/png" href="header.png">
+	<link rel="apple-touch-icon" href="header.png">
 
   <style>
     :root {
-      --bg: #edf3f5;
-      --ink: #050505;
-      --muted: #6f7477;
-      --footer: #000;
+      --bg: #050505;
+      --ink: #f5f5f5;
+      --muted: #a7a7a7;
+      --footer: #050505;
       --footerText: #f5f5f5;
-      --accent: #0f565a;
+      --accent: #f5f5f5;
     }
 
     * {
@@ -85,6 +85,7 @@
       height: auto;
       max-height: 112px;
       object-fit: contain;
+      filter: invert(1);
     }
 
     .header-instagram-link {
@@ -250,6 +251,97 @@
        HOME
     ========================== */
 
+    .home-feature {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 44px;
+      padding: 82px 0 92px;
+      align-items: stretch;
+    }
+
+    .feature-visual {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .feature-image {
+      min-height: 520px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.02)),
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,.12) 0 1px,
+          transparent 1px 18px
+        );
+      border: 1.5px solid var(--ink);
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .feature-copy {
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 36px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .feature-copy h2 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(42px, 5vw, 74px);
+      line-height: 0.98;
+      letter-spacing: -3px;
+      margin: 0 0 28px;
+    }
+
+    .feature-copy p {
+      font-size: 22px;
+      margin: 0 0 28px;
+    }
+
+    .feature-meta {
+      color: var(--muted);
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      margin: -8px 0 24px;
+      text-transform: uppercase;
+    }
+
+    .home-about {
+      border-top: 1.5px solid var(--ink);
+      display: grid;
+      grid-template-columns: 0.55fr 1.45fr;
+      gap: 44px;
+      padding: 72px 0 104px;
+    }
+
+    .home-about h1 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(46px, 7vw, 96px);
+      line-height: 0.94;
+      letter-spacing: -4px;
+      margin: 0;
+      max-width: 1000px;
+    }
+
+    .home-about-copy > p {
+      font-size: 23px;
+      margin: 34px 0 0;
+      max-width: 820px;
+    }
+
+    .home-about-copy .feature-photo-text {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.68;
+      max-width: 760px;
+    }
+
     .hero {
       padding: 92px 0 72px;
     }
@@ -267,63 +359,6 @@
       max-width: 740px;
       font-size: 23px;
       margin-top: 34px;
-    }
-
-    .home-feature {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 44px;
-      padding: 0 0 86px;
-      align-items: start;
-    }
-
-    .feature-visual {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .feature-image {
-      min-height: 520px;
-      background:
-        linear-gradient(135deg, rgba(15,86,90,.15), rgba(0,0,0,.05)),
-        repeating-linear-gradient(
-          45deg,
-          rgba(0,0,0,.08) 0 1px,
-          transparent 1px 18px
-        );
-      border: 1.5px solid var(--ink);
-      display: flex;
-      align-items: flex-end;
-      padding: 28px;
-      font-size: 18px;
-      color: var(--muted);
-    }
-
-    .feature-photo-text {
-      max-width: 720px;
-      margin: 18px 0 0;
-      font-size: 18px;
-      line-height: 1.68;
-      color: var(--ink);
-    }
-
-    .feature-copy {
-      border-top: 1.5px solid var(--ink);
-      border-bottom: 1.5px solid var(--ink);
-      padding: 36px 0;
-    }
-
-    .feature-copy h2 {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: clamp(42px, 5vw, 74px);
-      line-height: 0.98;
-      letter-spacing: -3px;
-      margin: 0 0 28px;
-    }
-
-    .feature-copy p {
-      font-size: 22px;
-      margin: 0 0 28px;
     }
 
     /* =========================
@@ -379,10 +414,10 @@
       height: 250px;
       border: 1.5px solid var(--ink);
       background:
-        linear-gradient(135deg, rgba(0,0,0,.09), rgba(15,86,90,.20)),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03)),
         repeating-linear-gradient(
           -30deg,
-          rgba(0,0,0,.10) 0 1px,
+          rgba(255,255,255,.10) 0 1px,
           transparent 1px 14px
         );
       margin-bottom: 22px;
@@ -471,11 +506,11 @@
       height: 560px;
       border: 1.5px solid var(--ink);
       background:
-        radial-gradient(circle at 25% 25%, rgba(15,86,90,.22), transparent 32%),
-        linear-gradient(135deg, rgba(0,0,0,.08), rgba(0,0,0,.02)),
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,.13), transparent 32%),
+        linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.02)),
         repeating-linear-gradient(
           45deg,
-          rgba(0,0,0,.09) 0 1px,
+          rgba(255,255,255,.10) 0 1px,
           transparent 1px 20px
         );
       display: flex;
@@ -656,6 +691,10 @@
         grid-template-columns: 1fr;
       }
 
+      .home-about {
+        grid-template-columns: 1fr;
+      }
+
       .article-grid {
         grid-template-columns: 1fr 1fr;
       }
@@ -716,8 +755,17 @@
       }
 
       .hero h1,
+      .home-about h1,
       .article-title {
         letter-spacing: -2.5px;
+      }
+
+      .home-feature {
+        padding: 58px 0 68px;
+      }
+
+      .home-about {
+        padding: 54px 0 72px;
       }
 
       .article-grid {
@@ -788,35 +836,37 @@
 
     <section id="page-home" class="page active">
       <div class="container">
-        <section class="hero">
-          <div id="homeEyebrow" class="eyebrow">Frankfurt Jazz Interviews</div>
-          <h1 id="homeTitle">Conversations with musicians shaping the local sound.</h1>
-          <p id="homeText">
-            JazzingFfm is a text-based interview magazine for jazz musicians,
-            concerts, records, scenes and late-night conversations around Frankfurt.
-          </p>
-        </section>
-
         <section class="home-feature">
-          <div class="feature-visual">
+          <a id="latestImageLink" class="feature-visual" href="#/article/leo-mori" aria-label="Read the latest interview">
             <div id="featureImageText" class="feature-image">
-              Replace this block with your own photo later.
+              Photo placeholder: Leo Mori
             </div>
-            <p id="homePhotoText" class="feature-photo-text">
-              Placeholder paragraph for a short note below the photo. This space can hold
-              context about JazzingFfm, the local music scene, listening notes, upcoming
-              conversations and the feeling behind the magazine.
-            </p>
-          </div>
+          </a>
 
           <div class="feature-copy">
             <div id="latestEyebrow" class="eyebrow">Latest Interview</div>
+            <div id="latestMeta" class="feature-meta">Interviews / July 2026</div>
             <h2 id="latestTitle">Leo Mori on sound, space and listening between the notes</h2>
             <p id="latestText">
               A short-form interview about saxophone language, practice,
               improvisation and what makes Frankfurt’s jazz community alive.
             </p>
             <a id="latestButton" class="button" href="#/article/leo-mori">read interview ↗</a>
+          </div>
+        </section>
+
+        <section class="home-about" aria-labelledby="homeTitle">
+          <div id="homeEyebrow" class="eyebrow">About JazzingFfm</div>
+          <div class="home-about-copy">
+            <h1 id="homeTitle">Conversations with musicians shaping the local sound.</h1>
+            <p id="homeText">
+              JazzingFfm is a text-based interview magazine for jazz musicians,
+              concerts, records, scenes and late-night conversations around Frankfurt.
+            </p>
+            <p id="homePhotoText" class="feature-photo-text">
+              Through portraits and conversations, JazzingFfm documents musicians from
+              Frankfurt and the Rhine-Main region whose work stands out.
+            </p>
           </div>
         </section>
       </div>
@@ -932,14 +982,11 @@
           contact: "Contact us"
         },
         home: {
-          eyebrow: "Frankfurt Jazz Interviews",
+          eyebrow: "About JazzingFfm",
           title: "Conversations with musicians shaping the local sound.",
           text: "JazzingFfm is a text-based interview magazine for jazz musicians, concerts, records, scenes and late-night conversations around Frankfurt.",
-          featureImage: "Replace this block with your own photo later.",
-          photoText: "This paragraph is a flexible space for a short introduction below the photo. Use it for a few lines about the people, places and listening moments that shape JazzingFfm. It can point readers toward interviews, features, concerts and notes from Frankfurt's jazz community.",
+          photoText: "Through portraits and conversations, JazzingFfm documents musicians from Frankfurt and the Rhine-Main region whose work stands out. The magazine follows the music beyond the stage—from rehearsals and records to the ideas, places and encounters behind it.",
           latestEyebrow: "Latest Interview",
-          latestTitle: "Leo Mori on sound, space and listening between the notes",
-          latestText: "A short-form interview about saxophone language, practice, improvisation and what makes Frankfurt’s jazz community alive.",
           latestButton: "read interview ↗"
         },
         pages: {
@@ -982,14 +1029,11 @@
           contact: "Kontakt"
         },
         home: {
-          eyebrow: "Frankfurter Jazz-Interviews",
+          eyebrow: "Über JazzingFfm",
           title: "Gespräche mit Musiker:innen, die den lokalen Sound prägen.",
           text: "JazzingFfm ist ein textbasiertes Interview-Magazin für Jazzmusiker:innen, Konzerte, Platten, Szenen und nächtliche Gespräche rund um Frankfurt.",
-          featureImage: "Dieses Feld später durch ein eigenes Foto ersetzen.",
-          photoText: "Dieser Absatz ist ein flexibler Platz für eine kurze Einführung unter dem Foto. Er kann ein paar Zeilen über die Menschen, Orte und Hörmomente erzählen, die JazzingFfm prägen. Hier ist Raum für Hinweise auf Interviews, Features, Konzerte und Notizen aus der Frankfurter Jazzszene.",
+          photoText: "Mit Porträts und Gesprächen dokumentiert JazzingFfm Musiker:innen aus Frankfurt und der Rhein-Main-Region, deren Arbeit heraussticht. Das Magazin folgt der Musik über die Bühne hinaus – von Proben und Platten bis zu den Ideen, Orten und Begegnungen dahinter.",
           latestEyebrow: "Neuestes Interview",
-          latestTitle: "Leo Mori über Klang, Raum und das Hören zwischen den Noten",
-          latestText: "Ein kurzes Interview über Saxophon-Sprache, Üben, Improvisation und darüber, was die Frankfurter Jazzszene lebendig macht.",
           latestButton: "Interview lesen ↗"
         },
         pages: {
@@ -1402,8 +1446,10 @@
     const homeTitle = document.getElementById("homeTitle");
     const homeText = document.getElementById("homeText");
     const featureImageText = document.getElementById("featureImageText");
+    const latestImageLink = document.getElementById("latestImageLink");
     const homePhotoText = document.getElementById("homePhotoText");
     const latestEyebrow = document.getElementById("latestEyebrow");
+    const latestMeta = document.getElementById("latestMeta");
     const latestTitle = document.getElementById("latestTitle");
     const latestText = document.getElementById("latestText");
     const latestButton = document.getElementById("latestButton");
@@ -1459,6 +1505,32 @@
       return ARTICLES.find(function(item) {
         return item.slug === slug;
       });
+    }
+
+    function getLatestArticle() {
+      // ARTICLES stays ordered from newest to oldest; the first entry leads the homepage.
+      return ARTICLES[0];
+    }
+
+    function renderHomeFeature() {
+      const copy = t();
+      const latestArticle = getLatestArticle();
+
+      if (!latestArticle) {
+        return;
+      }
+
+      const articleUrl = "#/article/" + latestArticle.slug;
+      const featureTitle = latestArticle.title[currentLang].replace(/^[^|]+\|\s*/, "");
+
+      featureImageText.textContent = latestArticle.imageLabel[currentLang];
+      latestImageLink.href = articleUrl;
+      latestImageLink.setAttribute("aria-label", copy.home.latestButton);
+      latestMeta.textContent = latestArticle.categoryLabel[currentLang] + " / " + latestArticle.date;
+      latestTitle.textContent = featureTitle;
+      latestText.textContent = latestArticle.excerpt[currentLang];
+      latestButton.textContent = copy.home.latestButton;
+      latestButton.href = articleUrl;
     }
 
     function getActiveRoute(route) {
@@ -1528,12 +1600,9 @@
       homeEyebrow.textContent = copy.home.eyebrow;
       homeTitle.textContent = copy.home.title;
       homeText.textContent = copy.home.text;
-      featureImageText.textContent = copy.home.featureImage;
       homePhotoText.textContent = copy.home.photoText;
       latestEyebrow.textContent = copy.home.latestEyebrow;
-      latestTitle.textContent = copy.home.latestTitle;
-      latestText.textContent = copy.home.latestText;
-      latestButton.textContent = copy.home.latestButton;
+      renderHomeFeature();
 
       contactEyebrow.textContent = copy.contact.eyebrow;
       contactTitle.textContent = copy.contact.title;
