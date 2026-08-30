@@ -27,7 +27,7 @@
       scroll-behavior: smooth;
       background: var(--bg);
       max-width: 100%;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
 
     body {
@@ -37,7 +37,7 @@
       font-family: "Courier New", Courier, monospace;
       line-height: 1.55;
       max-width: 100%;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
 
     a {
@@ -149,6 +149,7 @@
     }
 
     .nav-row {
+      position: -webkit-sticky;
       position: sticky;
       top: 0;
       z-index: 20;
@@ -1879,7 +1880,8 @@
 
       articleCategory.href = "#/" + articleCategoryRoute;
 
-      articleTitle.textContent = article.title[currentLang];
+      articleTitle.textContent =
+        article.cardTitle[currentLang] + " " + article.cardSubtitle[currentLang];
       articleByline.textContent = article.date[currentLang];
       if (article.image) {
         articleImage.textContent = "";
