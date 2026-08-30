@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>JazzingFfm</title>
-	<link rel="icon" type="image/png" href="header.png">
-	<link rel="shortcut icon" type="image/png" href="header.png">
-	<link rel="apple-touch-icon" href="header.png">
+	<link rel="icon" type="image/png" href="tab-icon.png">
+	<link rel="shortcut icon" type="image/png" href="tab-icon.png">
+	<link rel="apple-touch-icon" href="tab-icon.png">
 
   <style>
     :root {
@@ -595,7 +595,7 @@
     .site-footer {
       background: var(--footer);
       color: var(--footerText);
-      padding: 24px 0;
+      padding: 0 0 24px;
       border-radius: 0;
     }
 
@@ -604,8 +604,10 @@
       margin: 0 auto;
       display: flex;
       align-items: center;
+      border-top: 1.5px solid #4d4d4d;
       justify-content: space-between;
       gap: 24px;
+      padding-top: 24px;
     }
 
     .footer-left {
@@ -778,7 +780,7 @@
         justify-content: flex-start;
         max-width: 100%;
         overflow-x: auto;
-        padding: 0;
+        padding: 10px 14px;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
       }
@@ -789,16 +791,16 @@
 
       .nav-links {
         flex-wrap: nowrap;
-        gap: 0;
+        gap: 8px;
         justify-content: flex-start;
         font-size: 18px;
         min-width: max-content;
       }
 
       .nav-links a {
-        border-radius: 0;
-        border-right: 1.5px solid var(--ink);
-        padding: 14px 18px;
+        border-radius: 999px;
+        border-right: 0;
+        padding: 7px 16px;
       }
 
       .hero {
@@ -815,12 +817,26 @@
         padding: 58px 0 68px;
       }
 
+      .home-feature .feature-copy {
+        order: 1;
+      }
+
+      .home-feature .feature-visual {
+        order: 2;
+      }
+
       .home-about {
         padding: 54px 0 72px;
       }
 
       .article-grid {
         grid-template-columns: 1fr;
+      }
+
+      .listing-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
       }
 
       .article-hero-image,
