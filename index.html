@@ -559,9 +559,10 @@
     }
 
     .article-body {
-      font-family: "Courier New", Courier, monospace;
+      font-family: inherit;
       font-size: 23px;
       line-height: 1.72;
+      max-width: 720px;
     }
 
     .article-body p {
@@ -577,14 +578,12 @@
     }
 
     .artist-bio {
-      aspect-ratio: 1 / 1;
       border: 1.5px solid var(--ink);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin: 68px 0 0 auto;
-      padding: 36px;
-      width: min(100%, 440px);
+      display: block;
+      margin: 68px 0 0;
+      min-height: 150px;
+      padding: 28px 34px 30px;
+      width: 100%;
     }
 
     .artist-bio h2 {
@@ -592,11 +591,11 @@
       font-size: 34px;
       letter-spacing: -1px;
       line-height: 1;
-      margin: 0 0 30px;
+      margin: 0 0 8px;
     }
 
     .artist-bio p {
-      font-family: "Courier New", Courier, monospace;
+      font-family: inherit;
       font-size: 18px;
       line-height: 1.65;
       margin: 0;
@@ -1033,7 +1032,7 @@
       <div id="articleBody" class="article-body"></div>
 
       <aside id="articleBio" class="artist-bio" aria-labelledby="articleBioTitle">
-        <h2 id="articleBioTitle">Musician bio</h2>
+        <h2 id="articleBioTitle">Leo Mori</h2>
         <p id="articleBioText"></p>
       </aside>
 
@@ -1880,7 +1879,7 @@
       }
       articleCaption.textContent = article.caption[currentLang];
       articleBody.innerHTML = article.body[currentLang];
-      articleBioTitle.textContent = copy.article.bioTitle;
+      articleBioTitle.textContent = article.cardTitle[currentLang];
       articleBioText.textContent = ARTICLE_BIOS[article.slug][currentLang];
     }
 
