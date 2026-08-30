@@ -461,6 +461,21 @@
       color: var(--muted);
     }
 
+    .card-thumb.has-photo {
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .card-thumb img {
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .card-thumb.has-photo .card-thumb-label {
+      display: none;
+    }
+
     .article-card h2 {
       font-family: Arial, Helvetica, sans-serif;
       font-size: 34px;
@@ -592,54 +607,44 @@
     }
 
     .gallery-control {
-      align-items: center;
-      background: rgba(5, 5, 5, 0.78);
-      border: 1.5px solid var(--ink);
-      border-radius: 999px;
-      color: var(--ink);
+      background: transparent;
+      border: 0;
+      color: #fff;
       cursor: pointer;
-      display: flex;
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 34px;
-      height: 52px;
-      justify-content: center;
+      font-size: 30px;
       line-height: 1;
-      padding: 0 0 4px;
+      opacity: 0;
+      padding: 10px;
+      pointer-events: none;
       position: absolute;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85);
       top: 50%;
       transform: translateY(-50%);
-      width: 52px;
+      transition: opacity 0.16s ease;
       z-index: 2;
+    }
+
+    .article-gallery:hover .gallery-control,
+    .article-gallery:focus-within .gallery-control {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .gallery-control:hover {
-      background: var(--ink);
-      color: var(--bg);
+      color: #fff;
+      opacity: 0.65;
     }
 
     .gallery-control.previous {
-      left: 18px;
+      left: 8px;
     }
 
     .gallery-control.next {
-      right: 18px;
+      right: 8px;
     }
 
-    .gallery-status {
-      background: rgba(5, 5, 5, 0.78);
-      border: 1px solid var(--ink);
-      bottom: 18px;
-      color: var(--ink);
-      font-size: 15px;
-      padding: 5px 11px;
-      pointer-events: none;
-      position: absolute;
-      right: 18px;
-      z-index: 2;
-    }
-
-    .gallery-control[hidden],
-    .gallery-status[hidden] {
+    .gallery-control[hidden] {
       display: none;
     }
 
@@ -1129,7 +1134,6 @@
         <div id="articleGalleryTrack" class="article-gallery-track"></div>
         <button id="galleryPrevious" class="gallery-control previous" type="button" aria-label="Previous photo">‹</button>
         <button id="galleryNext" class="gallery-control next" type="button" aria-label="Next photo">›</button>
-        <div id="galleryStatus" class="gallery-status" aria-live="polite"></div>
       </div>
       <p id="articleCaption" class="caption"></p>
 
@@ -1761,7 +1765,6 @@
     const articleGalleryTrack = document.getElementById("articleGalleryTrack");
     const galleryPrevious = document.getElementById("galleryPrevious");
     const galleryNext = document.getElementById("galleryNext");
-    const galleryStatus = document.getElementById("galleryStatus");
     const articleCaption = document.getElementById("articleCaption");
     const articleBody = document.getElementById("articleBody");
     const articleBioTitle = document.getElementById("articleBioTitle");
@@ -1833,6 +1836,14 @@
       featureImage.hidden = !hasPhoto;
 
       if (hasPhoto) {
+        featureImage.onload = function() {
+          featureImageFrame.classList.add("has-photo");
+          featureImage.hidden = false;
+        };
+        featureImage.onerror = function() {
+          featureImageFrame.classList.remove("has-photo");
+          featureImage.hidden = true;
+        };
         featureImage.src = featuredPhoto;
         featureImage.alt = latestArticle.caption[currentLang];
       } else {
@@ -1955,10 +1966,18 @@
       }
 
       articleGrid.innerHTML = posts.map(function(article) {
+        const cardImage =
+          (Array.isArray(article.images) && article.images[0]) ||
+          article.image ||
+          "";
+
         return `
           <article class="article-card">
             <div>
-              <div class="card-thumb">${article.imageLabel[currentLang]}</div>
+              <div class="card-thumb${cardImage ? " has-photo" : ""}">
+                ${cardImage ? `<img data-image-path="${cardImage}" alt="${article.cardTitle[currentLang]}">` : ""}
+                <span class="card-thumb-label">${article.imageLabel[currentLang]}</span>
+              </div>
               <div class="article-meta">${article.date[currentLang]}</div>
               <h2>${article.cardTitle[currentLang]}</h2>
               <p class="card-subtitle">${article.cardSubtitle[currentLang]}</p>
@@ -1967,6 +1986,17 @@
           </article>
         `;
       }).join("");
+
+      articleGrid.querySelectorAll(".card-thumb img").forEach(function(image) {
+        const frame = image.closest(".card-thumb");
+
+        image.addEventListener("error", function() {
+          frame.classList.remove("has-photo");
+          image.remove();
+        });
+
+        image.src = image.getAttribute("data-image-path");
+      });
     }
 
     function renderArticleGallery(article, copy) {
@@ -2016,8 +2046,6 @@
 
       galleryPrevious.hidden = !hasMultiplePhotos;
       galleryNext.hidden = !hasMultiplePhotos;
-      galleryStatus.hidden = !hasMultiplePhotos;
-      galleryStatus.textContent = "1 / " + slideCount;
       galleryPrevious.setAttribute("aria-label", copy.article.previousPhoto);
       galleryNext.setAttribute("aria-label", copy.article.nextPhoto);
 
@@ -2031,15 +2059,9 @@
         );
       }
 
-      function updateGalleryStatus() {
-        galleryStatus.textContent = currentGalleryIndex() + 1 + " / " + slideCount;
-      }
-
       function moveGallery(direction) {
-        const nextIndex = Math.max(
-          0,
-          Math.min(slideCount - 1, currentGalleryIndex() + direction)
-        );
+        const nextIndex =
+          (currentGalleryIndex() + direction + slideCount) % slideCount;
 
         articleGalleryTrack.scrollTo({
           left: nextIndex * articleGalleryTrack.clientWidth,
@@ -2047,7 +2069,32 @@
         });
       }
 
-      articleGalleryTrack.onscroll = updateGalleryStatus;
+      let touchStartX = null;
+
+      articleGalleryTrack.ontouchstart = function(event) {
+        touchStartX = event.touches[0].clientX;
+      };
+
+      articleGalleryTrack.ontouchend = function(event) {
+        if (touchStartX === null || !hasMultiplePhotos) {
+          return;
+        }
+
+        const swipeDistance = touchStartX - event.changedTouches[0].clientX;
+        const galleryIndex = currentGalleryIndex();
+
+        if (swipeDistance > 40 && galleryIndex === slideCount - 1) {
+          articleGalleryTrack.scrollTo({ left: 0, behavior: "smooth" });
+        } else if (swipeDistance < -40 && galleryIndex === 0) {
+          articleGalleryTrack.scrollTo({
+            left: (slideCount - 1) * articleGalleryTrack.clientWidth,
+            behavior: "smooth"
+          });
+        }
+
+        touchStartX = null;
+      };
+
       galleryPrevious.onclick = function() {
         moveGallery(-1);
       };
