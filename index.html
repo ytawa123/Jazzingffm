@@ -25,6 +25,9 @@
 
     html {
       scroll-behavior: smooth;
+      background: var(--bg);
+      max-width: 100%;
+      overflow-x: hidden;
     }
 
     body {
@@ -33,6 +36,8 @@
       color: var(--ink);
       font-family: "Courier New", Courier, monospace;
       line-height: 1.55;
+      max-width: 100%;
+      overflow-x: hidden;
     }
 
     a {
@@ -202,6 +207,8 @@
 
     .page {
       display: none;
+      max-width: 100%;
+      overflow-x: clip;
     }
 
     .page.active {
@@ -280,6 +287,24 @@
       padding: 28px;
       font-size: 18px;
       color: var(--muted);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .feature-photo {
+      height: 100%;
+      inset: 0;
+      object-fit: cover;
+      position: absolute;
+      width: 100%;
+    }
+
+    .feature-image.has-photo {
+      padding: 0;
+    }
+
+    .feature-image.has-photo .feature-image-label {
+      display: none;
     }
 
     .feature-copy {
@@ -544,13 +569,6 @@
       margin-top: 38px;
     }
 
-.back-link {
-  display: inline-block;
-  width: fit-content;
-  font-size: 19px;
-  border-bottom: 1.5px solid var(--ink);
-}
-
     /* =========================
        CONTACT PAGE
     ========================== */
@@ -712,21 +730,19 @@
     @media (max-width: 680px) {
       .masthead {
         height: 116px;
-        flex-direction: column;
-        gap: 10px;
-        padding-top: 10px;
+        padding: 0 14px;
       }
 
       .header-logo {
-        width: min(410px, 88vw);
+        width: min(320px, 58vw);
         max-height: 62px;
       }
 
       .header-instagram-link {
-        left: 18px;
-        top: auto;
-        bottom: 17px;
-        transform: none;
+        left: 12px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%);
         width: 38px;
         height: 38px;
       }
@@ -737,17 +753,49 @@
       }
 
       .language-switch {
-        position: static;
-        transform: none;
-        font-size: 15px;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        gap: 4px;
+        font-size: 13px;
+      }
+
+      .language-switch button {
+        padding: 4px 8px;
+      }
+
+      .nav-row {
+        height: auto;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .nav-inner {
+        justify-content: flex-start;
+        max-width: 100%;
+        overflow-x: auto;
+        padding: 0;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .nav-inner::-webkit-scrollbar {
+        display: none;
       }
 
       .nav-links {
+        flex-wrap: nowrap;
+        gap: 0;
+        justify-content: flex-start;
         font-size: 18px;
+        min-width: max-content;
       }
 
       .nav-links a {
-        padding: 5px 13px;
+        border-radius: 0;
+        border-right: 1.5px solid var(--ink);
+        padding: 14px 18px;
       }
 
       .hero {
@@ -838,8 +886,9 @@
       <div class="container">
         <section class="home-feature">
           <a id="latestImageLink" class="feature-visual" href="#/article/leo-mori" aria-label="Read the latest interview">
-            <div id="featureImageText" class="feature-image">
-              Photo placeholder: Leo Mori
+            <div id="featureImageFrame" class="feature-image">
+              <img id="featureImage" class="feature-photo" alt="" hidden />
+              <span id="featureImageText" class="feature-image-label">Photo placeholder: Leo Mori</span>
             </div>
           </a>
 
@@ -896,12 +945,9 @@
          ARTICLE DETAIL PAGE
     ========================== -->
 
- <section id="page-article" class="page">
+    <section id="page-article" class="page">
   <div class="container article-page">
     <article class="article-shell">
-
-      <a id="articleBackLink" class="back-link article-back-top" href="#/interviews">← back to interviews</a>
-
       <a id="articleCategory" class="article-category" href="#/interviews">Interviews</a>
 
       <h1 id="articleTitle" class="article-title"></h1>
@@ -1005,7 +1051,6 @@
         },
         article: {
           by: "By",
-          backTo: "← back to",
           readMore: "read more ↗",
           noPosts: "No posts here yet."
         },
@@ -1052,7 +1097,6 @@
         },
         article: {
           by: "Von",
-          backTo: "← zurück zu",
           readMore: "mehr lesen ↗",
           noPosts: "Hier gibt es noch keine Beiträge."
         },
@@ -1445,6 +1489,8 @@
     const homeEyebrow = document.getElementById("homeEyebrow");
     const homeTitle = document.getElementById("homeTitle");
     const homeText = document.getElementById("homeText");
+    const featureImageFrame = document.getElementById("featureImageFrame");
+    const featureImage = document.getElementById("featureImage");
     const featureImageText = document.getElementById("featureImageText");
     const latestImageLink = document.getElementById("latestImageLink");
     const homePhotoText = document.getElementById("homePhotoText");
@@ -1464,7 +1510,6 @@
     const articleImage = document.getElementById("articleImage");
     const articleCaption = document.getElementById("articleCaption");
     const articleBody = document.getElementById("articleBody");
-    const articleBackLink = document.getElementById("articleBackLink");
 
     const contactEyebrow = document.getElementById("contactEyebrow");
     const contactTitle = document.getElementById("contactTitle");
@@ -1522,8 +1567,20 @@
 
       const articleUrl = "#/article/" + latestArticle.slug;
       const featureTitle = latestArticle.title[currentLang].replace(/^[^|]+\|\s*/, "");
+      const hasPhoto = Boolean(latestArticle.image);
 
       featureImageText.textContent = latestArticle.imageLabel[currentLang];
+      featureImageFrame.classList.toggle("has-photo", hasPhoto);
+      featureImage.hidden = !hasPhoto;
+
+      if (hasPhoto) {
+        featureImage.src = latestArticle.image;
+        featureImage.alt = latestArticle.caption[currentLang];
+      } else {
+        featureImage.removeAttribute("src");
+        featureImage.alt = "";
+      }
+
       latestImageLink.href = articleUrl;
       latestImageLink.setAttribute("aria-label", copy.home.latestButton);
       latestMeta.textContent = latestArticle.categoryLabel[currentLang] + " / " + latestArticle.date;
@@ -1670,12 +1727,17 @@
 
       articleTitle.textContent = article.title[currentLang];
       articleByline.textContent = copy.article.by + " " + article.author + " / " + article.date;
-      articleImage.textContent = article.imageLabel[currentLang];
+      if (article.image) {
+        articleImage.textContent = "";
+        articleImage.style.backgroundImage = `url("${article.image}")`;
+        articleImage.style.backgroundPosition = "center";
+        articleImage.style.backgroundSize = "cover";
+      } else {
+        articleImage.removeAttribute("style");
+        articleImage.textContent = article.imageLabel[currentLang];
+      }
       articleCaption.textContent = article.caption[currentLang];
       articleBody.innerHTML = article.body[currentLang];
-
-      articleBackLink.textContent = copy.article.backTo + " " + article.categoryLabel[currentLang].toLowerCase();
-      articleBackLink.href = "#/" + articleCategoryRoute;
     }
 
     function router() {
