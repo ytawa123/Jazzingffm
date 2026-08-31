@@ -1,0 +1,37 @@
+name: Fix interview dash
+
+on:
+  push:
+    branches:
+      - codex/interview-tagline
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/interview-tagline
+      - name: Replace double hyphen with en dash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+          s = s.replace('            --\n            <br />\n            Jazz and beyond.', '            –\n            <br />\n            Jazz and beyond.')
+          s = s.replace('description: "--\\nJazz and beyond."', 'description: "–\\nJazz and beyond."')
+          s = s.replace('description: "--\\nJazz und darüber hinaus."', 'description: "–\\nJazz und darüber hinaus."')
+          p.write_text(s)
+          PY
+      - name: Commit correction and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/fix-interview-dash.yml
+          git add index.html
+          git commit -m "Use an en dash in the interview tagline"
+          git push origin HEAD:codex/interview-tagline
