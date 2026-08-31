@@ -1361,3 +1361,28 @@
     margin-top: 16px;
   }
 }
+
+/* Make the slide fill the invisible gallery frame and keep the photo bottom flush with its caption. */
+.article-hero-image {
+  height: 100% !important;
+  align-items: end;
+}
+
+.article-gallery .gallery-status {
+  top: 100%;
+}
+
+#articleCaption.caption {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#articleBody.article-body {
+  margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+  #articleBody.article-body {
+    margin-top: 16px;
+  }
+}
