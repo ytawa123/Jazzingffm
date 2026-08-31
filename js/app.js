@@ -11,16 +11,16 @@
     const I18N = {
       en: {
         nav: {
-          home: "JazzingFfm",
+          home: "JazzingFfm.",
           highlights: "Features",
           interviews: "Interviews",
           liveReviews: "Live reviews",
-          contact: "Contact JazzingFfm"
+          contact: "Contact"
         },
         home: {
-          eyebrow: "ABOUT JAZZINGFFM",
+          eyebrow: "ABOUT JAZZINGFFM.",
           title: "Frankfurt am Main is jazzing.",
-          text: "JazzingFfm captures local musicians beyond jazz, artists and thought leaders shaping Frankfurt’s culture. Documenting the real and the best from the scene today. Portraits in noir and interviews about music, life, and more.",
+          text: "JazzingFfm. captures local musicians beyond jazz, artists and thought leaders shaping Frankfurt’s culture. Documenting the real and the best from the scene today. Portraits in noir and interviews about music, life, and more.",
           latestEyebrow: "Latest Interview",
           latestButton: "read interview ↗"
         },
@@ -47,28 +47,28 @@
           nextPhoto: "Next photo"
         },
         contact: {
-          eyebrow: "CONTACT JAZZINGFFM",
+          eyebrow: "CONTACT JAZZINGFFM.",
           title: "Send sounds, stories, photos and questions.",
-          text: "Interview requests, collaboration ideas, comments or love messages — contact JazzingFfm here:"
+          text: "Interview requests, collaboration ideas, comments or love messages — contact JazzingFfm. here:"
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
-          support: "support JazzingFfm"
+          support: "support JazzingFfm."
         }
       },
 
       de: {
         nav: {
-          home: "JazzingFfm",
+          home: "JazzingFfm.",
           highlights: "Features",
           interviews: "Interviews",
           liveReviews: "Live-Kritiken",
-          contact: "JazzingFfm kontaktieren"
+          contact: "Kontakt"
         },
         home: {
-          eyebrow: "ÜBER JAZZINGFFM",
+          eyebrow: "ÜBER JAZZINGFFM.",
           title: "Frankfurt am Main is jazzing.",
-          text: "JazzingFfm porträtiert lokale Musiker:innen über den Jazz hinaus, Künstler:innen und Vordenker:innen, die Frankfurts Kultur prägen. Dokumentiert wird das Echte und Beste aus der Szene von heute. Porträts in Noir und Interviews über Musik, Leben und mehr.",
+          text: "JazzingFfm. porträtiert lokale Musiker:innen über den Jazz hinaus, Künstler:innen und Vordenker:innen, die Frankfurts Kultur prägen. Dokumentiert wird das Echte und Beste aus der Szene von heute. Porträts in Noir und Interviews über Musik, Leben und mehr.",
           latestEyebrow: "Neuestes Interview",
           latestButton: "Interview lesen ↗"
         },
@@ -95,13 +95,13 @@
           nextPhoto: "Nächstes Foto"
         },
         contact: {
-          eyebrow: "JAZZINGFFM KONTAKTIEREN",
+          eyebrow: "JAZZINGFFM. KONTAKTIEREN",
           title: "Schick uns Sounds, Geschichten, Fotos und Fragen.",
-          text: "Interview-Anfragen, Kollaborationsideen, Kommentare oder Liebesnachrichten – schreib JazzingFfm hier:"
+          text: "Interview-Anfragen, Kollaborationsideen, Kommentare oder Liebesnachrichten – schreib JazzingFfm. hier:"
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
-          support: "support JazzingFfm"
+          support: "support JazzingFfm."
         }
       }
     };
