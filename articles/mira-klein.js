@@ -20,6 +20,12 @@ window.JAZZING_ARTICLES.push(
           de: "über Klavier, Stille und die Form eines Sets"
         },
         date: { en: "10th July 2026", de: "10. Juli 2026" },
+        images: [
+          "images/mira-klein/mira-klein-01.jpg",
+          "images/mira-klein/mira-klein-02.jpg",
+          "images/mira-klein/mira-klein-03.jpg",
+          "images/mira-klein/mira-klein-04.jpg"
+        ],
         caption: {
           en: "Mira Klein in rehearsal. Photo placeholder.",
           de: "Mira Klein bei der Probe. Foto-Platzhalter."

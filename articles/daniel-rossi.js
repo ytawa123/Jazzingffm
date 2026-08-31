@@ -20,6 +20,12 @@ window.JAZZING_ARTICLES.push(
           de: "bei einer Frankfurter Basement-Session"
         },
         date: { en: "3rd July 2026", de: "3. Juli 2026" },
+        images: [
+          "images/daniel-rossi/daniel-rossi-01.jpg",
+          "images/daniel-rossi/daniel-rossi-02.jpg",
+          "images/daniel-rossi/daniel-rossi-03.jpg",
+          "images/daniel-rossi/daniel-rossi-04.jpg"
+        ],
         caption: {
           en: "Daniel Rossi after soundcheck. Photo placeholder.",
           de: "Daniel Rossi nach dem Soundcheck. Foto-Platzhalter."

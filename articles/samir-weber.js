@@ -20,6 +20,12 @@ window.JAZZING_ARTICLES.push(
           de: "über Basslinien, Geduld und Stadtrhythmus"
         },
         date: { en: "17th July 2026", de: "17. Juli 2026" },
+        images: [
+          "images/samir-weber/samir-weber-01.jpg",
+          "images/samir-weber/samir-weber-02.jpg",
+          "images/samir-weber/samir-weber-03.jpg",
+          "images/samir-weber/samir-weber-04.jpg"
+        ],
         caption: {
           en: "Samir Weber with double bass. Photo placeholder.",
           de: "Samir Weber mit Kontrabass. Foto-Platzhalter."
