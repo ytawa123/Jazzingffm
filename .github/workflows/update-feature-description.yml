@@ -1,0 +1,44 @@
+name: Update feature description
+
+on:
+  push:
+    branches:
+      - codex/feature-description-copy
+
+permissions:
+  contents: write
+
+jobs:
+  update-copy:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/feature-description-copy
+
+      - name: Update Features description
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text()
+          old_en = 'Selected portraits, essays and scene notes from the Frankfurt jazz community.'
+          new_en = 'Featured articles, essays and notes from the Frankfurt scene.'
+          old_de = 'Ausgewählte Porträts, Essays und Szenenotizen aus der Frankfurter Jazz-Community.'
+          new_de = 'Ausgewählte Artikel, Essays und Notizen aus der Frankfurter Szene.'
+          if old_en not in text or old_de not in text:
+              raise SystemExit('Expected copy not found; refusing to modify file.')
+          text = text.replace(old_en, new_en)
+          text = text.replace(old_de, new_de)
+          p.write_text(text)
+          PY
+          rm .github/workflows/update-feature-description.yml
+
+      - name: Commit focused copy change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update Features page description"
+          git push
