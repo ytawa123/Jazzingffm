@@ -1,0 +1,9 @@
+.article-gallery-track {
+  opacity: 1;
+  transition: opacity 420ms ease;
+  will-change: opacity;
+}
+
+.article-gallery-track.gallery-fade-out {
+  opacity: 0;
+}
