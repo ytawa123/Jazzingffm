@@ -1,0 +1,109 @@
+name: Gallery Fade Fix 2
+
+on:
+  push:
+    branches: [codex/gallery-fade-transition-fix]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/gallery-fade-transition-fix
+      - name: Patch files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          cssp = Path('css/style.css')
+          css = cssp.read_text()
+          old = """    .article-gallery-track {
+      aspect-ratio: 3 / 2;
+      background: transparent;
+      border: 0;
+      display: block;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }"""
+          new = """    .article-gallery-track {
+      aspect-ratio: 3 / 2;
+      background: transparent;
+      border: 0;
+      display: block;
+      opacity: 1;
+      overflow: hidden;
+      position: relative;
+      transition: opacity 420ms ease;
+      width: 100%;
+    }
+
+    .article-gallery-track.is-fading {
+      opacity: 0;
+    }"""
+          assert css.count(old) == 1, 'gallery track block mismatch'
+          cssp.write_text(css.replace(old, new, 1))
+
+          jsp = Path('js/app.js')
+          js = jsp.read_text()
+          pat = re.compile(r"      function showSlide\(index\) \{.*?\n      \}\n\n      galleryPrevious\.onclick", re.S)
+          repl = """      function showSlide(index) {
+        if (isAnimating || slideCount < 1) {
+          return;
+        }
+
+        const nextIndex = (index + slideCount) % slideCount;
+        if (nextIndex === activeIndex) {
+          return;
+        }
+
+        isAnimating = true;
+        const fadeDuration = reduceMotion ? 140 : 420;
+
+        articleGalleryTrack.style.transitionDuration = fadeDuration + \"ms\";
+        articleGalleryTrack.classList.add(\"is-fading\");
+
+        window.setTimeout(function() {
+          setVisibleSlide(nextIndex);
+
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              articleGalleryTrack.classList.remove(\"is-fading\");
+
+              window.setTimeout(function() {
+                isAnimating = false;
+              }, fadeDuration + 40);
+            });
+          });
+        }, fadeDuration + 40);
+      }
+
+      galleryPrevious.onclick"""
+          js, n = pat.subn(repl, js, count=1)
+          assert n == 1, f'showSlide replacement count {n}'
+          jsp.write_text(js)
+
+          ip = Path('index.html')
+          index = ip.read_text()
+          assert index.count('css/style.css?v=gallery29') == 1
+          assert index.count('js/app.js?v=gallery29') == 1
+          index = index.replace('css/style.css?v=gallery29', 'css/style.css?v=gallery30', 1)
+          index = index.replace('js/app.js?v=gallery29', 'js/app.js?v=gallery30', 1)
+          ip.write_text(index)
+          PY
+      - name: Check JavaScript
+        run: node --check js/app.js
+      - name: Commit
+        run: |
+          rm -f .github/workflows/fix-gallery-fade.yml .github/workflows/fix-gallery-fade-2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Make gallery fade transition reliable"
+          git push origin codex/gallery-fade-transition-fix
