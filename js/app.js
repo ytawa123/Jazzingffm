@@ -15,10 +15,10 @@
           highlights: "Features",
           interviews: "Interviews",
           liveReviews: "Live reviews",
-          contact: "Contact us"
+          contact: "Contact JazzingFfm"
         },
         home: {
-          eyebrow: "About JazzingFfm",
+          eyebrow: "ABOUT JAZZINGFFM",
           title: "Frankfurt am Main is jazzing.",
           text: "JazzingFfm captures local musicians beyond jazz, artists and thought leaders shaping Frankfurt’s culture. Documenting the real and the best from the scene today. Portraits in noir and interviews about music, life, and more.",
           latestEyebrow: "Latest Interview",
@@ -47,9 +47,9 @@
           nextPhoto: "Next photo"
         },
         contact: {
-          eyebrow: "Contact us",
+          eyebrow: "CONTACT JAZZINGFFM",
           title: "Send sounds, stories, photos and questions.",
-          text: "For interview requests, collaboration ideas, concert tips or corrections, contact JazzingFfm here:"
+          text: "Interview requests, collaboration ideas, comments or love messages — contact JazzingFfm here:"
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
@@ -63,10 +63,10 @@
           highlights: "Features",
           interviews: "Interviews",
           liveReviews: "Live-Kritiken",
-          contact: "Kontakt"
+          contact: "JazzingFfm kontaktieren"
         },
         home: {
-          eyebrow: "Über JazzingFfm",
+          eyebrow: "ÜBER JAZZINGFFM",
           title: "Frankfurt am Main is jazzing.",
           text: "JazzingFfm porträtiert lokale Musiker:innen über den Jazz hinaus, Künstler:innen und Vordenker:innen, die Frankfurts Kultur prägen. Dokumentiert wird das Echte und Beste aus der Szene von heute. Porträts in Noir und Interviews über Musik, Leben und mehr.",
           latestEyebrow: "Neuestes Interview",
@@ -95,9 +95,9 @@
           nextPhoto: "Nächstes Foto"
         },
         contact: {
-          eyebrow: "Kontakt",
+          eyebrow: "JAZZINGFFM KONTAKTIEREN",
           title: "Schick uns Sounds, Geschichten, Fotos und Fragen.",
-          text: "Für Interview-Anfragen, Kooperationsideen, Konzerttipps oder Korrekturen erreichst du JazzingFfm hier:"
+          text: "Interview-Anfragen, Kollaborationsideen, Kommentare oder Liebesnachrichten – schreib JazzingFfm hier:"
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",

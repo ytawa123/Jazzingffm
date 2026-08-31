@@ -349,7 +349,7 @@
     }
 
     .home-about-copy > p {
-      color: var(--muted);
+      color: var(--ink);
       font-size: 19px;
       line-height: 1.65;
       margin: 18px 0 0;
