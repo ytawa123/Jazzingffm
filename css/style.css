@@ -1336,3 +1336,28 @@
     margin-top: 8px;
   }
 }
+
+/* flush article caption + counter row */
+.article-gallery .gallery-status {
+  top: 100%;
+}
+
+#articleCaption.caption {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#articleBody.article-body {
+  margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+  #articleCaption.caption {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  #articleBody.article-body {
+    margin-top: 16px;
+  }
+}
