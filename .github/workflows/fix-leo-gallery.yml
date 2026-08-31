@@ -1,0 +1,269 @@
+name: Fix Leo Mori gallery
+
+on:
+  push:
+    branches:
+      - codex/fix-leo-gallery
+
+permissions:
+  contents: write
+
+jobs:
+  fix-gallery:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/fix-leo-gallery
+
+      - name: Fix gallery navigation and natural image sizing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          css_path = Path('css/style.css')
+          css = css_path.read_text()
+
+          old_track = '''    .article-gallery-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      touch-action: pan-x pan-y;
+      -webkit-overflow-scrolling: touch;
+    }'''
+          new_track = '''    .article-gallery-track {
+      align-items: flex-start;
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      touch-action: pan-x pan-y;
+      transition: height 0.2s ease;
+      -webkit-overflow-scrolling: touch;
+    }'''
+          assert css.count(old_track) == 1, css.count(old_track)
+          css = css.replace(old_track, new_track, 1)
+
+          old_slide = '''    .article-hero-image {
+      height: 560px;
+      border: 1.5px solid var(--ink);'''
+          new_slide = '''    .article-hero-image {
+      border: 1.5px solid var(--ink);
+      min-height: 560px;'''
+          assert css.count(old_slide) == 1, css.count(old_slide)
+          css = css.replace(old_slide, new_slide, 1)
+
+          old_img = '''    .article-hero-image img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .article-hero-image.has-photo {
+      padding: 0;
+    }'''
+          new_img = '''    .article-hero-image img {
+      display: block;
+      height: auto;
+      object-fit: contain;
+      width: 100%;
+    }
+
+    .article-hero-image.has-photo {
+      align-items: flex-start;
+      min-height: 0;
+      padding: 0;
+    }'''
+          assert css.count(old_img) == 1, css.count(old_img)
+          css = css.replace(old_img, new_img, 1)
+
+          old_mobile = '''      .article-hero-image,
+      .feature-image {
+        height: 380px;
+        min-height: 380px;
+      }'''
+          new_mobile = '''      .feature-image {
+        height: 380px;
+        min-height: 380px;
+      }
+
+      .article-hero-image:not(.has-photo) {
+        min-height: 380px;
+      }'''
+          assert css.count(old_mobile) == 1, css.count(old_mobile)
+          css = css.replace(old_mobile, new_mobile, 1)
+
+          marker = '''    .gallery-control[hidden] {
+      display: none;
+    }
+'''
+          addition = '''    .gallery-control[hidden] {
+      display: none;
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .article-gallery .gallery-control {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+'''
+          assert css.count(marker) == 1, css.count(marker)
+          css = css.replace(marker, addition, 1)
+          css_path.write_text(css)
+
+          js_path = Path('js/app.js')
+          js = js_path.read_text()
+
+          old_index = '''      function currentGalleryIndex() {
+        const slideWidth = articleGalleryTrack.clientWidth || 1;
+        return Math.max(
+          0,
+          Math.min(slideCount - 1, Math.round(articleGalleryTrack.scrollLeft / slideWidth))
+        );
+      }
+
+      function moveGallery(direction) {
+        const nextIndex =
+          (currentGalleryIndex() + direction + slideCount) % slideCount;
+
+        articleGalleryTrack.scrollTo({
+          left: nextIndex * articleGalleryTrack.clientWidth,
+          behavior: "smooth"
+        });
+      }'''
+          new_index = '''      function currentGalleryIndex() {
+        const slideWidth = articleGalleryTrack.clientWidth || 1;
+        return Math.max(
+          0,
+          Math.min(slideCount - 1, Math.round(articleGalleryTrack.scrollLeft / slideWidth))
+        );
+      }
+
+      function syncGalleryHeight(index) {
+        const slide = articleGalleryTrack.children[index];
+        if (!slide) {
+          return;
+        }
+
+        const image = slide.querySelector("img");
+        const galleryWidth = articleGalleryTrack.clientWidth;
+
+        if (image && image.complete && image.naturalWidth && galleryWidth > 0) {
+          const naturalHeight = Math.round(
+            galleryWidth * image.naturalHeight / image.naturalWidth
+          );
+          articleGalleryTrack.style.height = naturalHeight + "px";
+        } else if (!image) {
+          articleGalleryTrack.style.height = "";
+        }
+      }
+
+      function moveGallery(direction) {
+        const nextIndex =
+          (currentGalleryIndex() + direction + slideCount) % slideCount;
+
+        articleGalleryTrack.scrollTo({
+          left: nextIndex * articleGalleryTrack.clientWidth,
+          behavior: "smooth"
+        });
+        syncGalleryHeight(nextIndex);
+      }'''
+          assert js.count(old_index) == 1, js.count(old_index)
+          js = js.replace(old_index, new_index, 1)
+
+          old_error = '''          image.addEventListener("error", function() {
+            slide.classList.remove("has-photo");
+            slide.textContent =
+              article.imageLabel[currentLang] + " (" + imagePath + ")";
+            image.remove();
+          });
+
+          slide.appendChild(image);'''
+          new_error = '''          image.addEventListener("load", function() {
+            if (index === currentGalleryIndex()) {
+              syncGalleryHeight(index);
+            }
+          });
+
+          image.addEventListener("error", function() {
+            slide.classList.remove("has-photo");
+            slide.textContent =
+              article.imageLabel[currentLang] + " (" + imagePath + ")";
+            image.remove();
+            syncGalleryHeight(currentGalleryIndex());
+          });
+
+          slide.appendChild(image);'''
+          assert js.count(old_error) == 1, js.count(old_error)
+          js = js.replace(old_error, new_error, 1)
+
+          old_buttons = '''      galleryPrevious.onclick = function() {
+        moveGallery(-1);
+      };
+      galleryNext.onclick = function() {
+        moveGallery(1);
+      };
+    }'''
+          new_buttons = '''      galleryPrevious.onclick = function() {
+        moveGallery(-1);
+      };
+      galleryNext.onclick = function() {
+        moveGallery(1);
+      };
+
+      articleGalleryTrack.onscroll = function() {
+        window.requestAnimationFrame(function() {
+          syncGalleryHeight(currentGalleryIndex());
+        });
+      };
+
+      window.requestAnimationFrame(function() {
+        syncGalleryHeight(0);
+      });
+    }'''
+          assert js.count(old_buttons) == 1, js.count(old_buttons)
+          js = js.replace(old_buttons, new_buttons, 1)
+
+          old_router = '''      } else if (route.startsWith("article/")) {
+        const slug = route.split("/")[1];
+        renderArticle(slug);
+        pages.article.classList.add("active");'''
+          new_router = '''      } else if (route.startsWith("article/")) {
+        const slug = route.split("/")[1];
+        pages.article.classList.add("active");
+        renderArticle(slug);'''
+          assert js.count(old_router) == 1, js.count(old_router)
+          js = js.replace(old_router, new_router, 1)
+          js_path.write_text(js)
+
+          index_path = Path('index.html')
+          index = index_path.read_text()
+          old_css = '<link rel="stylesheet" href="css/style.css?v=2f55ac76" />'
+          new_css = '<link rel="stylesheet" href="css/style.css?v=gallery26" />'
+          assert index.count(old_css) == 1, index.count(old_css)
+          index = index.replace(old_css, new_css, 1)
+          old_js = '<script src="js/app.js"></script>'
+          new_js = '<script src="js/app.js?v=gallery26"></script>'
+          assert index.count(old_js) == 1, index.count(old_js)
+          index = index.replace(old_js, new_js, 1)
+          index_path.write_text(index)
+          PY
+
+      - name: Verify JavaScript
+        run: node --check js/app.js
+
+      - name: Commit focused fix
+        run: |
+          rm .github/workflows/fix-leo-gallery.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add css/style.css js/app.js index.html .github/workflows/fix-leo-gallery.yml
+          git commit -m "Fix Leo Mori photo gallery"
+          git push origin codex/fix-leo-gallery
