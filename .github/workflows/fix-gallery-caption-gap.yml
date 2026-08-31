@@ -12,12 +12,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: codex/fix-gallery-caption-gap
-      - name: Fix gallery slide height and caption position
+      - name: Fix gallery geometry
         shell: bash
         run: |
           cat >> css/style.css <<'EOF'
 
-/* Ensure the visible photo reaches the gallery bottom so captions sit flush below it. */
+/* Make the slide fill the invisible gallery frame and keep the photo bottom flush with its caption. */
 .article-hero-image {
   height: 100% !important;
   align-items: end;
@@ -42,14 +42,7 @@ jobs:
   }
 }
 EOF
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('index.html')
-          s = p.read_text()
-          import re
-          s = re.sub(r'css/style\.css\?v=[^"\']+', 'css/style.css?v=caption37', s)
-          p.write_text(s)
-          PY
+          sed -i -E 's#css/style.css\?v=[^\"]+#css/style.css?v=caption37#' index.html
       - name: Commit focused fix and remove helper workflow
         shell: bash
         run: |
