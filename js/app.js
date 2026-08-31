@@ -456,7 +456,7 @@
         updateStatus();
       }
 
-      function showSlide(index, direction) {
+      function showSlide(index) {
         if (isAnimating || slideCount < 1) {
           return;
         }
@@ -468,7 +468,6 @@
 
         const currentSlide = slides[activeIndex];
         const nextSlide = slides[nextIndex];
-        const travelDirection = direction < 0 ? -1 : 1;
 
         if (reduceMotion || typeof currentSlide.animate !== "function") {
           setVisibleSlide(nextIndex);
@@ -476,46 +475,60 @@
         }
 
         isAnimating = true;
-        nextSlide.hidden = false;
-        nextSlide.setAttribute("aria-hidden", "false");
 
-        const duration = 430;
-        const easing = "cubic-bezier(0.22, 0.61, 0.36, 1)";
-        const currentAnimation = currentSlide.animate(
+        const fadeOut = currentSlide.animate(
           [
-            { transform: "translateX(0%)" },
-            { transform: "translateX(" + (-travelDirection * 100) + "%)" }
+            { opacity: 1 },
+            { opacity: 0 }
           ],
-          { duration: duration, easing: easing }
-        );
-        const nextAnimation = nextSlide.animate(
-          [
-            { transform: "translateX(" + (travelDirection * 100) + "%)" },
-            { transform: "translateX(0%)" }
-          ],
-          { duration: duration, easing: easing }
+          {
+            duration: 240,
+            easing: "ease-in",
+            fill: "forwards"
+          }
         );
 
-        Promise.allSettled([currentAnimation.finished, nextAnimation.finished]).then(function() {
+        fadeOut.finished.then(function() {
+          currentSlide.hidden = true;
+          currentSlide.setAttribute("aria-hidden", "true");
+
           activeIndex = nextIndex;
-          slides.forEach(function(slide, slideIndex) {
-            const isActive = slideIndex === activeIndex;
-            slide.hidden = !isActive;
-            slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+          nextSlide.hidden = false;
+          nextSlide.setAttribute("aria-hidden", "false");
+
+          const fadeIn = nextSlide.animate(
+            [
+              { opacity: 0 },
+              { opacity: 1 }
+            ],
+            {
+              duration: 320,
+              easing: "ease-out",
+              fill: "forwards"
+            }
+          );
+
+          fadeIn.finished.then(function() {
+            currentSlide.getAnimations().forEach(function(animation) {
+              animation.cancel();
+            });
+            nextSlide.getAnimations().forEach(function(animation) {
+              animation.cancel();
+            });
+            updateStatus();
+            isAnimating = false;
           });
-          updateStatus();
-          isAnimating = false;
         });
       }
 
       galleryPrevious.onclick = function(event) {
         event.preventDefault();
-        showSlide(activeIndex - 1, -1);
+        showSlide(activeIndex - 1);
       };
 
       galleryNext.onclick = function(event) {
         event.preventDefault();
-        showSlide(activeIndex + 1, 1);
+        showSlide(activeIndex + 1);
       };
 
       let touchStartX = null;
@@ -533,9 +546,9 @@
         const swipeDistance = touchStartX - event.changedTouches[0].clientX;
 
         if (swipeDistance > 40) {
-          showSlide(activeIndex + 1, 1);
+          showSlide(activeIndex + 1);
         } else if (swipeDistance < -40) {
-          showSlide(activeIndex - 1, -1);
+          showSlide(activeIndex - 1);
         }
 
         touchStartX = null;
