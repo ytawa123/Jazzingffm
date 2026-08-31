@@ -279,8 +279,10 @@ jobs:
 
           index_path = Path('index.html')
           index = index_path.read_text()
-          index = re.sub(r'css/style\.css\?v=[^"\']+', 'css/style.css?v=gallery27', index, count=1)
-          index = re.sub(r'js/app\.js\?v=[^"\']+', 'js/app.js?v=gallery27', index, count=1)
+          if 'css/style.css?v=gallery26' not in index or 'js/app.js?v=gallery26' not in index:
+              raise SystemExit('Expected gallery26 cache keys not found')
+          index = index.replace('css/style.css?v=gallery26', 'css/style.css?v=gallery27', 1)
+          index = index.replace('js/app.js?v=gallery26', 'js/app.js?v=gallery27', 1)
           index_path.write_text(index)
           PY
 
