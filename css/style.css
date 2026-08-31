@@ -380,7 +380,7 @@
     ========================== */
 
     .listing {
-      padding: 50px 0 70px;
+      padding: 18px 0 70px;
     }
 
     .listing-header {
@@ -388,11 +388,11 @@
       align-items: end;
       justify-content: flex-start;
       gap: 56px;
-      margin-bottom: 16px;
+      margin-bottom: 0;
     }
 
     .listing-header + .thin-line {
-      margin: 14px 0 44px;
+      margin: 18px 0 44px;
     }
 
     .section-title {
