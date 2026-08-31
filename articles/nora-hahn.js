@@ -20,6 +20,12 @@ window.JAZZING_ARTICLES.push(
           de: "über Stimme, Risiko und einen gemeinsamen Puls"
         },
         date: { en: "24th July 2026", de: "24. Juli 2026" },
+        images: [
+          "images/nora-hahn/nora-hahn-01.jpg",
+          "images/nora-hahn/nora-hahn-02.jpg",
+          "images/nora-hahn/nora-hahn-03.jpg",
+          "images/nora-hahn/nora-hahn-04.jpg"
+        ],
         caption: {
           en: "Nora Hahn after rehearsal in Frankfurt. Photo placeholder.",
           de: "Nora Hahn nach der Probe in Frankfurt. Foto-Platzhalter."
