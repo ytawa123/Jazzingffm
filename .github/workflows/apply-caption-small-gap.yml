@@ -1,0 +1,38 @@
+name: Apply caption small gap
+on:
+  push:
+    branches:
+      - codex/article-caption-small-gap
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/article-caption-small-gap
+      - name: Add small photo-caption gap
+        shell: bash
+        run: |
+          cat >> css/style.css <<'EOF'
+
+/* Small breathing room between article photo and caption/counter row. */
+.article-gallery .gallery-status {
+  top: calc(100% + 4px);
+}
+
+#articleCaption.caption {
+  margin-top: 4px;
+}
+EOF
+          sed -i -E 's#css/style.css\?v=[^\"]+#css/style.css?v=caption38#' index.html
+      - name: Commit focused change and remove helper workflow
+        shell: bash
+        run: |
+          rm .github/workflows/apply-caption-small-gap.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add css/style.css index.html .github/workflows/apply-caption-small-gap.yml
+          git commit -m "Add small gap below article photos"
+          git push origin codex/article-caption-small-gap
