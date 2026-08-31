@@ -117,7 +117,7 @@ replacement = r'''    function renderArticleGallery(article, copy) {
     function renderArticle(slug) {'''
 
 pattern = r'    function renderArticleGallery\(article, copy\) \{.*?\n    function renderArticle\(slug\) \{'
-js, count = re.subn(pattern, replacement, js, count=1, flags=re.S)
+js, count = re.subn(pattern, lambda match: replacement, js, count=1, flags=re.S)
 if count != 1:
     raise SystemExit(f'Expected one gallery function replacement, got {count}')
 js_path.write_text(js)
