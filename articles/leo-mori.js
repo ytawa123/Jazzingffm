@@ -21,10 +21,10 @@ window.JAZZING_ARTICLES.push(
         },
         date: { en: "31st July 2026", de: "31. Juli 2026" },
         images: [
-          "https://cataas.com/cat?width=1600&gallery=leo-test-1",
-          "https://cataas.com/cat?height=1200&gallery=leo-test-2",
-          "https://cataas.com/cat?type=square&gallery=leo-test-3",
-          "https://cataas.com/cat?width=720&gallery=leo-test-4"
+          "images/leo-mori/leo-mori-01.jpg",
+          "images/leo-mori/leo-mori-02.jpg",
+          "images/leo-mori/leo-mori-03.jpg",
+          "images/leo-mori/leo-mori-04.jpg"
         ],
         caption: {
           en: "Leo Mori photographed in Frankfurt. Photo placeholder.",
