@@ -1,0 +1,33 @@
+name: Run gallery fade patch
+
+on:
+  push:
+    branches:
+      - codex/gallery-slide-transition
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/gallery-slide-transition
+
+      - name: Apply patch
+        run: python .github/gallery29.py
+
+      - name: Verify JavaScript
+        run: node --check js/app.js
+
+      - name: Commit result
+        run: |
+          rm -f .github/gallery29.py .github/trigger-gallery29.txt .github/workflows/apply-gallery29.yml .github/workflows/run-gallery29.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Use fade gallery with contained cat test images"
+          git push origin codex/gallery-slide-transition
