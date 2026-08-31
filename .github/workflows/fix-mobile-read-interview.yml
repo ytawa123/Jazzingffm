@@ -1,0 +1,50 @@
+name: Fix mobile read interview button
+
+on:
+  push:
+    branches:
+      - codex/mobile-read-interview-nowrap
+
+permissions:
+  contents: write
+
+jobs:
+  fix-button:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/mobile-read-interview-nowrap
+
+      - name: Keep mobile button text on one line
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('css/style.css')
+          text = path.read_text()
+          old = '''      .latest-button-mobile {
+        display: inline-flex;
+        justify-self: start;
+        order: 3;
+      }'''
+          new = '''      .latest-button-mobile {
+        display: inline-flex;
+        justify-self: start;
+        order: 3;
+        white-space: nowrap;
+      }'''
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one mobile button rule, found {text.count(old)}')
+          path.write_text(text.replace(old, new, 1))
+          PY
+
+      - name: Commit focused change
+        run: |
+          rm .github/workflows/fix-mobile-read-interview.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add css/style.css .github/workflows/fix-mobile-read-interview.yml
+          git commit -m "Keep mobile interview button on one line"
+          git push origin codex/mobile-read-interview-nowrap
