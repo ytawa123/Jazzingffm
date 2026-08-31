@@ -15,33 +15,7 @@ jobs:
       - name: Fix gallery geometry
         shell: bash
         run: |
-          cat >> css/style.css <<'EOF'
-
-/* Make the slide fill the invisible gallery frame and keep the photo bottom flush with its caption. */
-.article-hero-image {
-  height: 100% !important;
-  align-items: end;
-}
-
-.article-gallery .gallery-status {
-  top: 100%;
-}
-
-#articleCaption.caption {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#articleBody.article-body {
-  margin-top: 20px;
-}
-
-@media (max-width: 700px) {
-  #articleBody.article-body {
-    margin-top: 16px;
-  }
-}
-EOF
+          printf '%s\n' '' '/* Make the slide fill the invisible gallery frame and keep the photo bottom flush with its caption. */' '.article-hero-image {' '  height: 100% !important;' '  align-items: end;' '}' '' '.article-gallery .gallery-status {' '  top: 100%;' '}' '' '#articleCaption.caption {' '  margin-top: 0;' '  margin-bottom: 0;' '}' '' '#articleBody.article-body {' '  margin-top: 20px;' '}' '' '@media (max-width: 700px) {' '  #articleBody.article-body {' '    margin-top: 16px;' '  }' '}' >> css/style.css
           sed -i -E 's#css/style.css\?v=[^\"]+#css/style.css?v=caption37#' index.html
       - name: Commit focused fix and remove helper workflow
         shell: bash
