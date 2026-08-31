@@ -14,34 +14,10 @@ jobs:
           ref: codex/article-caption-flush-row
       - name: Tighten caption row and add article text gap
         shell: bash
+        env:
+          CSS_B64: Ci8qIGZsdXNoIGFydGljbGUgY2FwdGlvbiArIGNvdW50ZXIgcm93ICovCi5hcnRpY2xlLWdhbGxlcnkgLmdhbGxlcnktc3RhdHVzIHsKICB0b3A6IDEwMCU7Cn0KCiNhcnRpY2xlQ2FwdGlvbi5jYXB0aW9uIHsKICBtYXJnaW4tdG9wOiAwOwogIG1hcmdpbi1ib3R0b206IDA7Cn0KCiNhcnRpY2xlQm9keS5hcnRpY2xlLWJvZHkgewogIG1hcmdpbi10b3A6IDIwcHg7Cn0KCkBtZWRpYSAobWF4LXdpZHRoOiA3MDBweCkgewogICNhcnRpY2xlQ2FwdGlvbi5jYXB0aW9uIHsKICAgIG1hcmdpbi10b3A6IDA7CiAgICBtYXJnaW4tYm90dG9tOiAwOwogIH0KCiAgI2FydGljbGVCb2R5LmFydGljbGUtYm9keSB7CiAgICBtYXJnaW4tdG9wOiAxNnB4OwogIH0KfQo=
         run: |
-          cat >> css/style.css <<'EOF'
-
-/* flush article caption + counter row */
-.article-gallery .gallery-status {
-  top: 100%;
-}
-
-#articleCaption.caption {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#articleBody.article-body {
-  margin-top: 20px;
-}
-
-@media (max-width: 700px) {
-  #articleCaption.caption {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  #articleBody.article-body {
-    margin-top: 16px;
-  }
-}
-EOF
+          printf '%s' "$CSS_B64" | base64 -d >> css/style.css
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
