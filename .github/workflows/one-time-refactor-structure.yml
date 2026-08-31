@@ -1,0 +1,302 @@
+name: One-time site structure refactor
+
+on:
+  push:
+    branches:
+      - codex/refactor-site-structure
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Split index into maintainable files
+        shell: bash
+        run: |
+          cat > /tmp/refactor.py <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('.')
+          index_path = root / 'index.html'
+          source = index_path.read_text(encoding='utf-8')
+
+          def find_balanced(text, start, opening, closing):
+              if text[start] != opening:
+                  raise ValueError(f'Expected {opening!r} at {start}')
+              depth = 0
+              mode = None
+              escaped = False
+              i = start
+              while i < len(text):
+                  ch = text[i]
+                  nxt = text[i + 1] if i + 1 < len(text) else ''
+
+                  if mode in ("'", '"', '`'):
+                      if escaped:
+                          escaped = False
+                      elif ch == '\\':
+                          escaped = True
+                      elif ch == mode:
+                          mode = None
+                      i += 1
+                      continue
+
+                  if mode == 'line-comment':
+                      if ch == '\n':
+                          mode = None
+                      i += 1
+                      continue
+
+                  if mode == 'block-comment':
+                      if ch == '*' and nxt == '/':
+                          mode = None
+                          i += 2
+                      else:
+                          i += 1
+                      continue
+
+                  if ch in ("'", '"', '`'):
+                      mode = ch
+                      i += 1
+                      continue
+                  if ch == '/' and nxt == '/':
+                      mode = 'line-comment'
+                      i += 2
+                      continue
+                  if ch == '/' and nxt == '*':
+                      mode = 'block-comment'
+                      i += 2
+                      continue
+
+                  if ch == opening:
+                      depth += 1
+                  elif ch == closing:
+                      depth -= 1
+                      if depth == 0:
+                          return i
+                  i += 1
+
+              raise ValueError(f'Unbalanced {opening}{closing}')
+
+          def declaration_range(js, name, opening, closing):
+              match = re.search(rf'(?m)^\s*const\s+{re.escape(name)}\s*=\s*\{opening}', js)
+              if not match:
+                  raise ValueError(f'Could not find declaration for {name}')
+              open_at = js.find(opening, match.start())
+              close_at = find_balanced(js, open_at, opening, closing)
+              end = close_at + 1
+              while end < len(js) and js[end] in ' \t':
+                  end += 1
+              if end < len(js) and js[end] == ';':
+                  end += 1
+              return match.start(), end, open_at, close_at
+
+          def top_level_objects(inner):
+              objects = []
+              i = 0
+              while i < len(inner):
+                  while i < len(inner) and (inner[i].isspace() or inner[i] == ','):
+                      i += 1
+                  if i >= len(inner):
+                      break
+                  if inner[i] != '{':
+                      raise ValueError(f'Expected article object at offset {i}: {inner[i:i+30]!r}')
+                  end = find_balanced(inner, i, '{', '}')
+                  objects.append(inner[i:end + 1])
+                  i = end + 1
+              return objects
+
+          def bio_entries(inner):
+              entries = {}
+              i = 0
+              while i < len(inner):
+                  while i < len(inner) and (inner[i].isspace() or inner[i] == ','):
+                      i += 1
+                  if i >= len(inner):
+                      break
+                  key_match = re.match(r'"([^"]+)"\s*:\s*', inner[i:])
+                  if not key_match:
+                      raise ValueError(f'Expected bio key at offset {i}: {inner[i:i+40]!r}')
+                  key = key_match.group(1)
+                  value_start = i + key_match.end()
+                  if inner[value_start] != '{':
+                      raise ValueError(f'Expected bio object for {key}')
+                  value_end = find_balanced(inner, value_start, '{', '}')
+                  entries[key] = inner[value_start:value_end + 1]
+                  i = value_end + 1
+              return entries
+
+          # 1) CSS: move the exact existing style block into css/style.css.
+          style_match = re.search(r'  <style>\n(.*?)\n  </style>', source, re.S)
+          if not style_match:
+              raise ValueError('Could not find the inline style block')
+          css = style_match.group(1)
+          (root / 'css').mkdir(exist_ok=True)
+          (root / 'css' / 'style.css').write_text(css + '\n', encoding='utf-8')
+          source = source[:style_match.start()] + '  <link rel="stylesheet" href="css/style.css" />' + source[style_match.end():]
+
+          # 2) JavaScript: extract the existing bottom script, then separate article data.
+          script_matches = list(re.finditer(r'  <script>\n(.*?)\n  </script>', source, re.S))
+          if not script_matches:
+              raise ValueError('Could not find the inline application script')
+          script_match = script_matches[-1]
+          js = script_match.group(1)
+
+          a_start, a_end, a_open, a_close = declaration_range(js, 'ARTICLES', '[', ']')
+          b_start, b_end, b_open, b_close = declaration_range(js, 'ARTICLE_BIOS', '{', '}')
+
+          article_objects = top_level_objects(js[a_open + 1:a_close])
+          bios = bio_entries(js[b_open + 1:b_close])
+
+          articles = []
+          for obj in article_objects:
+              slug_match = re.search(r'\bslug:\s*"([^"]+)"', obj)
+              if not slug_match:
+                  raise ValueError('Article without slug')
+              slug = slug_match.group(1)
+              if slug not in bios:
+                  raise ValueError(f'Missing bio for {slug}')
+              articles.append((slug, obj, bios[slug]))
+
+          # Preserve application logic exactly, replacing only the two data declarations.
+          ranges = sorted([(a_start, a_end), (b_start, b_end)], reverse=True)
+          app_js = js
+          for start, end in ranges:
+              app_js = app_js[:start] + app_js[end:]
+          registry_aliases = (
+              '    const ARTICLES = window.JAZZING_ARTICLES || [];\n'
+              '    const ARTICLE_BIOS = window.JAZZING_ARTICLE_BIOS || {};\n\n'
+          )
+          app_js = registry_aliases + app_js.lstrip('\n')
+
+          (root / 'js').mkdir(exist_ok=True)
+          (root / 'js' / 'app.js').write_text(app_js.rstrip() + '\n', encoding='utf-8')
+
+          (root / 'data').mkdir(exist_ok=True)
+          (root / 'data' / 'articles.js').write_text(
+              '// Shared article registry. Individual article content lives in /articles.\n'
+              'window.JAZZING_ARTICLES = [];\n'
+              'window.JAZZING_ARTICLE_BIOS = {};\n',
+              encoding='utf-8'
+          )
+
+          (root / 'articles').mkdir(exist_ok=True)
+          article_script_tags = []
+          for slug, obj, bio in articles:
+              # Keep current image files visually identical, but organize article photos by article.
+              if slug == 'leo-mori':
+                  for n in range(1, 5):
+                      obj = obj.replace(f'"kenny{n}.jpg"', f'"images/leo-mori/kenny{n}.jpg"')
+
+              article_file = (
+                  f'// Content for {slug}. Edit this file when updating this article.\n'
+                  'window.JAZZING_ARTICLES.push(\n'
+                  f'{obj}\n'
+                  ');\n\n'
+                  f'window.JAZZING_ARTICLE_BIOS["{slug}"] = {bio};\n'
+              )
+              (root / 'articles' / f'{slug}.js').write_text(article_file, encoding='utf-8')
+              article_script_tags.append(f'  <script src="articles/{slug}.js"></script>')
+
+          # 3) Organize the current Leo Mori photos without changing the image content.
+          leo_dir = root / 'images' / 'leo-mori'
+          leo_dir.mkdir(parents=True, exist_ok=True)
+          for n in range(1, 5):
+              old = root / f'kenny{n}.jpg'
+              new = leo_dir / f'kenny{n}.jpg'
+              if old.exists():
+                  old.rename(new)
+              elif not new.exists():
+                  raise ValueError(f'Missing expected image: {old}')
+
+          # 4) Replace the original inline app script with ordered external scripts.
+          script_block = '\n'.join([
+              '  <script src="data/articles.js"></script>',
+              *article_script_tags,
+              '  <script src="js/app.js"></script>'
+          ])
+          source = source[:script_match.start()] + script_block + source[script_match.end():]
+          index_path.write_text(source, encoding='utf-8')
+
+          # 5) Add a concise editing guide for future articles.
+          guide = '''# Adding a new JazzingFfm article\n\nThe site now keeps layout, styling, application logic and article content separate.\n\n## Add an article\n\n1. Copy an existing file in this folder, for example `leo-mori.js`.\n2. Rename it to the new slug, for example `markus-harm.js`.\n3. Edit the article fields, translations, body text and image paths in that file.\n4. Put its photos in `images/<slug>/`.\n5. Add one `<script src="articles/<slug>.js"></script>` line in `index.html`, immediately before `js/app.js`. Article order in those script tags is also the listing/latest-article order.\n\nYou normally do **not** need to touch `css/style.css` or `js/app.js` when publishing a new article.\n'''
+          (root / 'articles' / 'README.md').write_text(guide, encoding='utf-8')
+
+          print('Created structure:')
+          print('  index.html')
+          print('  css/style.css')
+          print('  js/app.js')
+          print('  data/articles.js')
+          for slug, _, _ in articles:
+              print(f'  articles/{slug}.js')
+          print('  images/leo-mori/kenny1.jpg ... kenny4.jpg')
+          PY
+
+          python /tmp/refactor.py
+
+      - name: Verify structure and JavaScript syntax
+        shell: bash
+        run: |
+          test -f index.html
+          test -f css/style.css
+          test -f js/app.js
+          test -f data/articles.js
+          test -f articles/leo-mori.js
+          test -f articles/nora-hahn.js
+          test -f articles/samir-weber.js
+          test -f articles/mira-klein.js
+          test -f articles/daniel-rossi.js
+          test -f images/leo-mori/kenny1.jpg
+          test -f images/leo-mori/kenny2.jpg
+          test -f images/leo-mori/kenny3.jpg
+          test -f images/leo-mori/kenny4.jpg
+
+          grep -q 'css/style.css' index.html
+          grep -q 'data/articles.js' index.html
+          grep -q 'js/app.js' index.html
+          grep -q 'Featured articles, essays and notes from the Frankfurt scene.' js/app.js
+          grep -q 'Ausgewählte Artikel, Essays und Notizen aus der Frankfurter Szene.' js/app.js
+          grep -q 'images/leo-mori/kenny1.jpg' articles/leo-mori.js
+
+          node --check data/articles.js
+          node --check js/app.js
+          for file in articles/*.js; do node --check "$file"; done
+
+          node <<'NODE'
+          global.window = {};
+          require('./data/articles.js');
+          require('./articles/leo-mori.js');
+          require('./articles/nora-hahn.js');
+          require('./articles/samir-weber.js');
+          require('./articles/mira-klein.js');
+          require('./articles/daniel-rossi.js');
+          const slugs = window.JAZZING_ARTICLES.map(article => article.slug);
+          const expected = ['leo-mori', 'nora-hahn', 'samir-weber', 'mira-klein', 'daniel-rossi'];
+          if (JSON.stringify(slugs) !== JSON.stringify(expected)) {
+            throw new Error(`Article order changed: ${JSON.stringify(slugs)}`);
+          }
+          for (const slug of expected) {
+            if (!window.JAZZING_ARTICLE_BIOS[slug]) throw new Error(`Missing bio: ${slug}`);
+          }
+          console.log('Article registry verified:', slugs.join(', '));
+          NODE
+
+      - name: Commit refactor
+        shell: bash
+        run: |
+          git config user.name "ytawa123"
+          git config user.email "ytawarada@gmail.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Refactor site into maintainable article structure"
+          git push origin HEAD:codex/refactor-site-structure
