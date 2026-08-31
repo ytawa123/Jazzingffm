@@ -402,11 +402,18 @@
             galleryImages.length;
           image.loading = index === 0 ? "eager" : "lazy";
 
+          image.addEventListener("load", function() {
+            if (index === currentGalleryIndex()) {
+              syncGalleryHeight(index);
+            }
+          });
+
           image.addEventListener("error", function() {
             slide.classList.remove("has-photo");
             slide.textContent =
               article.imageLabel[currentLang] + " (" + imagePath + ")";
             image.remove();
+            syncGalleryHeight(currentGalleryIndex());
           });
 
           slide.appendChild(image);
@@ -437,6 +444,25 @@
         );
       }
 
+      function syncGalleryHeight(index) {
+        const slide = articleGalleryTrack.children[index];
+        if (!slide) {
+          return;
+        }
+
+        const image = slide.querySelector("img");
+        const galleryWidth = articleGalleryTrack.clientWidth;
+
+        if (image && image.complete && image.naturalWidth && galleryWidth > 0) {
+          const naturalHeight = Math.round(
+            galleryWidth * image.naturalHeight / image.naturalWidth
+          );
+          articleGalleryTrack.style.height = naturalHeight + "px";
+        } else if (!image) {
+          articleGalleryTrack.style.height = "";
+        }
+      }
+
       function moveGallery(direction) {
         const nextIndex =
           (currentGalleryIndex() + direction + slideCount) % slideCount;
@@ -445,6 +471,7 @@
           left: nextIndex * articleGalleryTrack.clientWidth,
           behavior: "smooth"
         });
+        syncGalleryHeight(nextIndex);
       }
 
       let touchStartX = null;
@@ -479,6 +506,16 @@
       galleryNext.onclick = function() {
         moveGallery(1);
       };
+
+      articleGalleryTrack.onscroll = function() {
+        window.requestAnimationFrame(function() {
+          syncGalleryHeight(currentGalleryIndex());
+        });
+      };
+
+      window.requestAnimationFrame(function() {
+        syncGalleryHeight(0);
+      });
     }
 
     function renderArticle(slug) {
@@ -534,8 +571,8 @@
         pages.contact.classList.add("active");
       } else if (route.startsWith("article/")) {
         const slug = route.split("/")[1];
-        renderArticle(slug);
         pages.article.classList.add("active");
+        renderArticle(slug);
       } else if (
         route === "features" ||
         route === "highlights" ||
