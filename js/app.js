@@ -406,11 +406,11 @@
           image.src = imagePath;
           image.alt =
             article.cardTitle[currentLang] +
-            " \u2014 photo " +
+            " — photo " +
             (index + 1) +
             " of " +
             galleryImages.length;
-          image.loading = index === 0 ? "eager" : "lazy";
+          image.loading = "eager";
 
           image.addEventListener("error", function() {
             slide.classList.remove("has-photo");
@@ -432,7 +432,9 @@
       const slides = Array.from(articleGalleryTrack.children);
       const slideCount = slides.length;
       const hasMultiplePhotos = slideCount > 1;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       let activeIndex = 0;
+      let isAnimating = false;
 
       galleryPrevious.hidden = !hasMultiplePhotos;
       galleryNext.hidden = !hasMultiplePhotos;
@@ -440,25 +442,80 @@
       galleryPrevious.setAttribute("aria-label", copy.article.previousPhoto);
       galleryNext.setAttribute("aria-label", copy.article.nextPhoto);
 
-      function showSlide(index) {
-        activeIndex = (index + slideCount) % slideCount;
-
-        slides.forEach(function(slide, slideIndex) {
-          slide.hidden = slideIndex !== activeIndex;
-          slide.setAttribute("aria-hidden", slideIndex === activeIndex ? "false" : "true");
-        });
-
+      function updateStatus() {
         galleryStatus.textContent = activeIndex + 1 + " / " + slideCount;
+      }
+
+      function setVisibleSlide(index) {
+        activeIndex = (index + slideCount) % slideCount;
+        slides.forEach(function(slide, slideIndex) {
+          const isActive = slideIndex === activeIndex;
+          slide.hidden = !isActive;
+          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
+        updateStatus();
+      }
+
+      function showSlide(index, direction) {
+        if (isAnimating || slideCount < 1) {
+          return;
+        }
+
+        const nextIndex = (index + slideCount) % slideCount;
+        if (nextIndex === activeIndex) {
+          return;
+        }
+
+        const currentSlide = slides[activeIndex];
+        const nextSlide = slides[nextIndex];
+        const travelDirection = direction < 0 ? -1 : 1;
+
+        if (reduceMotion || typeof currentSlide.animate !== "function") {
+          setVisibleSlide(nextIndex);
+          return;
+        }
+
+        isAnimating = true;
+        nextSlide.hidden = false;
+        nextSlide.setAttribute("aria-hidden", "false");
+
+        const duration = 430;
+        const easing = "cubic-bezier(0.22, 0.61, 0.36, 1)";
+        const currentAnimation = currentSlide.animate(
+          [
+            { transform: "translateX(0%)" },
+            { transform: "translateX(" + (-travelDirection * 100) + "%)" }
+          ],
+          { duration: duration, easing: easing }
+        );
+        const nextAnimation = nextSlide.animate(
+          [
+            { transform: "translateX(" + (travelDirection * 100) + "%)" },
+            { transform: "translateX(0%)" }
+          ],
+          { duration: duration, easing: easing }
+        );
+
+        Promise.allSettled([currentAnimation.finished, nextAnimation.finished]).then(function() {
+          activeIndex = nextIndex;
+          slides.forEach(function(slide, slideIndex) {
+            const isActive = slideIndex === activeIndex;
+            slide.hidden = !isActive;
+            slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+          });
+          updateStatus();
+          isAnimating = false;
+        });
       }
 
       galleryPrevious.onclick = function(event) {
         event.preventDefault();
-        showSlide(activeIndex - 1);
+        showSlide(activeIndex - 1, -1);
       };
 
       galleryNext.onclick = function(event) {
         event.preventDefault();
-        showSlide(activeIndex + 1);
+        showSlide(activeIndex + 1, 1);
       };
 
       let touchStartX = null;
@@ -476,15 +533,15 @@
         const swipeDistance = touchStartX - event.changedTouches[0].clientX;
 
         if (swipeDistance > 40) {
-          showSlide(activeIndex + 1);
+          showSlide(activeIndex + 1, 1);
         } else if (swipeDistance < -40) {
-          showSlide(activeIndex - 1);
+          showSlide(activeIndex - 1, -1);
         }
 
         touchStartX = null;
       };
 
-      showSlide(0);
+      setVisibleSlide(0);
     }
 
     function renderArticle(slug) {
