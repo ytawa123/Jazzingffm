@@ -1,0 +1,8 @@
+/* Small breathing room between article photo and caption/counter row. */
+.article-gallery .gallery-status {
+  top: calc(100% + 4px);
+}
+
+#articleCaption.caption {
+  margin-top: 4px;
+}
