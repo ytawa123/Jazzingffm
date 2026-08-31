@@ -544,9 +544,9 @@
     }
 
     .article-gallery-track {
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 3 / 2;
       background: transparent;
-      border: 1.5px solid var(--ink);
+      border: 0;
       display: block;
       overflow: hidden;
       position: relative;
