@@ -1,0 +1,41 @@
+name: Force CSS refresh
+
+on:
+  push:
+    branches:
+      - codex/force-css-refresh
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-css:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/force-css-refresh
+
+      - name: Add stylesheet cache version
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text()
+          old = '<link rel="stylesheet" href="css/style.css" />'
+          new = '<link rel="stylesheet" href="css/style.css?v=2f55ac76" />'
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one stylesheet link, found {text.count(old)}')
+          path.write_text(text.replace(old, new, 1))
+          PY
+
+      - name: Commit focused change
+        run: |
+          rm .github/workflows/force-css-refresh.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/force-css-refresh.yml
+          git commit -m "Force browsers to refresh site CSS"
+          git push origin codex/force-css-refresh
