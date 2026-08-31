@@ -1,0 +1,34 @@
+name: Apply gallery slide transition
+
+on:
+  push:
+    branches:
+      - codex/gallery-slide-transition
+
+permissions:
+  contents: write
+
+jobs:
+  patch-gallery:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/gallery-slide-transition
+
+      - name: Apply gallery patch
+        run: python .github/gallery28_patch.py
+
+      - name: Verify JavaScript
+        run: node --check js/app.js
+
+      - name: Commit focused gallery update
+        run: |
+          rm .github/gallery28_patch.py
+          rm .github/workflows/apply-gallery28.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/app.js css/style.css index.html .github/gallery28_patch.py .github/workflows/apply-gallery28.yml
+          git commit -m "Add sliding gallery transition and contained photo frame"
+          git push origin codex/gallery-slide-transition
