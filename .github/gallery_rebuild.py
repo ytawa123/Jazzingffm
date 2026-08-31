@@ -250,9 +250,19 @@ new_mobile = '''      .feature-image {
         height: auto;
         min-height: 0;
       }'''
-if old_mobile not in css:
-    raise SystemExit('Mobile gallery sizing block not found')
-css = css.replace(old_mobile, new_mobile, 1)
+if old_mobile in css:
+    css = css.replace(old_mobile, new_mobile, 1)
+else:
+    existing_mobile = '''      .feature-image {
+        height: 380px;
+        min-height: 380px;
+      }
+
+      .article-hero-image:not(.has-photo) {
+        min-height: 380px;
+      }'''
+    if existing_mobile not in css:
+        raise SystemExit('Responsive gallery sizing block not recognized')
 css_path.write_text(css)
 
 index_path = Path('index.html')
