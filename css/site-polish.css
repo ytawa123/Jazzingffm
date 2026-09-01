@@ -36,7 +36,7 @@ main {
    slideshow changes. Photos are letterboxed against black, so neither a slow
    image nor a different aspect ratio can move the article text below it. */
 .article-gallery-track {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 9;
   background: var(--bg);
   height: auto;
   min-height: 0;
