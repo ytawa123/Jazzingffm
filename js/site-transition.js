@@ -1,28 +1,74 @@
 (function() {
   const main = document.querySelector("main");
 
-  if (!main) {
+  if (!main || typeof main.animate !== "function") {
     return;
   }
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let transitionTimer = null;
   let pendingHash = null;
+  let activeAnimation = null;
 
-  function revealNewPage() {
-    window.clearTimeout(transitionTimer);
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        main.classList.remove("route-fade-out");
-        pendingHash = null;
-      });
+  function cancelActiveAnimation() {
+    if (activeAnimation) {
+      activeAnimation.cancel();
+      activeAnimation = null;
+    }
+  }
+
+  function fadeInNewPage() {
+    cancelActiveAnimation();
+
+    const desktop = window.matchMedia("(min-width: 769px)").matches;
+    const duration = desktop ? 430 : 300;
+
+    activeAnimation = main.animate(
+      [
+        { opacity: 0, filter: "blur(8px)", transform: "scale(0.997)" },
+        { opacity: 1, filter: "blur(0px)", transform: "scale(1)" }
+      ],
+      {
+        duration: duration,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        fill: "both"
+      }
+    );
+
+    activeAnimation.finished.then(function() {
+      if (activeAnimation) {
+        activeAnimation.cancel();
+        activeAnimation = null;
+      }
+      pendingHash = null;
+    }).catch(function() {});
+  }
+
+  function navigateWithDissolve(targetHash) {
+    cancelActiveAnimation();
+    pendingHash = targetHash;
+
+    activeAnimation = main.animate(
+      [
+        { opacity: 1, filter: "blur(0px)", transform: "scale(1)" },
+        { opacity: 0, filter: "blur(7px)", transform: "scale(0.998)" }
+      ],
+      {
+        duration: 150,
+        easing: "ease-in",
+        fill: "forwards"
+      }
+    );
+
+    activeAnimation.finished.then(function() {
+      window.location.hash = targetHash.slice(1);
+    }).catch(function() {
+      window.location.hash = targetHash.slice(1);
     });
   }
 
   document.addEventListener(
     "click",
     function(event) {
-      if (reduceMotion || event.defaultPrevented || event.button !== 0) {
+      if (event.defaultPrevented || event.button !== 0) {
         return;
       }
 
@@ -41,27 +87,14 @@
       }
 
       event.preventDefault();
-      pendingHash = targetHash;
-      main.classList.add("route-fade-out");
-
-      window.clearTimeout(transitionTimer);
-      transitionTimer = window.setTimeout(function() {
-        window.location.hash = targetHash.slice(1);
-      }, 105);
+      navigateWithDissolve(targetHash);
     },
     true
   );
 
   window.addEventListener("hashchange", function() {
-    if (pendingHash) {
-      revealNewPage();
-      return;
-    }
-
-    // Browser back/forward: briefly dissolve the newly routed page in.
-    if (!reduceMotion) {
-      main.classList.add("route-fade-out");
-      revealNewPage();
-    }
+    // app.js registers its router before this file, so by the time this runs
+    // the new page content has already been swapped in.
+    fadeInNewPage();
   });
 })();
