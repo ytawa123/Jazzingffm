@@ -33,8 +33,76 @@ main {
 }
 
 @media (max-width: 680px) {
+  body {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .nav-row {
+    height: 58px;
+  }
+
+  .nav-inner {
+    padding: 0 8px;
+  }
+
+  .nav-links {
+    gap: 2px;
+    font-size: 15.5px;
+  }
+
+  .nav-links a {
+    padding: 6px 10px;
+  }
+
+  .button {
+    font-size: 19px;
+    padding: 8px 20px;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .home-feature {
+    row-gap: 12px;
+    padding-top: 22px;
+    padding-bottom: 28px;
+  }
+
+  .feature-copy {
+    padding: 0;
+  }
+
+  .feature-copy h2 {
+    font-size: 30px;
+    line-height: 1.02;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+  }
+
+  .feature-copy p {
+    font-size: 16.5px;
+    line-height: 1.55;
+    margin-bottom: 2px;
+  }
+
+  .feature-meta {
+    font-size: 12.5px;
+    margin-bottom: 14px;
+  }
+
+  .feature-visual {
+    align-items: center;
+    margin: 0;
+    width: 100%;
+  }
+
   .feature-image.has-photo {
+    align-self: center;
     height: auto;
+    margin-inline: auto;
     min-height: 0;
     max-width: 100%;
   }
@@ -43,5 +111,114 @@ main {
     height: auto;
     max-width: 100%;
     width: auto;
+  }
+
+  .latest-button-mobile {
+    margin-top: 6px;
+  }
+
+  .home-about {
+    padding: 34px 0 44px;
+  }
+
+  .home-about h1 {
+    font-size: 38px;
+    letter-spacing: -2px;
+    line-height: 0.98;
+  }
+
+  .home-about-copy > p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    margin-top: 14px;
+  }
+
+  .listing-header {
+    gap: 18px;
+  }
+
+  .section-title {
+    font-size: 40px;
+    letter-spacing: -2px;
+  }
+
+  .listing-header p {
+    font-size: 15.5px;
+    line-height: 1.5;
+  }
+
+  .article-card h2 {
+    font-size: 27px;
+    line-height: 1.05;
+  }
+
+  .article-card p,
+  .article-card .card-subtitle {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .read-more {
+    font-size: 15px;
+  }
+
+  .article-page {
+    padding-top: 30px;
+  }
+
+  .article-category {
+    font-size: 15px;
+  }
+
+  .article-title {
+    font-size: 40px;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .byline {
+    font-size: 14px;
+    margin: 12px 0;
+  }
+
+  .caption,
+  .gallery-status {
+    font-size: 12.5px;
+  }
+
+  .article-body,
+  .article-body p,
+  .article-body li {
+    font-size: 16px;
+    line-height: 1.62;
+  }
+
+  .artist-bio h2 {
+    font-size: 24px;
+  }
+
+  .artist-bio p {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .hero {
+    padding: 36px 0;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .hero p,
+  .contact-box {
+    font-size: 16px;
+  }
+
+  .copyright,
+  .site-footer {
+    font-size: 12px;
   }
 }
