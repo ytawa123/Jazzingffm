@@ -5,7 +5,7 @@
     return;
   }
 
-  let pendingHash = null;
+  const transitionKey = "jazzingffm-page-transition";
   let activeAnimation = null;
 
   function cancelActiveAnimation() {
@@ -38,13 +38,11 @@
         activeAnimation.cancel();
         activeAnimation = null;
       }
-      pendingHash = null;
     }).catch(function() {});
   }
 
-  function navigateWithDissolve(targetHash) {
+  function fadeOutThen(callback) {
     cancelActiveAnimation();
-    pendingHash = targetHash;
 
     activeAnimation = main.animate(
       [
@@ -58,43 +56,87 @@
       }
     );
 
-    activeAnimation.finished.then(function() {
-      window.location.hash = targetHash.slice(1);
-    }).catch(function() {
+    activeAnimation.finished.then(callback).catch(callback);
+  }
+
+  function navigateHash(targetHash) {
+    fadeOutThen(function() {
       window.location.hash = targetHash.slice(1);
     });
+  }
+
+  function navigatePage(targetUrl) {
+    fadeOutThen(function() {
+      try {
+        sessionStorage.setItem(transitionKey, "1");
+      } catch (error) {}
+      window.location.href = targetUrl;
+    });
+  }
+
+  function shouldHandleLink(link) {
+    if (!link || link.hasAttribute("download")) return false;
+    if (link.target && link.target.toLowerCase() !== "_self") return false;
+
+    const href = link.getAttribute("href");
+    if (!href || href === "#" || href.startsWith("mailto:") || href.startsWith("tel:")) {
+      return false;
+    }
+
+    return true;
   }
 
   document.addEventListener(
     "click",
     function(event) {
-      if (event.defaultPrevented || event.button !== 0) {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const link = event.target.closest("a[href]");
+      if (!shouldHandleLink(link)) return;
+
+      let targetUrl;
+      try {
+        targetUrl = new URL(link.href, window.location.href);
+      } catch (error) {
         return;
       }
 
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      if (targetUrl.origin !== window.location.origin) return;
+
+      const sameDocument =
+        targetUrl.pathname === window.location.pathname &&
+        targetUrl.search === window.location.search;
+
+      if (sameDocument && targetUrl.hash && targetUrl.hash.startsWith("#/")) {
+        if (targetUrl.hash === window.location.hash) return;
+        event.preventDefault();
+        navigateHash(targetUrl.hash);
         return;
       }
 
-      const link = event.target.closest('a[href^="#/"]');
-      if (!link) {
+      if (sameDocument && targetUrl.hash && !targetUrl.hash.startsWith("#/")) {
         return;
       }
 
-      const targetHash = link.getAttribute("href");
-      if (!targetHash || targetHash === window.location.hash) {
-        return;
-      }
+      const currentUrl = window.location.pathname + window.location.search + window.location.hash;
+      const nextUrl = targetUrl.pathname + targetUrl.search + targetUrl.hash;
+      if (currentUrl === nextUrl) return;
 
       event.preventDefault();
-      navigateWithDissolve(targetHash);
+      navigatePage(targetUrl.href);
     },
     true
   );
 
   window.addEventListener("hashchange", function() {
-    // app.js registers its router before this file, so by the time this runs
-    // the new page content has already been swapped in.
     fadeInNewPage();
   });
+
+  try {
+    if (sessionStorage.getItem(transitionKey) === "1") {
+      sessionStorage.removeItem(transitionKey);
+      fadeInNewPage();
+    }
+  } catch (error) {}
 })();
