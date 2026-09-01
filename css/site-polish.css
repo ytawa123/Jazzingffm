@@ -1,0 +1,61 @@
+/* Fast dissolve between internal pages. */
+main {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+  transition:
+    opacity 110ms ease,
+    filter 120ms ease,
+    transform 120ms ease;
+  will-change: opacity, filter, transform;
+}
+
+main.route-fade-out {
+  opacity: 0;
+  filter: blur(5px);
+  transform: scale(0.998);
+}
+
+/* Use the same invisible 3:2 contain-frame concept as article galleries. */
+.feature-image.has-photo {
+  align-items: end;
+  aspect-ratio: 3 / 2;
+  background: transparent;
+  border: 0;
+  display: grid;
+  height: auto;
+  justify-items: center;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+.feature-image.has-photo .feature-photo {
+  display: block;
+  height: auto;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  position: static;
+  width: auto;
+}
+
+@media (max-width: 680px) {
+  .feature-image.has-photo {
+    height: auto;
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main {
+    transition: none;
+  }
+
+  main.route-fade-out {
+    filter: none;
+    transform: none;
+  }
+}
