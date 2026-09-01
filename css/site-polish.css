@@ -32,23 +32,24 @@ main {
   width: auto;
 }
 
-/* Article gallery: let the active photo define the visible gallery height.
-   This removes the empty top area from the old fixed 3:2 frame while still
-   capping portrait images to the same approximate gallery height. */
+/* Article gallery: reserve one stable frame before images load and while the
+   slideshow changes. Photos are letterboxed against black, so neither a slow
+   image nor a different aspect ratio can move the article text below it. */
 .article-gallery-track {
-  aspect-ratio: auto;
+  aspect-ratio: 3 / 2;
+  background: var(--bg);
   height: auto;
   min-height: 0;
 }
 
 .article-hero-image {
-  height: auto !important;
-  inset: auto;
-  position: relative;
+  height: 100% !important;
+  inset: 0;
+  position: absolute;
 }
 
 .article-hero-image img {
-  max-height: min(66.666vw, 653px);
+  max-height: 100%;
 }
 
 @media (max-width: 680px) {

@@ -385,6 +385,7 @@
             ? [article.image]
             : [];
 
+      articleGalleryTrack.classList.add("gallery-loading-enabled");
       articleGalleryTrack.innerHTML = "";
       const galleryRoot = articleGalleryTrack.parentElement;
       let galleryStatus = galleryRoot.querySelector(".gallery-status");
@@ -412,12 +413,21 @@
             galleryImages.length;
           image.loading = "eager";
 
+          image.addEventListener("load", function() {
+            slide.classList.add("is-loaded");
+          }, { once: true });
+
           image.addEventListener("error", function() {
+            slide.classList.add("is-loaded");
             slide.classList.remove("has-photo");
             slide.textContent =
               article.imageLabel[currentLang] + " (" + imagePath + ")";
             image.remove();
           });
+
+          if (image.complete && image.naturalWidth > 0) {
+            slide.classList.add("is-loaded");
+          }
 
           slide.appendChild(image);
           articleGalleryTrack.appendChild(slide);
