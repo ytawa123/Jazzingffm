@@ -1,56 +1,33 @@
-/* Fast dissolve between internal pages. */
+/* Page transitions are driven by js/site-transition.js so the dissolve is reliable on desktop. */
 main {
   opacity: 1;
   filter: blur(0);
   transform: scale(1);
-  transition:
-    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 260ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, filter, transform;
 }
 
-main.route-fade-out {
-  opacity: 0;
-  filter: blur(6px);
-  transform: scale(0.998);
-  transition-duration: 115ms, 130ms, 130ms;
-  transition-timing-function: ease-in, ease-in, ease-in;
-}
-
-/* Give desktop page entrances a little more time to dissolve back in. */
-@media (min-width: 769px) {
-  main {
-    transition-duration: 320ms, 340ms, 340ms;
-  }
-
-  main.route-fade-out {
-    transition-duration: 135ms, 150ms, 150ms;
-  }
-}
-
-/* Use the same 3:2 contain-frame concept as article galleries. */
+/* Homepage lead image: keep the photo's natural aspect ratio and let the white frame hug the image itself. */
 .feature-image.has-photo {
-  align-items: end;
-  aspect-ratio: 3 / 2;
+  align-self: flex-start;
+  aspect-ratio: auto;
   background: transparent;
   border: 1.5px solid var(--ink);
-  display: grid;
+  display: block;
   height: auto;
-  justify-items: center;
   min-height: 0;
   overflow: hidden;
   padding: 0;
   position: relative;
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .feature-image.has-photo .feature-photo {
   display: block;
   height: auto;
-  max-height: 100%;
+  max-height: none;
   max-width: 100%;
-  object-fit: contain;
+  object-fit: initial;
   position: static;
   width: auto;
 }
@@ -59,16 +36,12 @@ main.route-fade-out {
   .feature-image.has-photo {
     height: auto;
     min-height: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  main {
-    transition: none;
+    max-width: 100%;
   }
 
-  main.route-fade-out {
-    filter: none;
-    transform: none;
+  .feature-image.has-photo .feature-photo {
+    height: auto;
+    max-width: 100%;
+    width: auto;
   }
 }
