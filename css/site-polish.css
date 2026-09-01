@@ -52,10 +52,40 @@ main {
   max-height: 100%;
 }
 
+.footer-legal {
+  align-items: center;
+  color: #8c8c8c;
+  display: flex;
+  font-size: 16px;
+  gap: 22px;
+  text-transform: uppercase;
+}
+
+.footer-legal a {
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.footer-legal a:hover,
+.footer-legal a:focus-visible {
+  border-color: var(--footerText);
+  color: var(--footerText);
+}
+
 @media (max-width: 680px) {
   body {
     font-size: 15px;
     line-height: 1.5;
+  }
+
+  .footer-main {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer-legal {
+    font-size: 13px;
+    gap: 18px;
   }
 
   .nav-row {
