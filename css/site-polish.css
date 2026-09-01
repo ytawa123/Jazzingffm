@@ -32,6 +32,25 @@ main {
   width: auto;
 }
 
+/* Article gallery: let the active photo define the visible gallery height.
+   This removes the empty top area from the old fixed 3:2 frame while still
+   capping portrait images to the same approximate gallery height. */
+.article-gallery-track {
+  aspect-ratio: auto;
+  height: auto;
+  min-height: 0;
+}
+
+.article-hero-image {
+  height: auto !important;
+  inset: auto;
+  position: relative;
+}
+
+.article-hero-image img {
+  max-height: min(66.666vw, 653px);
+}
+
 @media (max-width: 680px) {
   body {
     font-size: 15px;
