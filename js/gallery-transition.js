@@ -32,6 +32,41 @@
     }
   }
 
+  function prepareImage(slide) {
+    const image = slide.querySelector("img");
+
+    if (!image) {
+      return Promise.resolve();
+    }
+
+    image.loading = "eager";
+
+    function reveal() {
+      slide.classList.add("is-loaded");
+    }
+
+    if (image.complete) {
+      if (image.naturalWidth > 0 && typeof image.decode === "function") {
+        return image.decode().catch(function() {}).then(reveal);
+      }
+
+      reveal();
+      return Promise.resolve();
+    }
+
+    return new Promise(function(resolve) {
+      function finish() {
+        image.removeEventListener("load", finish);
+        image.removeEventListener("error", finish);
+        reveal();
+        resolve();
+      }
+
+      image.addEventListener("load", finish, { once: true });
+      image.addEventListener("error", finish, { once: true });
+    });
+  }
+
   function changeSlide(delta) {
     const state = getGalleryState();
     if (!state || state.track.dataset.fadeBusy === "true") {
@@ -50,24 +85,35 @@
     state.track.classList.add("gallery-fade-out");
 
     window.setTimeout(function() {
-      state.slides.forEach(function(slide, index) {
-        const isActive = index === nextIndex;
-        slide.hidden = !isActive;
-        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-      });
+      prepareImage(state.slides[nextIndex]).then(function() {
+        state.slides.forEach(function(slide, index) {
+          const isActive = index === nextIndex;
+          slide.hidden = !isActive;
+          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
 
-      updateStatus(nextIndex, state.slides.length);
+        updateStatus(nextIndex, state.slides.length);
 
-      requestAnimationFrame(function() {
         requestAnimationFrame(function() {
-          state.track.classList.remove("gallery-fade-out");
+          requestAnimationFrame(function() {
+            state.track.classList.remove("gallery-fade-out");
 
-          window.setTimeout(function() {
-            state.track.dataset.fadeBusy = "false";
-          }, fadeDuration + 40);
+            window.setTimeout(function() {
+              state.track.dataset.fadeBusy = "false";
+            }, fadeDuration + 40);
+          });
         });
       });
     }, fadeDuration + 40);
+  }
+
+  const initialTrack = document.getElementById("articleGalleryTrack");
+  const initialSlide = initialTrack && Array.from(initialTrack.children).find(function(slide) {
+    return !slide.hidden;
+  });
+
+  if (initialSlide) {
+    prepareImage(initialSlide);
   }
 
   document.addEventListener(
