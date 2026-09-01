@@ -78,8 +78,11 @@
       images.forEach(function(path, index) {
         const slide = document.createElement("div");
         const image = document.createElement("img");
+        const isActive = index === 0;
+
         slide.className = "article-hero-image has-photo";
-        slide.hidden = index !== 0;
+        slide.hidden = !isActive;
+        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
         image.src = rootPath(path);
         image.alt = article.cardTitle[currentLang] + " — photo " + (index + 1) + " of " + images.length;
         image.loading = index === 0 ? "eager" : "lazy";
@@ -89,24 +92,13 @@
     }
 
     const slides = Array.from(galleryTrack.children);
-    let activeIndex = 0;
     const hasMultiple = slides.length > 1;
 
     galleryPrevious.hidden = !hasMultiple;
     galleryNext.hidden = !hasMultiple;
     galleryStatus.hidden = !hasMultiple;
-
-    function show(index) {
-      activeIndex = (index + slides.length) % slides.length;
-      slides.forEach(function(slide, slideIndex) {
-        slide.hidden = slideIndex !== activeIndex;
-      });
-      galleryStatus.textContent = (activeIndex + 1) + " / " + slides.length;
-    }
-
-    galleryPrevious.onclick = function() { show(activeIndex - 1); };
-    galleryNext.onclick = function() { show(activeIndex + 1); };
-    show(0);
+    galleryStatus.textContent = hasMultiple ? "1 / " + slides.length : "";
+    galleryTrack.dataset.fadeBusy = "false";
   }
 
   function localize() {
@@ -136,6 +128,14 @@
     setLanguageButtons();
   }
 
+  function loadSharedScript(src, id) {
+    if (document.getElementById(id)) return;
+    const script = document.createElement("script");
+    script.id = id;
+    script.src = src;
+    document.body.appendChild(script);
+  }
+
   langButtons.forEach(function(button) {
     button.addEventListener("click", function() {
       currentLang = button.getAttribute("data-lang-button");
@@ -145,4 +145,6 @@
   });
 
   localize();
+  loadSharedScript("/js/gallery-transition.js?v=gallery31", "jazzing-gallery-transition");
+  loadSharedScript("/js/site-transition.js?v=3", "jazzing-site-transition");
 })();
