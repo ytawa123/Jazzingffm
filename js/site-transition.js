@@ -15,6 +15,13 @@
     }
   }
 
+  function restoreVisiblePage() {
+    cancelActiveAnimation();
+    main.style.opacity = "1";
+    main.style.filter = "blur(0px)";
+    main.style.transform = "scale(1)";
+  }
+
   function fadeInNewPage() {
     cancelActiveAnimation();
 
@@ -131,6 +138,19 @@
 
   window.addEventListener("hashchange", function() {
     fadeInNewPage();
+  });
+
+  /* Browsers can restore a page from the back/forward cache after its exit
+     animation has finished at opacity: 0. Clear that retained animation so
+     browser Back always returns to a visible page. */
+  window.addEventListener("pageshow", function(event) {
+    if (!event.persisted) return;
+
+    try {
+      sessionStorage.removeItem(transitionKey);
+    } catch (error) {}
+
+    restoreVisiblePage();
   });
 
   try {
