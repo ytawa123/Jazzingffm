@@ -20,7 +20,7 @@
         home: {
           eyebrow: "ABOUT JAZZINGFFM.",
           title: "Frankfurt am Main is jazzing.",
-          text: "JazzingFfm. captures local musicians beyond jazz, artists and thought leaders shaping Frankfurt’s culture. Documenting the real and the best from the scene today. Portraits in noir and interviews about music, life, and more.",
+          text: "JazzingFfm is an independent editorial project portraying musicians, artists, and thought leaders who shape the culture of Frankfurt and the Rhine-Main region — in jazz and beyond. Through noir portraits and conversations about music, life, and more, JazzingFfm documents the authentic and exceptional voices of today’s scene.",
           latestEyebrow: "Latest Interview",
           latestButton: "read interview ↗"
         },
@@ -68,7 +68,7 @@
         home: {
           eyebrow: "ÜBER JAZZINGFFM.",
           title: "Frankfurt am Main is jazzing.",
-          text: "JazzingFfm. porträtiert lokale Musiker:innen über den Jazz hinaus, Künstler:innen und Vordenker:innen, die Frankfurts Kultur prägen. Dokumentiert wird das Echte und Beste aus der Szene von heute. Porträts in Noir und Interviews über Musik, Leben und mehr.",
+          text: "JazzingFfm ist ein unabhängiges redaktionelles Projekt, das Musiker:innen, Künstler:innen und Vordenker:innen porträtiert, die die Kultur in Frankfurt und der Rhein-Main-Region prägen – im Jazz und darüber hinaus. Mit Porträts in Noir und Gesprächen über Musik, Leben und mehr dokumentiert JazzingFfm das Echte und Beste aus der Szene von heute.",
           latestEyebrow: "Neuestes Interview",
           latestButton: "Interview lesen ↗"
         },
