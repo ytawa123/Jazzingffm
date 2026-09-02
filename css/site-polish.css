@@ -42,7 +42,7 @@ main {
 
   .home-feature .feature-visual {
     align-self: stretch;
-    padding: 10px 0;
+    padding: 0;
     transform: none;
   }
 
