@@ -156,5 +156,5 @@
 
   localize();
   loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
-  loadSharedScript("/js/site-transition.js?v=3", "jazzing-site-transition");
+  loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();
