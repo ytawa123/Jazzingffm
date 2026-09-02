@@ -6,11 +6,12 @@ main {
   will-change: opacity, filter, transform;
 }
 
-/* Homepage lead image: keep the photo's natural aspect ratio and let the white frame hug the image itself. */
+/* Homepage lead image: crop every source photo into one consistent portrait
+   frame instead of letting the source image decide the homepage layout. */
 .feature-image.has-photo {
-  align-self: flex-start;
-  aspect-ratio: auto;
-  background: transparent;
+  align-self: center;
+  aspect-ratio: 4 / 5;
+  background: var(--bg);
   border: 1.5px solid var(--ink);
   display: block;
   height: auto;
@@ -18,18 +19,40 @@ main {
   overflow: hidden;
   padding: 0;
   position: relative;
-  width: fit-content;
-  max-width: 100%;
+  width: min(100%, 520px);
 }
 
 .feature-image.has-photo .feature-photo {
   display: block;
-  height: auto;
-  max-height: none;
-  max-width: 100%;
-  object-fit: initial;
-  position: static;
-  width: auto;
+  height: 100%;
+  inset: 0;
+  max-height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  width: 100%;
+}
+
+@media (min-width: 1051px) {
+  .home-feature {
+    grid-template-columns: minmax(0, 390px) minmax(0, 460px);
+    justify-content: center;
+  }
+
+  .home-feature .feature-visual {
+    align-self: stretch;
+    padding: 10px 0;
+    transform: none;
+  }
+
+  .feature-image.has-photo {
+    align-self: stretch;
+    aspect-ratio: auto;
+    flex: 1 1 auto;
+    height: auto;
+    width: 100%;
+  }
 }
 
 /* Article gallery: reserve one stable frame before images load and while the
@@ -265,12 +288,13 @@ main {
     margin-inline: auto;
     min-height: 0;
     max-width: 100%;
+    width: 100%;
   }
 
   .feature-image.has-photo .feature-photo {
-    height: auto;
-    max-width: 100%;
-    width: auto;
+    height: 100%;
+    max-width: none;
+    width: 100%;
   }
 
   .latest-button-mobile {
