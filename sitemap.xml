@@ -5,13 +5,14 @@ permalink: /sitemap.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {% assign site_url = "https://jazzingffm.de" %}
+  <url>
+    <loc>{{ site_url }}/</loc>
+  </url>
 {% assign html_files = site.static_files | where: "extname", ".html" | sort: "path" %}
 {% for file in html_files %}
-  {% unless file.path == "/impressum/index.html" or file.path == "/datenschutz/index.html" %}
+  {% unless file.path == "/index.html" or file.path == "/impressum/index.html" or file.path == "/datenschutz/index.html" %}
     {% assign page_path = file.path | remove_first: "/" %}
-    {% if page_path == "index.html" %}
-      {% assign page_url = "/" %}
-    {% elsif page_path contains "/index.html" %}
+    {% if page_path contains "/index.html" %}
       {% assign page_url = page_path | remove: "index.html" | prepend: "/" %}
     {% else %}
       {% assign page_url = page_path | prepend: "/" %}
