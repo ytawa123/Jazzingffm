@@ -27,4 +27,4 @@ You normally do **not** need to touch `css/style.css` or `js/app.js` when publis
 
 ## Sitemap
 
-Do not edit `sitemap.xml` manually. When a new public HTML page is merged, GitHub Pages rebuilds the sitemap and adds its URL automatically. Pages marked `noindex`, such as the Impressum and Datenschutz pages, stay out of the sitemap.
+Do not edit `sitemap.xml` manually. When a new public HTML page is merged, GitHub Pages rebuilds the sitemap and adds its URL automatically. The existing `noindex` pages `/impressum/` and `/datenschutz/` are explicitly excluded.
