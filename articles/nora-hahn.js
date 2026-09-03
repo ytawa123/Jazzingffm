@@ -2,14 +2,14 @@
 window.JAZZING_ARTICLES.push(
 {
         slug: "nora-hahn",
-        category: "interviews",
+        category: "highlights",
         categoryLabel: {
-          en: "Interviews",
-          de: "Interviews"
+          en: "Features",
+          de: "Features"
         },
         title: {
-          en: "Interview | Mustermann Jazzing2 on voice, risk and finding a shared pulse",
-          de: "Interview | Mustermann Jazzing2 über Stimme, Risiko und einen gemeinsamen Puls"
+          en: "Feature | Mustermann Jazzing2 on voice, risk and finding a shared pulse",
+          de: "Feature | Mustermann Jazzing2 über Stimme, Risiko und einen gemeinsamen Puls"
         },
         cardTitle: {
           en: "Mustermann Jazzing2",
