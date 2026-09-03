@@ -1,7 +1,7 @@
-// Content for nora-hahn. Edit this file when updating this article.
+// Content for mustermann-jazzing2. Edit this file when updating this article.
 window.JAZZING_ARTICLES.push(
 {
-        slug: "nora-hahn",
+        slug: "mustermann-jazzing2",
         category: "highlights",
         categoryLabel: {
           en: "Features",
@@ -21,10 +21,10 @@ window.JAZZING_ARTICLES.push(
         },
         date: { en: "24th July 2026", de: "24. Juli 2026" },
         images: [
-          "images/nora-hahn/nora-hahn-01.jpg",
-          "images/nora-hahn/nora-hahn-02.jpg",
-          "images/nora-hahn/nora-hahn-03.jpg",
-          "images/nora-hahn/nora-hahn-04.jpg"
+          "images/mustermann-jazzing2/mustermann-jazzing2-01.jpg",
+          "images/mustermann-jazzing2/mustermann-jazzing2-02.jpg",
+          "images/mustermann-jazzing2/mustermann-jazzing2-03.jpg",
+          "images/mustermann-jazzing2/mustermann-jazzing2-04.jpg"
         ],
         caption: {
           en: "Mustermann Jazzing2 after rehearsal in Frankfurt. Photo placeholder.",
@@ -85,7 +85,7 @@ window.JAZZING_ARTICLES.push(
       }
 );
 
-window.JAZZING_ARTICLE_BIOS["nora-hahn"] = {
+window.JAZZING_ARTICLE_BIOS["mustermann-jazzing2"] = {
         en: "Mustermann Jazzing2 is a vocalist working between song form and open improvisation. She uses the voice as melody, texture and rhythm, with a strong focus on listening and shared musical space.",
         de: "Mustermann Jazzing2 ist Sängerin und arbeitet zwischen Songform und offener Improvisation. Sie nutzt die Stimme als Melodie, Textur und Rhythmus – mit einem besonderen Fokus auf Zuhören und gemeinsamen musikalischen Raum."
       };
