@@ -24,3 +24,7 @@ images/markus-harm/markus-harm-04.jpg
 Use lowercase `.jpg` filenames so GitHub's case-sensitive paths match reliably.
 
 You normally do **not** need to touch `css/style.css` or `js/app.js` when publishing a new article.
+
+## Sitemap
+
+Do not edit `sitemap.xml` manually. When a new public HTML page is merged, GitHub Pages rebuilds the sitemap and adds its URL automatically. Pages marked `noindex`, such as the Impressum and Datenschutz pages, stay out of the sitemap.
