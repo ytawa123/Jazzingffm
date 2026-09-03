@@ -1,9 +1,24 @@
+---
+layout: null
+permalink: /sitemap.xml
+---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://jazzingffm.de/</loc></url>
-  <url><loc>https://jazzingffm.de/interviews/leo-mori/</loc><lastmod>2026-07-31</lastmod></url>
-  <url><loc>https://jazzingffm.de/interviews/nora-hahn/</loc><lastmod>2026-07-24</lastmod></url>
-  <url><loc>https://jazzingffm.de/interviews/samir-weber/</loc><lastmod>2026-07-17</lastmod></url>
-  <url><loc>https://jazzingffm.de/features/mira-klein/</loc><lastmod>2026-07-10</lastmod></url>
-  <url><loc>https://jazzingffm.de/live-reviews/daniel-rossi/</loc><lastmod>2026-07-03</lastmod></url>
+{% assign site_url = "https://jazzingffm.de" %}
+{% assign html_files = site.static_files | where: "extname", ".html" | sort: "path" %}
+{% for file in html_files %}
+  {% unless file.path == "/impressum/index.html" or file.path == "/datenschutz/index.html" %}
+    {% assign page_path = file.path | remove_first: "/" %}
+    {% if page_path == "index.html" %}
+      {% assign page_url = "/" %}
+    {% elsif page_path contains "/index.html" %}
+      {% assign page_url = page_path | remove: "index.html" | prepend: "/" %}
+    {% else %}
+      {% assign page_url = page_path | prepend: "/" %}
+    {% endif %}
+  <url>
+    <loc>{{ site_url }}{{ page_url | xml_escape }}</loc>
+  </url>
+  {% endunless %}
+{% endfor %}
 </urlset>
