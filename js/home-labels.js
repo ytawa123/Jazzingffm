@@ -54,15 +54,15 @@
       "@type": "WebSite",
       name: "JazzingFfm",
       url: "https://jazzingffm.de/",
-      description: "Portraits and conversations with musicians, artists and thought leaders shaping Frankfurt and the Rhine-Main cultural scene — jazz and beyond.",
+      description: "JazzingFfm ist ein unabhängiges redaktionelles Projekt, das Musiker:innen, Künstler:innen und Vordenker:innen porträtiert, die die Kultur in Frankfurt und der Rhein-Main-Region prägen – im Jazz und darüber hinaus. Mit Porträts in Noir und Gesprächen über Musik, Leben und mehr dokumentiert JazzingFfm das Echte und Beste aus der Szene von heute.",
       sameAs: ["https://www.instagram.com/jazzingffm/"]
     });
     document.head.appendChild(script);
   }
 
   function applySeo() {
-    document.title = "JazzingFfm — Musicians, Artists & Culture in Frankfurt";
-    ensureMeta("description", "Portraits and conversations with musicians, artists and thought leaders shaping Frankfurt and the Rhine-Main cultural scene — jazz and beyond.");
+    document.title = "JazzingFfm – Frankfurt am Main is jazzing.";
+    ensureMeta("description", "JazzingFfm ist ein unabhängiges redaktionelles Projekt, das Musiker:innen, Künstler:innen und Vordenker:innen porträtiert, die die Kultur in Frankfurt und der Rhein-Main-Region prägen – im Jazz und darüber hinaus. Mit Porträts in Noir und Gesprächen über Musik, Leben und mehr dokumentiert JazzingFfm das Echte und Beste aus der Szene von heute.");
     ensureMeta("robots", "index, follow");
     ensureCanonical("https://jazzingffm.de/");
     ensureStructuredData();
