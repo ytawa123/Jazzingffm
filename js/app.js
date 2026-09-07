@@ -43,8 +43,8 @@
           readMore: "read more ↗",
           noPosts: "No posts here yet.",
           bioTitle: "Musician bio",
-          previousPhoto: "Previous photo",
-          nextPhoto: "Next photo"
+          choosePhoto: "Choose photo",
+          showPhoto: "Show photo"
         },
         contact: {
           eyebrow: "CONTACT JAZZINGFFM.",
@@ -92,8 +92,8 @@
           readMore: "mehr lesen ↗",
           noPosts: "Hier gibt es noch keine Beiträge.",
           bioTitle: "Biografie",
-          previousPhoto: "Vorheriges Foto",
-          nextPhoto: "Nächstes Foto"
+          choosePhoto: "Foto auswählen",
+          showPhoto: "Foto anzeigen"
         },
         contact: {
           eyebrow: "JAZZINGFFM. KONTAKTIEREN",
@@ -143,9 +143,9 @@
     const articleCategory = document.getElementById("articleCategory");
     const articleTitle = document.getElementById("articleTitle");
     const articleByline = document.getElementById("articleByline");
+    const articleGallery = document.getElementById("articleGallery");
     const articleGalleryTrack = document.getElementById("articleGalleryTrack");
-    const galleryPrevious = document.getElementById("galleryPrevious");
-    const galleryNext = document.getElementById("galleryNext");
+    const articleGalleryThumbnails = document.getElementById("articleGalleryThumbnails");
     const articleCaption = document.getElementById("articleCaption");
     const articleBody = document.getElementById("articleBody");
     const articleBioTitle = document.getElementById("articleBioTitle");
@@ -391,15 +391,8 @@
 
       articleGalleryTrack.classList.add("gallery-loading-enabled");
       articleGalleryTrack.innerHTML = "";
-      const galleryRoot = articleGalleryTrack.parentElement;
-      let galleryStatus = galleryRoot.querySelector(".gallery-status");
-
-      if (!galleryStatus) {
-        galleryStatus = document.createElement("div");
-        galleryStatus.className = "gallery-status";
-        galleryStatus.setAttribute("aria-live", "polite");
-        galleryRoot.appendChild(galleryStatus);
-      }
+      articleGalleryThumbnails.innerHTML = "";
+      articleGalleryThumbnails.setAttribute("aria-label", copy.article.choosePhoto);
 
       if (galleryImages.length) {
         galleryImages.forEach(function(imagePath, index) {
@@ -408,6 +401,7 @@
 
           slide.className = "article-hero-image has-photo";
           slide.hidden = index !== 0;
+          slide.setAttribute("aria-hidden", index === 0 ? "false" : "true");
           image.src = imagePath;
           image.alt =
             article.cardTitle[currentLang] +
@@ -415,7 +409,7 @@
             (index + 1) +
             " of " +
             galleryImages.length;
-          image.loading = "eager";
+          image.loading = index === 0 ? "eager" : "lazy";
 
           image.addEventListener("load", function() {
             slide.classList.add("is-loaded");
@@ -435,6 +429,19 @@
 
           slide.appendChild(image);
           articleGalleryTrack.appendChild(slide);
+
+          const button = document.createElement("button");
+          const thumbnail = document.createElement("img");
+          button.type = "button";
+          button.className = "gallery-thumbnail";
+          button.dataset.galleryIndex = String(index);
+          button.setAttribute("aria-label", copy.article.showPhoto + " " + (index + 1));
+          button.setAttribute("aria-pressed", index === 0 ? "true" : "false");
+          thumbnail.src = imagePath;
+          thumbnail.alt = "";
+          thumbnail.loading = index < 4 ? "eager" : "lazy";
+          button.appendChild(thumbnail);
+          articleGalleryThumbnails.appendChild(button);
         });
       } else {
         const placeholder = document.createElement("div");
@@ -444,131 +451,9 @@
       }
 
       const slides = Array.from(articleGalleryTrack.children);
-      const slideCount = slides.length;
-      const hasMultiplePhotos = slideCount > 1;
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      let activeIndex = 0;
-      let isAnimating = false;
-
-      galleryPrevious.hidden = !hasMultiplePhotos;
-      galleryNext.hidden = !hasMultiplePhotos;
-      galleryStatus.hidden = !hasMultiplePhotos;
-      galleryPrevious.setAttribute("aria-label", copy.article.previousPhoto);
-      galleryNext.setAttribute("aria-label", copy.article.nextPhoto);
-
-      function updateStatus() {
-        galleryStatus.textContent = activeIndex + 1 + " / " + slideCount;
-      }
-
-      function setVisibleSlide(index) {
-        activeIndex = (index + slideCount) % slideCount;
-        slides.forEach(function(slide, slideIndex) {
-          const isActive = slideIndex === activeIndex;
-          slide.hidden = !isActive;
-          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-        });
-        updateStatus();
-      }
-
-      function showSlide(index) {
-        if (isAnimating || slideCount < 1) {
-          return;
-        }
-
-        const nextIndex = (index + slideCount) % slideCount;
-        if (nextIndex === activeIndex) {
-          return;
-        }
-
-        const currentSlide = slides[activeIndex];
-        const nextSlide = slides[nextIndex];
-
-        if (reduceMotion || typeof currentSlide.animate !== "function") {
-          setVisibleSlide(nextIndex);
-          return;
-        }
-
-        isAnimating = true;
-
-        const fadeOut = currentSlide.animate(
-          [
-            { opacity: 1 },
-            { opacity: 0 }
-          ],
-          {
-            duration: 240,
-            easing: "ease-in",
-            fill: "forwards"
-          }
-        );
-
-        fadeOut.finished.then(function() {
-          currentSlide.hidden = true;
-          currentSlide.setAttribute("aria-hidden", "true");
-
-          activeIndex = nextIndex;
-          nextSlide.hidden = false;
-          nextSlide.setAttribute("aria-hidden", "false");
-
-          const fadeIn = nextSlide.animate(
-            [
-              { opacity: 0 },
-              { opacity: 1 }
-            ],
-            {
-              duration: 320,
-              easing: "ease-out",
-              fill: "forwards"
-            }
-          );
-
-          fadeIn.finished.then(function() {
-            currentSlide.getAnimations().forEach(function(animation) {
-              animation.cancel();
-            });
-            nextSlide.getAnimations().forEach(function(animation) {
-              animation.cancel();
-            });
-            updateStatus();
-            isAnimating = false;
-          });
-        });
-      }
-
-      galleryPrevious.onclick = function(event) {
-        event.preventDefault();
-        showSlide(activeIndex - 1);
-      };
-
-      galleryNext.onclick = function(event) {
-        event.preventDefault();
-        showSlide(activeIndex + 1);
-      };
-
-      let touchStartX = null;
-
-      articleGalleryTrack.ontouchstart = function(event) {
-        touchStartX = event.touches[0].clientX;
-      };
-
-      articleGalleryTrack.ontouchend = function(event) {
-        if (touchStartX === null || !hasMultiplePhotos) {
-          touchStartX = null;
-          return;
-        }
-
-        const swipeDistance = touchStartX - event.changedTouches[0].clientX;
-
-        if (swipeDistance > 40) {
-          showSlide(activeIndex + 1);
-        } else if (swipeDistance < -40) {
-          showSlide(activeIndex - 1);
-        }
-
-        touchStartX = null;
-      };
-
-      setVisibleSlide(0);
+      articleGallery.classList.toggle("has-multiple-images", slides.length > 1);
+      articleGalleryThumbnails.hidden = slides.length < 2;
+      articleGalleryTrack.dataset.fadeBusy = "false";
     }
 
     function renderArticle(slug) {

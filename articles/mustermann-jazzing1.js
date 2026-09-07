@@ -24,7 +24,10 @@ window.JAZZING_ARTICLES.push(
           "images/mustermann-jazzing1/mustermann-jazzing1-01.jpg",
           "images/mustermann-jazzing1/mustermann-jazzing1-02.jpg",
           "images/mustermann-jazzing1/mustermann-jazzing1-03.jpg",
-          "images/mustermann-jazzing1/mustermann-jazzing1-04.jpg"
+          "images/mustermann-jazzing1/mustermann-jazzing1-04.jpg",
+          "images/mustermann-jazzing1/mustermann-jazzing1-05.JPG",
+          "images/mustermann-jazzing1/mustermann-jazzing1-06.JPG",
+          "images/mustermann-jazzing1/mustermann-jazzing1-07.JPG"
         ],
         caption: {
           en: "Mustermann Jazzing1 photographed in Frankfurt. Photo placeholder.",

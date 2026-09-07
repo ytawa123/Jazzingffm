@@ -1,8 +1,11 @@
 .article-gallery--thumbnails .article-gallery-stage {
-  --thumbnail-rail-gap: 10px;
-  --thumbnail-rail-width: clamp(76px, 8vw, 108px);
-  padding-right: calc(var(--thumbnail-rail-width) + var(--thumbnail-rail-gap));
+  --thumbnail-rail-gap: 8px;
+  --thumbnail-rail-width: clamp(56px, 6vw, 78px);
   position: relative;
+}
+
+.article-gallery--thumbnails.has-multiple-images .article-gallery-stage {
+  padding-right: calc(var(--thumbnail-rail-width) + var(--thumbnail-rail-gap));
 }
 
 .article-gallery--thumbnails .article-gallery-track {
@@ -19,7 +22,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 4px 0 0;
+  padding: 0 3px 0 0;
   position: absolute;
   right: 0;
   scrollbar-color: #777 #151515;
@@ -30,7 +33,7 @@
 }
 
 .article-gallery-thumbnails::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .article-gallery-thumbnails::-webkit-scrollbar-track {
@@ -74,10 +77,11 @@
 
 .gallery-thumbnail:focus-visible {
   outline: 2px solid #fff;
-  outline-offset: 2px;
+  outline-offset: -3px;
 }
 
-.article-gallery--thumbnails + .caption {
+.article-gallery--thumbnails + #articleCaption.caption {
+  margin-top: 1px;
   margin-right: 0;
 }
 
@@ -89,7 +93,7 @@
 }
 
 @media (max-width: 680px) {
-  .article-gallery--thumbnails .article-gallery-stage {
+  .article-gallery--thumbnails.has-multiple-images .article-gallery-stage {
     padding-right: 0;
   }
 

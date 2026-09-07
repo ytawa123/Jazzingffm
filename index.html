@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="css/gallery-transition.css?v=gallery31" />
   <link rel="stylesheet" href="css/article-caption-gap.css?v=caption38" />
   <link rel="stylesheet" href="css/site-polish.css?v=14" />
+  <link rel="stylesheet" href="css/thumbnail-gallery.css?v=3" />
 </head>
 
 <body>
@@ -134,10 +135,11 @@
 
       <hr class="thin-line" />
 
-      <div id="articleGallery" class="article-gallery">
-        <div id="articleGalleryTrack" class="article-gallery-track"></div>
-        <button id="galleryPrevious" class="gallery-control previous" type="button" aria-label="Previous photo">‹</button>
-        <button id="galleryNext" class="gallery-control next" type="button" aria-label="Next photo">›</button>
+      <div id="articleGallery" class="article-gallery article-gallery--thumbnails" data-gallery-style="thumbnails">
+        <div class="article-gallery-stage">
+          <div id="articleGalleryTrack" class="article-gallery-track"></div>
+          <div id="articleGalleryThumbnails" class="article-gallery-thumbnails" role="group" aria-label="Foto auswählen"></div>
+        </div>
       </div>
       <p id="articleCaption" class="caption"></p>
 
@@ -217,8 +219,8 @@
   <script src="data/articles.js"></script>
   <script src="articles/mustermann-jazzing1.js?v=1"></script>
   <script src="articles/mustermann-jazzing2.js?v=2"></script>
-  <script src="js/app.js?v=brand37"></script>
-  <script src="js/gallery-transition.js?v=gallery32"></script>
+  <script src="js/app.js?v=brand38"></script>
+  <script src="js/thumbnail-gallery.js?v=2"></script>
   <script src="js/site-transition.js?v=4"></script>
   <script src="js/home-labels.js?v=2"></script>
 

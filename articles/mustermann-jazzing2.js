@@ -25,10 +25,8 @@ window.JAZZING_ARTICLES.push(
           "images/mustermann-jazzing2/mustermann-jazzing2-02.jpg",
           "images/mustermann-jazzing2/mustermann-jazzing2-03.jpg",
           "images/mustermann-jazzing2/mustermann-jazzing2-04.jpg",
-          "images/mustermann-jazzing2/mustermann-jazzing2-05.jpg",
-          "images/mustermann-jazzing2/mustermann-jazzing2-06.JPG",
-          "images/mustermann-jazzing2/mustermann-jazzing2-07.JPG",
-          "images/mustermann-jazzing2/mustermann-jazzing2-08.JPG"
+          "images/mustermann-jazzing2/mustermann-jazzing2-05.JPG",
+          "images/mustermann-jazzing2/mustermann-jazzing2-06.JPG"
         ],
         caption: {
           en: "Mustermann Jazzing2 after rehearsal in Frankfurt. Photo placeholder.",
