@@ -78,10 +78,29 @@ main {
 .footer-legal {
   align-items: center;
   color: #8c8c8c;
-  display: flex;
-  font-size: 16px;
-  gap: 22px;
+  display: inline-flex;
+  font-size: inherit;
+  gap: 0.6em;
   text-transform: uppercase;
+}
+
+.copyright {
+  font-size: 12px;
+}
+
+.footer-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+}
+
+.footer-meta p {
+  margin: 0;
+}
+
+.footer-separator {
+  color: #8c8c8c;
 }
 
 .footer-legal a {
@@ -183,8 +202,15 @@ main {
   }
 
   .footer-legal {
-    font-size: 13px;
-    gap: 18px;
+    gap: 0.55em;
+  }
+
+  .copyright {
+    font-size: 10px;
+  }
+
+  .footer-meta {
+    gap: 0.55em;
   }
 
   .legal-page {
@@ -403,6 +429,6 @@ main {
 
   .copyright,
   .site-footer {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
