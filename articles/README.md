@@ -4,7 +4,7 @@ The site keeps layout, styling, application logic and article content separate.
 
 ## Add an article
 
-1. Copy an existing file in this folder, for example `leo-mori.js`.
+1. Copy an existing file in this folder, for example `mustermann-jazzing1.js`.
 2. Rename it to the new slug, for example `markus-harm.js`.
 3. Edit the article fields, translations and body text in that file.
 4. Create the matching photo folder: `images/<slug>/`.

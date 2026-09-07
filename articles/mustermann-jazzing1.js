@@ -1,7 +1,7 @@
-// Content for leo-mori. Edit this file when updating this article.
+// Content for mustermann-jazzing1. Edit this file when updating this article.
 window.JAZZING_ARTICLES.push(
 {
-        slug: "leo-mori",
+        slug: "mustermann-jazzing1",
         category: "interviews",
         categoryLabel: {
           en: "Interviews",
@@ -21,10 +21,10 @@ window.JAZZING_ARTICLES.push(
         },
         date: { en: "31st July 2026", de: "31. Juli 2026" },
         images: [
-          "images/leo-mori/leo-mori-01.jpg",
-          "images/leo-mori/leo-mori-02.jpg",
-          "images/leo-mori/leo-mori-03.jpg",
-          "images/leo-mori/leo-mori-04.jpg"
+          "images/mustermann-jazzing1/mustermann-jazzing1-01.jpg",
+          "images/mustermann-jazzing1/mustermann-jazzing1-02.jpg",
+          "images/mustermann-jazzing1/mustermann-jazzing1-03.jpg",
+          "images/mustermann-jazzing1/mustermann-jazzing1-04.jpg"
         ],
         caption: {
           en: "Mustermann Jazzing1 photographed in Frankfurt. Photo placeholder.",
@@ -101,7 +101,7 @@ window.JAZZING_ARTICLES.push(
       }
 );
 
-window.JAZZING_ARTICLE_BIOS["leo-mori"] = {
+window.JAZZING_ARTICLE_BIOS["mustermann-jazzing1"] = {
         en: "Mustermann Jazzing1 is a saxophonist whose playing moves between lyricism, texture and sharp rhythmic instinct. His work explores sound, improvisation and the balance between control and openness.",
         de: "Mustermann Jazzing1 ist Saxophonist. Sein Spiel bewegt sich zwischen Lyrik, Textur und einem klaren rhythmischen Instinkt. Seine Arbeit erkundet Klang, Improvisation und die Balance zwischen Kontrolle und Offenheit."
       };
