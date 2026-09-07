@@ -68,7 +68,7 @@
     if (!document.querySelector('link[href*="thumbnail-gallery.css"]')) {
       const stylesheet = document.createElement("link");
       stylesheet.rel = "stylesheet";
-      stylesheet.href = "/css/thumbnail-gallery.css?v=3";
+      stylesheet.href = "/css/thumbnail-gallery.css?v=4";
       document.head.appendChild(stylesheet);
     }
   }
