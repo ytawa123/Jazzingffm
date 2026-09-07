@@ -103,6 +103,28 @@ main {
   color: #8c8c8c;
 }
 
+.footer-partner {
+  align-items: center;
+  color: #8c8c8c;
+  display: flex;
+  font-size: 12px;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-left: auto;
+  text-transform: uppercase;
+}
+
+.footer-partner a,
+.footer-partner img {
+  display: block;
+}
+
+.footer-partner img {
+  height: 38px;
+  object-fit: contain;
+  width: auto;
+}
+
 .footer-legal a {
   border-bottom: 1px solid transparent;
   transition: border-color 0.18s ease, color 0.18s ease;
@@ -211,6 +233,16 @@ main {
 
   .footer-meta {
     gap: 0.55em;
+  }
+
+  .footer-partner {
+    font-size: 10px;
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .footer-partner img {
+    height: 30px;
   }
 
   .legal-page {
