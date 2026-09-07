@@ -1,0 +1,82 @@
+.article-gallery--thumbnails .article-gallery-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(76px, 8vw, 108px);
+  gap: 10px;
+  align-items: start;
+}
+
+.article-gallery--thumbnails .article-gallery-track {
+  min-width: 0;
+  transition: opacity 320ms ease;
+}
+
+.article-gallery-thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.gallery-thumbnail {
+  appearance: none;
+  aspect-ratio: 1;
+  background: #050505;
+  border: 1px solid #484848;
+  cursor: pointer;
+  opacity: 0.48;
+  overflow: hidden;
+  padding: 0;
+  transition: border-color 180ms ease, opacity 180ms ease;
+  width: 100%;
+}
+
+.gallery-thumbnail img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.gallery-thumbnail:hover,
+.gallery-thumbnail:focus-visible {
+  opacity: 0.82;
+}
+
+.gallery-thumbnail[aria-pressed="true"] {
+  border-color: #fff;
+  opacity: 1;
+}
+
+.gallery-thumbnail:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.article-gallery--thumbnails + .caption {
+  margin-right: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-gallery--thumbnails .article-gallery-track,
+  .gallery-thumbnail {
+    transition-duration: 120ms;
+  }
+}
+
+@media (max-width: 680px) {
+  .article-gallery--thumbnails .article-gallery-stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .article-gallery-thumbnails {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 2px 2px 4px;
+  }
+
+  .gallery-thumbnail {
+    flex: 0 0 58px;
+    width: 58px;
+  }
+}
