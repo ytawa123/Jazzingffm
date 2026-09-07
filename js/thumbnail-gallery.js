@@ -60,6 +60,26 @@
     });
   }
 
+  function fitTrackToImage(track, slide) {
+    const image = slide && slide.querySelector("img");
+
+    if (!track || !image || !image.naturalWidth || !image.naturalHeight) return;
+
+    const width = image.naturalWidth;
+    const height = image.naturalHeight;
+
+    track.style.setProperty("--gallery-image-ratio", width + " / " + height);
+    track.dataset.imageOrientation = height > width ? "portrait" : "landscape";
+  }
+
+  function fitTrackToActiveImage(track) {
+    const activeSlide = track && Array.from(track.children).find(function(slide) {
+      return !slide.hidden;
+    });
+
+    fitTrackToImage(track, activeSlide);
+  }
+
   function showSlide(nextIndex) {
     const state = getGalleryState();
 
@@ -78,6 +98,8 @@
 
     window.setTimeout(function() {
       prepareImage(state.slides[nextIndex]).then(function() {
+        fitTrackToImage(state.track, state.slides[nextIndex]);
+
         state.slides.forEach(function(slide, index) {
           const isActive = index === nextIndex;
           slide.hidden = !isActive;
@@ -110,6 +132,33 @@
     showSlide(Number(thumbnail.dataset.galleryIndex));
   });
 
+  document.addEventListener("load", function(event) {
+    const image = event.target;
+
+    if (!(image instanceof HTMLImageElement)) return;
+
+    const slide = image.closest('[data-gallery-style="thumbnails"] .article-hero-image');
+    const track = slide && slide.closest(".article-gallery-track");
+
+    if (slide && track && !slide.hidden) fitTrackToImage(track, slide);
+  }, true);
+
+  const observedTrack = document.querySelector('[data-gallery-style="thumbnails"] .article-gallery-track');
+  if (observedTrack) {
+    new MutationObserver(function() {
+      fitTrackToActiveImage(observedTrack);
+    }).observe(observedTrack, {
+      attributes: true,
+      attributeFilter: ["hidden"],
+      childList: true,
+      subtree: true
+    });
+  }
+
   const initialState = getGalleryState();
-  if (initialState) prepareImage(initialState.slides[initialState.activeIndex]);
+  if (initialState) {
+    prepareImage(initialState.slides[initialState.activeIndex]).then(function() {
+      fitTrackToImage(initialState.track, initialState.slides[initialState.activeIndex]);
+    });
+  }
 })();
