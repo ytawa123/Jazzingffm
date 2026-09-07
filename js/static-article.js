@@ -10,6 +10,8 @@
       nav: { home: "JazzingFfm.", interviews: "Interviews", features: "Features", contact: "Contact" },
       previousPhoto: "Previous photo",
       nextPhoto: "Next photo",
+      choosePhoto: "Choose photo",
+      showPhoto: "Show photo",
       footer: "MADE WITH LOVE IN FRANKFURT",
       partner: "In cooperation with"
     },
@@ -17,6 +19,8 @@
       nav: { home: "JazzingFfm.", interviews: "Interviews", features: "Features", contact: "Kontakt" },
       previousPhoto: "Vorheriges Foto",
       nextPhoto: "Nächstes Foto",
+      choosePhoto: "Foto auswählen",
+      showPhoto: "Foto anzeigen",
       footer: "MADE WITH LOVE IN FRANKFURT",
       partner: "In Kooperation mit"
     }
@@ -33,7 +37,9 @@
   const articleBody = document.getElementById("articleBody");
   const articleBioTitle = document.getElementById("articleBioTitle");
   const articleBioText = document.getElementById("articleBioText");
+  const articleGallery = document.getElementById("articleGallery");
   const galleryTrack = document.getElementById("articleGalleryTrack");
+  const galleryThumbnails = document.getElementById("articleGalleryThumbnails");
   const galleryPrevious = document.getElementById("galleryPrevious");
   const galleryNext = document.getElementById("galleryNext");
   const galleryStatus = document.getElementById("galleryStatus");
@@ -107,10 +113,34 @@
     const slides = Array.from(galleryTrack.children);
     const hasMultiple = slides.length > 1;
 
-    galleryPrevious.hidden = !hasMultiple;
-    galleryNext.hidden = !hasMultiple;
-    galleryStatus.hidden = !hasMultiple;
-    galleryStatus.textContent = hasMultiple ? "1 / " + slides.length : "";
+    if (galleryThumbnails) {
+      galleryThumbnails.innerHTML = "";
+      galleryThumbnails.hidden = !hasMultiple;
+
+      images.forEach(function(path, index) {
+        const button = document.createElement("button");
+        const thumbnail = document.createElement("img");
+        const isActive = index === 0;
+
+        button.type = "button";
+        button.className = "gallery-thumbnail";
+        button.dataset.galleryIndex = String(index);
+        button.setAttribute("aria-label", copy[currentLang].showPhoto + " " + (index + 1));
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+        thumbnail.src = rootPath(path);
+        thumbnail.alt = "";
+        thumbnail.loading = index < 4 ? "eager" : "lazy";
+        button.appendChild(thumbnail);
+        galleryThumbnails.appendChild(button);
+      });
+    }
+
+    if (galleryPrevious) galleryPrevious.hidden = !hasMultiple;
+    if (galleryNext) galleryNext.hidden = !hasMultiple;
+    if (galleryStatus) {
+      galleryStatus.hidden = !hasMultiple;
+      galleryStatus.textContent = hasMultiple ? "1 / " + slides.length : "";
+    }
     galleryTrack.dataset.fadeBusy = "false";
   }
 
@@ -132,8 +162,9 @@
     articleBody.innerHTML = article.body[currentLang];
     articleBioTitle.textContent = article.cardTitle[currentLang];
     articleBioText.textContent = BIOS[article.slug][currentLang];
-    galleryPrevious.setAttribute("aria-label", strings.previousPhoto);
-    galleryNext.setAttribute("aria-label", strings.nextPhoto);
+    if (galleryPrevious) galleryPrevious.setAttribute("aria-label", strings.previousPhoto);
+    if (galleryNext) galleryNext.setAttribute("aria-label", strings.nextPhoto);
+    if (galleryThumbnails) galleryThumbnails.setAttribute("aria-label", strings.choosePhoto);
     footerLove.textContent = strings.footer;
     footerPartnerLabel.textContent = strings.partner;
 
@@ -159,6 +190,10 @@
   });
 
   localize();
-  loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
+  if (articleGallery && articleGallery.dataset.galleryStyle === "thumbnails") {
+    loadSharedScript("/js/thumbnail-gallery.js?v=1", "jazzing-thumbnail-gallery");
+  } else {
+    loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
+  }
   loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();
