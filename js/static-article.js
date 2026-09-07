@@ -8,8 +8,6 @@
   const copy = {
     en: {
       nav: { home: "JazzingFfm.", interviews: "Interviews", features: "Features", contact: "Contact" },
-      previousPhoto: "Previous photo",
-      nextPhoto: "Next photo",
       choosePhoto: "Choose photo",
       showPhoto: "Show photo",
       footer: "MADE WITH LOVE IN FRANKFURT",
@@ -17,8 +15,6 @@
     },
     de: {
       nav: { home: "JazzingFfm.", interviews: "Interviews", features: "Features", contact: "Kontakt" },
-      previousPhoto: "Vorheriges Foto",
-      nextPhoto: "Nächstes Foto",
       choosePhoto: "Foto auswählen",
       showPhoto: "Foto anzeigen",
       footer: "MADE WITH LOVE IN FRANKFURT",
@@ -39,12 +35,43 @@
   const articleBioText = document.getElementById("articleBioText");
   const articleGallery = document.getElementById("articleGallery");
   const galleryTrack = document.getElementById("articleGalleryTrack");
-  const galleryThumbnails = document.getElementById("articleGalleryThumbnails");
-  const galleryPrevious = document.getElementById("galleryPrevious");
-  const galleryNext = document.getElementById("galleryNext");
-  const galleryStatus = document.getElementById("galleryStatus");
+  let galleryThumbnails = document.getElementById("articleGalleryThumbnails");
   const footerLove = document.getElementById("footerLove");
   const footerPartnerLabel = document.getElementById("footerPartnerLabel");
+
+  function ensureThumbnailGallery() {
+    if (!articleGallery || !galleryTrack) return;
+
+    articleGallery.classList.add("article-gallery--thumbnails");
+    articleGallery.dataset.galleryStyle = "thumbnails";
+
+    let stage = articleGallery.querySelector(".article-gallery-stage");
+    if (!stage) {
+      stage = document.createElement("div");
+      stage.className = "article-gallery-stage";
+      articleGallery.insertBefore(stage, galleryTrack);
+      stage.appendChild(galleryTrack);
+    }
+
+    if (!galleryThumbnails) {
+      galleryThumbnails = document.createElement("div");
+      galleryThumbnails.id = "articleGalleryThumbnails";
+      galleryThumbnails.className = "article-gallery-thumbnails";
+      galleryThumbnails.setAttribute("role", "group");
+      stage.appendChild(galleryThumbnails);
+    }
+
+    articleGallery.querySelectorAll(".gallery-control, .gallery-status").forEach(function(control) {
+      control.remove();
+    });
+
+    if (!document.querySelector('link[href*="thumbnail-gallery.css"]')) {
+      const stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.href = "/css/thumbnail-gallery.css?v=3";
+      document.head.appendChild(stylesheet);
+    }
+  }
 
   function categoryRoute(category) {
     if (category === "highlights") return "features";
@@ -112,6 +139,7 @@
 
     const slides = Array.from(galleryTrack.children);
     const hasMultiple = slides.length > 1;
+    articleGallery.classList.toggle("has-multiple-images", hasMultiple);
 
     if (galleryThumbnails) {
       galleryThumbnails.innerHTML = "";
@@ -135,12 +163,6 @@
       });
     }
 
-    if (galleryPrevious) galleryPrevious.hidden = !hasMultiple;
-    if (galleryNext) galleryNext.hidden = !hasMultiple;
-    if (galleryStatus) {
-      galleryStatus.hidden = !hasMultiple;
-      galleryStatus.textContent = hasMultiple ? "1 / " + slides.length : "";
-    }
     galleryTrack.dataset.fadeBusy = "false";
   }
 
@@ -162,8 +184,6 @@
     articleBody.innerHTML = article.body[currentLang];
     articleBioTitle.textContent = article.cardTitle[currentLang];
     articleBioText.textContent = BIOS[article.slug][currentLang];
-    if (galleryPrevious) galleryPrevious.setAttribute("aria-label", strings.previousPhoto);
-    if (galleryNext) galleryNext.setAttribute("aria-label", strings.nextPhoto);
     if (galleryThumbnails) galleryThumbnails.setAttribute("aria-label", strings.choosePhoto);
     footerLove.textContent = strings.footer;
     footerPartnerLabel.textContent = strings.partner;
@@ -189,11 +209,8 @@
     });
   });
 
+  ensureThumbnailGallery();
   localize();
-  if (articleGallery && articleGallery.dataset.galleryStyle === "thumbnails") {
-    loadSharedScript("/js/thumbnail-gallery.js?v=1", "jazzing-thumbnail-gallery");
-  } else {
-    loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
-  }
+  loadSharedScript("/js/thumbnail-gallery.js?v=2", "jazzing-thumbnail-gallery");
   loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();
