@@ -10,13 +10,15 @@
       nav: { home: "JazzingFfm.", interviews: "Interviews", features: "Features", contact: "Contact" },
       previousPhoto: "Previous photo",
       nextPhoto: "Next photo",
-      footer: "MADE WITH LOVE IN FRANKFURT"
+      footer: "MADE WITH LOVE IN FRANKFURT",
+      partner: "In cooperation with"
     },
     de: {
       nav: { home: "JazzingFfm.", interviews: "Interviews", features: "Features", contact: "Kontakt" },
       previousPhoto: "Vorheriges Foto",
       nextPhoto: "Nächstes Foto",
-      footer: "MADE WITH LOVE IN FRANKFURT"
+      footer: "MADE WITH LOVE IN FRANKFURT",
+      partner: "In Kooperation mit"
     }
   };
 
@@ -36,6 +38,7 @@
   const galleryNext = document.getElementById("galleryNext");
   const galleryStatus = document.getElementById("galleryStatus");
   const footerLove = document.getElementById("footerLove");
+  const footerPartnerLabel = document.getElementById("footerPartnerLabel");
 
   function categoryRoute(category) {
     if (category === "highlights") return "features";
@@ -132,6 +135,7 @@
     galleryPrevious.setAttribute("aria-label", strings.previousPhoto);
     galleryNext.setAttribute("aria-label", strings.nextPhoto);
     footerLove.textContent = strings.footer;
+    footerPartnerLabel.textContent = strings.partner;
 
     boldSpeakerNames();
     renderGallery();

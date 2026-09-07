@@ -53,7 +53,8 @@
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
-          support: "support JazzingFfm."
+          support: "support JazzingFfm.",
+          partner: "In cooperation with"
         }
       },
 
@@ -101,7 +102,8 @@
         },
         footer: {
           love: "MADE WITH LOVE IN FRANKFURT",
-          support: "support JazzingFfm."
+          support: "support JazzingFfm.",
+          partner: "In Kooperation mit"
         }
       }
     };
@@ -155,6 +157,7 @@
 
     const footerLove = document.getElementById("footerLove");
     const supportLink = document.getElementById("supportLink");
+    const footerPartnerLabel = document.getElementById("footerPartnerLabel");
 
     function t() {
       return I18N[currentLang];
@@ -317,6 +320,7 @@
 
       footerLove.textContent = copy.footer.love;
       supportLink.textContent = copy.footer.support;
+      footerPartnerLabel.textContent = copy.footer.partner;
 
       setActiveLanguageButton();
     }
