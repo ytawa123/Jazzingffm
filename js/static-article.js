@@ -68,7 +68,7 @@
     if (!document.querySelector('link[href*="thumbnail-gallery.css"]')) {
       const stylesheet = document.createElement("link");
       stylesheet.rel = "stylesheet";
-      stylesheet.href = "/css/thumbnail-gallery.css?v=4";
+      stylesheet.href = "/css/thumbnail-gallery.css?v=5";
       document.head.appendChild(stylesheet);
     }
   }
@@ -211,6 +211,6 @@
 
   ensureThumbnailGallery();
   localize();
-  loadSharedScript("/js/thumbnail-gallery.js?v=2", "jazzing-thumbnail-gallery");
+  loadSharedScript("/js/thumbnail-gallery.js?v=3", "jazzing-thumbnail-gallery");
   loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();
