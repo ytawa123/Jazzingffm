@@ -108,7 +108,7 @@
 
 
 
-    let currentLang = localStorage.getItem("jazzingffm-lang") || "en";
+    let currentLang = localStorage.getItem("jazzingffm-lang") || "de";
 
     const pages = {
       home: document.getElementById("page-home"),
