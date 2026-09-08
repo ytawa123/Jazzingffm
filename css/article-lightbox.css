@@ -1,0 +1,131 @@
+.article-lightbox {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.97);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  transition: opacity 180ms ease;
+  visibility: hidden;
+  z-index: 1000;
+}
+
+.article-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.article-lightbox-stage {
+  align-items: center;
+  display: flex;
+  inset: 42px 92px 48px;
+  justify-content: center;
+  position: absolute;
+}
+
+.article-lightbox-image {
+  display: block;
+  height: auto;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+  width: auto;
+}
+
+.article-lightbox-control,
+.article-lightbox-close {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  line-height: 1;
+  margin: 0;
+  outline-offset: 4px;
+  padding: 10px;
+  position: absolute;
+  z-index: 2;
+}
+
+.article-lightbox-control {
+  font-size: 66px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.article-lightbox-control.previous {
+  left: 22px;
+}
+
+.article-lightbox-control.next {
+  right: 22px;
+}
+
+.article-lightbox-close {
+  font-size: 40px;
+  right: 22px;
+  top: 16px;
+}
+
+.article-lightbox-control:hover,
+.article-lightbox-control:focus-visible,
+.article-lightbox-close:hover,
+.article-lightbox-close:focus-visible {
+  opacity: 0.62;
+}
+
+.article-lightbox-status {
+  bottom: 22px;
+  color: #f5f5f5;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 16px;
+  line-height: 1;
+  position: absolute;
+  right: 28px;
+  z-index: 2;
+}
+
+@media (max-width: 680px) {
+  .article-lightbox-stage {
+    inset: 54px 46px 48px;
+  }
+
+  .article-lightbox-control {
+    font-size: 50px;
+    padding: 8px;
+  }
+
+  .article-lightbox-control.previous {
+    left: 4px;
+  }
+
+  .article-lightbox-control.next {
+    right: 4px;
+  }
+
+  .article-lightbox-close {
+    font-size: 34px;
+    right: 8px;
+    top: 8px;
+  }
+
+  .article-lightbox-status {
+    bottom: 14px;
+    font-size: 14px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-lightbox {
+    transition-duration: 0ms;
+  }
+}
