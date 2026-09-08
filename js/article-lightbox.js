@@ -1,7 +1,7 @@
 (function() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const overlayDuration = reduceMotion ? 0 : 480;
-  const imageFadeDuration = reduceMotion ? 0 : 360;
+  const imageFadeDuration = reduceMotion ? 0 : 420;
   let lightbox = null;
   let lightboxLayers = [];
   let lightboxPrevious = null;
