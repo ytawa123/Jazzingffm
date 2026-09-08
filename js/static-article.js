@@ -2,6 +2,14 @@
   const ARTICLES = window.JAZZING_ARTICLES || [];
   const BIOS = window.JAZZING_ARTICLE_BIOS || {};
   const article = ARTICLES[0];
+  const TRANSITION_ENTRY_KEY = "jazzingffm-transition-entry";
+
+  try {
+    if (sessionStorage.getItem(TRANSITION_ENTRY_KEY) === "1") {
+      const pageMain = document.querySelector("main");
+      if (pageMain) pageMain.style.opacity = "0";
+    }
+  } catch (error) {}
 
   if (!article) return;
 
