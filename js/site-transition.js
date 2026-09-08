@@ -383,7 +383,8 @@
     forceCurtainOpacity(0);
   });
 
-  const shouldFadeIn = root.classList.contains("jazzing-transition-entry") || consumeDocumentFadeIn();
+  const storedEntry = consumeDocumentFadeIn();
+  const shouldFadeIn = root.classList.contains("jazzing-transition-entry") || storedEntry;
 
   if (shouldFadeIn) {
     curtain.style.pointerEvents = "auto";
