@@ -1,14 +1,18 @@
 (function() {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const overlayDuration = reduceMotion ? 0 : 220;
+  const imageFadeDuration = reduceMotion ? 0 : 180;
   let lightbox = null;
   let lightboxImage = null;
   let lightboxStatus = null;
   let lightboxPrevious = null;
   let lightboxNext = null;
-  let lightboxClose = null;
   let galleryImages = [];
   let activeIndex = 0;
   let previousFocus = null;
   let touchStartX = null;
+  let closeTimer = null;
+  let imageRequest = 0;
 
   function strings() {
     const isGerman = document.documentElement.lang === "de";
@@ -18,15 +22,13 @@
           dialog: "Fotogalerie",
           open: "Foto in Originalgröße öffnen",
           previous: "Vorheriges Foto",
-          next: "Nächstes Foto",
-          close: "Galerie schließen"
+          next: "Nächstes Foto"
         }
       : {
           dialog: "Photo gallery",
           open: "Open photo at full size",
           previous: "Previous photo",
-          next: "Next photo",
-          close: "Close gallery"
+          next: "Next photo"
         };
   }
 
@@ -38,19 +40,20 @@
     lightbox.hidden = true;
     lightbox.setAttribute("role", "dialog");
     lightbox.setAttribute("aria-modal", "true");
+    lightbox.setAttribute("tabindex", "-1");
     lightbox.innerHTML =
-      '<button class="article-lightbox__control article-lightbox__close" type="button">×</button>' +
       '<button class="article-lightbox__control article-lightbox__previous" type="button">‹</button>' +
-      '<figure class="article-lightbox__figure"><img class="article-lightbox__image" alt="" /></figure>' +
-      '<button class="article-lightbox__control article-lightbox__next" type="button">›</button>' +
-      '<div class="article-lightbox__status" aria-live="polite"></div>';
+      '<figure class="article-lightbox__figure">' +
+        '<img class="article-lightbox__image" alt="" />' +
+        '<div class="article-lightbox__status" aria-live="polite"></div>' +
+      '</figure>' +
+      '<button class="article-lightbox__control article-lightbox__next" type="button">›</button>';
 
     document.body.appendChild(lightbox);
     lightboxImage = lightbox.querySelector(".article-lightbox__image");
     lightboxStatus = lightbox.querySelector(".article-lightbox__status");
     lightboxPrevious = lightbox.querySelector(".article-lightbox__previous");
     lightboxNext = lightbox.querySelector(".article-lightbox__next");
-    lightboxClose = lightbox.querySelector(".article-lightbox__close");
   }
 
   function updateLabels() {
@@ -59,18 +62,85 @@
     lightbox.setAttribute("aria-label", copy.dialog);
     lightboxPrevious.setAttribute("aria-label", copy.previous);
     lightboxNext.setAttribute("aria-label", copy.next);
-    lightboxClose.setAttribute("aria-label", copy.close);
   }
 
-  function showImage(index) {
-    if (!galleryImages.length) return;
+  function revealChangedImage(request) {
+    if (request !== imageRequest) return;
 
-    activeIndex = (index + galleryImages.length) % galleryImages.length;
+    requestAnimationFrame(function() {
+      if (request !== imageRequest) return;
+      lightboxImage.classList.remove("is-changing");
+    });
+  }
+
+  function swapImage(request) {
+    if (request !== imageRequest || !galleryImages.length) return;
+
     const sourceImage = galleryImages[activeIndex];
-
     lightboxImage.src = sourceImage.currentSrc || sourceImage.src;
     lightboxImage.alt = sourceImage.alt;
     lightboxStatus.textContent = activeIndex + 1 + " / " + galleryImages.length;
+
+    if (typeof lightboxImage.decode === "function") {
+      lightboxImage.decode().catch(function() {}).then(function() {
+        revealChangedImage(request);
+      });
+    } else if (lightboxImage.complete) {
+      revealChangedImage(request);
+    } else {
+      lightboxImage.addEventListener("load", function() {
+        revealChangedImage(request);
+      }, { once: true });
+      lightboxImage.addEventListener("error", function() {
+        revealChangedImage(request);
+      }, { once: true });
+    }
+  }
+
+  function showImage(index, animate) {
+    if (!galleryImages.length) return;
+
+    activeIndex = (index + galleryImages.length) % galleryImages.length;
+    const request = ++imageRequest;
+
+    if (!animate || imageFadeDuration === 0 || !lightboxImage.getAttribute("src")) {
+      lightboxImage.classList.remove("is-changing");
+      swapImage(request);
+      return;
+    }
+
+    lightboxImage.classList.add("is-changing");
+    window.setTimeout(function() {
+      swapImage(request);
+    }, imageFadeDuration);
+  }
+
+  function syncArticleGallery() {
+    const activeImage = galleryImages[activeIndex];
+    const gallery = activeImage && activeImage.closest(".article-gallery");
+    if (!gallery) return;
+
+    const track = gallery.querySelector(".article-gallery-track");
+    const slides = track ? Array.from(track.children) : [];
+
+    slides.forEach(function(slide, index) {
+      const isActive = index === activeIndex;
+      if (typeof slide.getAnimations === "function") {
+        slide.getAnimations().forEach(function(animation) {
+          animation.cancel();
+        });
+      }
+      slide.hidden = !isActive;
+      slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+    });
+
+    if (track) {
+      track.classList.remove("gallery-fade-out");
+      track.dataset.fadeBusy = "false";
+    }
+
+    const status = gallery.querySelector(".gallery-status");
+    if (status) status.textContent = activeIndex + 1 + " / " + slides.length;
   }
 
   function openLightbox(sourceImage) {
@@ -82,23 +152,38 @@
 
     createLightbox();
     updateLabels();
+    window.clearTimeout(closeTimer);
     previousFocus = sourceImage;
     activeIndex = galleryImages.indexOf(sourceImage);
     if (activeIndex < 0) activeIndex = 0;
-    showImage(activeIndex);
+    showImage(activeIndex, false);
     lightbox.hidden = false;
     document.body.classList.add("article-lightbox-open");
-    lightboxClose.focus();
+
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        lightbox.classList.add("is-open");
+        lightboxPrevious.focus();
+      });
+    });
   }
 
   function closeLightbox() {
     if (!lightbox || lightbox.hidden) return;
 
-    lightbox.hidden = true;
-    lightboxImage.removeAttribute("src");
+    syncArticleGallery();
+    imageRequest += 1;
+    lightboxImage.classList.remove("is-changing");
+    lightbox.classList.remove("is-open");
     document.body.classList.remove("article-lightbox-open");
 
-    if (previousFocus && document.contains(previousFocus)) previousFocus.focus();
+    const focusTarget = galleryImages[activeIndex] || previousFocus;
+    window.clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(function() {
+      lightbox.hidden = true;
+      lightboxImage.removeAttribute("src");
+      if (focusTarget && document.contains(focusTarget)) focusTarget.focus();
+    }, overlayDuration);
   }
 
   function decorateGalleryImages() {
@@ -122,12 +207,12 @@
 
     if (!lightbox || lightbox.hidden) return;
 
-    if (event.target === lightbox || event.target === lightboxClose) {
+    if (event.target.closest(".article-lightbox__previous")) {
+      showImage(activeIndex - 1, true);
+    } else if (event.target.closest(".article-lightbox__next")) {
+      showImage(activeIndex + 1, true);
+    } else if (!event.target.closest(".article-lightbox__image")) {
       closeLightbox();
-    } else if (event.target === lightboxPrevious) {
-      showImage(activeIndex - 1);
-    } else if (event.target === lightboxNext) {
-      showImage(activeIndex + 1);
     }
   });
 
@@ -147,10 +232,10 @@
       closeLightbox();
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      showImage(activeIndex - 1);
+      showImage(activeIndex - 1, true);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      showImage(activeIndex + 1);
+      showImage(activeIndex + 1, true);
     }
   });
 
@@ -166,7 +251,7 @@
     touchStartX = null;
 
     if (Math.abs(distance) < 40) return;
-    showImage(activeIndex + (distance > 0 ? 1 : -1));
+    showImage(activeIndex + (distance > 0 ? 1 : -1), true);
   }, { passive: true });
 
   const gallery = document.getElementById("articleGallery");
