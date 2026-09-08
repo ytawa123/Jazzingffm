@@ -21,7 +21,7 @@ images/markus-harm/markus-harm-03.jpg
 images/markus-harm/markus-harm-04.jpg
 ```
 
-Article galleries automatically use the shared thumbnail layout. On desktop, additional thumbnails scroll vertically beside the preview; on mobile, they scroll horizontally below it.
+Article galleries automatically use the shared previous/next arrow controls and display the current position, for example `1 / 7`.
 
 You normally do **not** need to touch `css/style.css` or `js/app.js` when publishing a new article.
 
