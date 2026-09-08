@@ -89,14 +89,17 @@
     updateStatus(targetIndex, state.slides.length);
   }
 
+  function getRequestedIndex(track, fallback, total) {
+    const value = Number(track.dataset.galleryTargetIndex);
+    return normalizeIndex(Number.isInteger(value) ? value : fallback, total);
+  }
+
   function runRequestedTransition(animate) {
     const state = getGalleryState();
     if (!state || state.slides.length < 2) return;
     if (state.track.dataset.fadeBusy === "true") return;
 
-    let requestedIndex = Number(state.track.dataset.galleryTargetIndex);
-    if (!Number.isInteger(requestedIndex)) requestedIndex = state.activeIndex;
-    requestedIndex = normalizeIndex(requestedIndex, state.slides.length);
+    const requestedIndex = getRequestedIndex(state.track, state.activeIndex, state.slides.length);
 
     if (requestedIndex === state.activeIndex) {
       setVisibleSlide(state, state.activeIndex);
@@ -114,10 +117,9 @@
         return;
       }
 
-      const latestRequested = normalizeIndex(
-        Number.isInteger(Number(state.track.dataset.galleryTargetIndex))
-          ? Number(state.track.dataset.galleryTargetIndex)
-          : requestedIndex,
+      const latestRequested = getRequestedIndex(
+        state.track,
+        requestedIndex,
         freshState.slides.length
       );
 
@@ -161,16 +163,16 @@
         const finalState = getGalleryState();
         if (!finalState || finalState.track !== state.track) return;
 
-        setVisibleSlide(finalState, requestedIndex);
-
-        const queuedIndex = normalizeIndex(
-          Number.isInteger(Number(state.track.dataset.galleryTargetIndex))
-            ? Number(state.track.dataset.galleryTargetIndex)
-            : requestedIndex,
+        const queuedIndex = getRequestedIndex(
+          state.track,
+          requestedIndex,
           finalState.slides.length
         );
 
+        setVisibleSlide(finalState, requestedIndex);
+
         if (queuedIndex !== requestedIndex) {
+          state.track.dataset.galleryTargetIndex = String(queuedIndex);
           runRequestedTransition(true);
         }
       });
@@ -196,8 +198,11 @@
     const state = getGalleryState();
     if (!state || state.slides.length < 2) return;
 
-    const queuedIndex = Number(state.track.dataset.galleryTargetIndex);
-    const baseIndex = Number.isInteger(queuedIndex) ? queuedIndex : state.activeIndex;
+    const baseIndex = getRequestedIndex(
+      state.track,
+      state.activeIndex,
+      state.slides.length
+    );
     showIndex(baseIndex + delta, true);
   }
 
