@@ -1,8 +1,8 @@
 (function() {
   const root = document.documentElement;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const FADE_OUT_MS = 480;
-  const FADE_IN_MS = 640;
+  const FADE_OUT_MS = 360;
+  const FADE_IN_MS = 500;
   const ENTRY_KEY = "jazzingffm-transition-entry";
   const CURTAIN_ID = "jazzingPageTransition";
   const preloadCache = new Map();
@@ -10,6 +10,14 @@
   let navigationToken = 0;
   let preparedHash = null;
   let navigating = false;
+
+  function restoreContentOpacity() {
+    const main = document.querySelector("main");
+    if (main) {
+      main.style.opacity = "1";
+      main.style.visibility = "visible";
+    }
+  }
 
   function ensureCurtain() {
     let curtain = document.getElementById(CURTAIN_ID);
@@ -37,6 +45,7 @@
   }
 
   const curtain = ensureCurtain();
+  restoreContentOpacity();
 
   function nextPaint(callback) {
     requestAnimationFrame(function() {
@@ -83,7 +92,7 @@
         curtain.style.opacity = String(value);
       });
 
-      timeoutId = window.setTimeout(finish, duration + 120);
+      timeoutId = window.setTimeout(finish, duration + 100);
     });
   }
 
@@ -93,9 +102,12 @@
   }
 
   function revealPage() {
+    restoreContentOpacity();
+
     return new Promise(function(resolve) {
       nextPaint(function() {
         fadeCurtainTo(0, FADE_IN_MS, "cubic-bezier(0.16, 1, 0.3, 1)").then(function() {
+          restoreContentOpacity();
           curtain.style.pointerEvents = "none";
           navigating = false;
           resolve();
@@ -202,7 +214,7 @@
 
     const preload = Promise.allSettled(urls.map(preloadImage));
     const timeout = new Promise(function(resolve) {
-      window.setTimeout(resolve, FADE_OUT_MS - 30);
+      window.setTimeout(resolve, Math.max(120, FADE_OUT_MS - 30));
     });
 
     return Promise.race([preload, timeout]);
@@ -374,6 +386,7 @@
   });
 
   window.addEventListener("pageshow", function(event) {
+    restoreContentOpacity();
     if (!event.persisted) return;
     ++navigationToken;
     preparedHash = null;
@@ -393,6 +406,7 @@
     revealPage();
   } else {
     root.classList.remove("jazzing-transition-entry");
+    restoreContentOpacity();
     forceCurtainOpacity(0);
   }
 })();
