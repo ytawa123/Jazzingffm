@@ -6,3 +6,12 @@
 #articleCaption.caption {
   margin-top: 4px;
 }
+
+/* Interview speaker typography: JazzingFfm in typewriter, musician in serif. */
+body .article-body p.question {
+  font-family: "Courier New", Courier, monospace;
+}
+
+body .article-body p:not(.question):has(> strong:first-child) {
+  font-family: Georgia, "Times New Roman", serif;
+}
