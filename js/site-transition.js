@@ -1,65 +1,107 @@
 (function() {
-  const main = document.querySelector("main");
-
-  if (!main || typeof main.animate !== "function") {
-    return;
-  }
-
+  const root = document.documentElement;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const FADE_OUT_MS = 420;
-  const FADE_IN_MS = 560;
+  const FADE_OUT_MS = 480;
+  const FADE_IN_MS = 640;
   const ENTRY_KEY = "jazzingffm-transition-entry";
+  const CURTAIN_ID = "jazzingPageTransition";
   const preloadCache = new Map();
-  let activeAnimation = null;
+
   let navigationToken = 0;
   let preparedHash = null;
+  let navigating = false;
 
-  function cancelActiveAnimation() {
-    if (activeAnimation) {
-      activeAnimation.cancel();
-      activeAnimation = null;
-    }
+  function ensureCurtain() {
+    let curtain = document.getElementById(CURTAIN_ID);
+    if (curtain) return curtain;
+
+    curtain = document.createElement("div");
+    curtain.id = CURTAIN_ID;
+    curtain.setAttribute("aria-hidden", "true");
+    curtain.style.position = "fixed";
+    curtain.style.inset = "0";
+    curtain.style.zIndex = "2147483000";
+    curtain.style.background = "#050505";
+    curtain.style.opacity = root.classList.contains("jazzing-transition-entry") ? "1" : "0";
+    curtain.style.pointerEvents = "none";
+    curtain.style.transitionProperty = "opacity";
+    curtain.style.transitionDuration = "0ms";
+    curtain.style.transitionTimingFunction = "linear";
+    curtain.style.willChange = "opacity";
+    curtain.style.transform = "translateZ(0)";
+    curtain.style.backfaceVisibility = "hidden";
+    curtain.style.contain = "strict";
+
+    document.body.appendChild(curtain);
+    return curtain;
   }
 
-  function currentOpacity() {
-    const value = Number.parseFloat(window.getComputedStyle(main).opacity);
-    return Number.isFinite(value) ? value : 1;
+  const curtain = ensureCurtain();
+
+  function nextPaint(callback) {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(callback);
+    });
   }
 
-  function restoreVisiblePage() {
-    cancelActiveAnimation();
-    main.style.opacity = "1";
+  function forceCurtainOpacity(value) {
+    curtain.style.transitionDuration = "0ms";
+    curtain.style.transitionTimingFunction = "linear";
+    curtain.style.opacity = String(value);
+    void curtain.offsetWidth;
   }
 
-  function animateOpacity(from, to, duration, easing, fill) {
-    cancelActiveAnimation();
-
+  function fadeCurtainTo(value, duration, easing) {
     if (reduceMotion || duration <= 0) {
-      main.style.opacity = String(to);
+      forceCurtainOpacity(value);
       return Promise.resolve();
     }
 
-    const animation = main.animate(
-      [
-        { opacity: from },
-        { opacity: to }
-      ],
-      {
-        duration: duration,
-        easing: easing,
-        fill: fill || "both"
-      }
-    );
+    return new Promise(function(resolve) {
+      let finished = false;
+      let timeoutId = null;
 
-    activeAnimation = animation;
-
-    return animation.finished.then(function() {
-      if (activeAnimation === animation) {
-        main.style.opacity = String(to);
-        animation.cancel();
-        activeAnimation = null;
+      function finish() {
+        if (finished) return;
+        finished = true;
+        curtain.removeEventListener("transitionend", onTransitionEnd);
+        if (timeoutId !== null) window.clearTimeout(timeoutId);
+        resolve();
       }
-    }).catch(function() {});
+
+      function onTransitionEnd(event) {
+        if (event.target === curtain && event.propertyName === "opacity") {
+          finish();
+        }
+      }
+
+      curtain.addEventListener("transitionend", onTransitionEnd);
+      curtain.style.transitionDuration = duration + "ms";
+      curtain.style.transitionTimingFunction = easing;
+
+      requestAnimationFrame(function() {
+        curtain.style.opacity = String(value);
+      });
+
+      timeoutId = window.setTimeout(finish, duration + 120);
+    });
+  }
+
+  function coverPage() {
+    curtain.style.pointerEvents = "auto";
+    return fadeCurtainTo(1, FADE_OUT_MS, "cubic-bezier(0.4, 0, 0.2, 1)");
+  }
+
+  function revealPage() {
+    return new Promise(function(resolve) {
+      nextPaint(function() {
+        fadeCurtainTo(0, FADE_IN_MS, "cubic-bezier(0.16, 1, 0.3, 1)").then(function() {
+          curtain.style.pointerEvents = "none";
+          navigating = false;
+          resolve();
+        });
+      });
+    });
   }
 
   function firstImage(article) {
@@ -160,36 +202,19 @@
 
     const preload = Promise.allSettled(urls.map(preloadImage));
     const timeout = new Promise(function(resolve) {
-      window.setTimeout(resolve, 300);
+      window.setTimeout(resolve, FADE_OUT_MS - 30);
     });
 
     return Promise.race([preload, timeout]);
   }
 
   function instantScrollTop() {
-    const root = document.documentElement;
     const previous = root.style.scrollBehavior;
     root.style.scrollBehavior = "auto";
     window.scrollTo(0, 0);
 
     requestAnimationFrame(function() {
       root.style.scrollBehavior = previous;
-    });
-  }
-
-  function revealNewPage() {
-    main.style.opacity = "0";
-
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        animateOpacity(
-          0,
-          1,
-          reduceMotion ? 0 : FADE_IN_MS,
-          "cubic-bezier(0.16, 1, 0.3, 1)",
-          "both"
-        );
-      });
     });
   }
 
@@ -210,17 +235,14 @@
   }
 
   function navigateHash(targetHash) {
+    if (navigating) return;
+    navigating = true;
+
     const token = ++navigationToken;
     const preloadPromise = preloadTargetHash(targetHash);
-    const fadePromise = animateOpacity(
-      currentOpacity(),
-      0,
-      reduceMotion ? 0 : FADE_OUT_MS,
-      "cubic-bezier(0.4, 0, 0.2, 1)",
-      "forwards"
-    );
+    const coverPromise = coverPage();
 
-    Promise.all([preloadPromise, fadePromise]).then(function() {
+    Promise.all([preloadPromise, coverPromise]).then(function() {
       if (token !== navigationToken) return;
 
       instantScrollTop();
@@ -230,15 +252,12 @@
   }
 
   function navigatePage(targetUrl) {
+    if (navigating) return;
+    navigating = true;
+
     const token = ++navigationToken;
 
-    animateOpacity(
-      currentOpacity(),
-      0,
-      reduceMotion ? 0 : FADE_OUT_MS,
-      "cubic-bezier(0.4, 0, 0.2, 1)",
-      "forwards"
-    ).then(function() {
+    coverPage().then(function() {
       if (token !== navigationToken) return;
       markNextDocumentForFadeIn();
       window.location.href = targetUrl;
@@ -342,28 +361,37 @@
   window.addEventListener("hashchange", function() {
     const wasPrepared = preparedHash === window.location.hash;
     preparedHash = null;
-    cancelActiveAnimation();
 
     if (!wasPrepared) {
       ++navigationToken;
+      navigating = true;
+      curtain.style.pointerEvents = "auto";
+      forceCurtainOpacity(1);
       instantScrollTop();
     }
 
-    revealNewPage();
+    revealPage();
   });
 
   window.addEventListener("pageshow", function(event) {
     if (!event.persisted) return;
     ++navigationToken;
     preparedHash = null;
-    restoreVisiblePage();
+    navigating = false;
+    root.classList.remove("jazzing-transition-entry");
+    curtain.style.pointerEvents = "none";
+    forceCurtainOpacity(0);
   });
 
-  if (consumeDocumentFadeIn()) {
-    document.documentElement.classList.remove("jazzing-transition-entry");
-    main.style.opacity = "0";
-    revealNewPage();
+  const shouldFadeIn = root.classList.contains("jazzing-transition-entry") || consumeDocumentFadeIn();
+
+  if (shouldFadeIn) {
+    curtain.style.pointerEvents = "auto";
+    forceCurtainOpacity(1);
+    root.classList.remove("jazzing-transition-entry");
+    revealPage();
   } else {
-    document.documentElement.classList.remove("jazzing-transition-entry");
+    root.classList.remove("jazzing-transition-entry");
+    forceCurtainOpacity(0);
   }
 })();
