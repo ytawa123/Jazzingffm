@@ -47,6 +47,8 @@
 
     return animation.finished.then(function() {
       if (activeAnimation === animation) {
+        main.style.opacity = String(to);
+        animation.cancel();
         activeAnimation = null;
       }
     }).catch(function() {});
@@ -60,7 +62,7 @@
 
   function routeImageUrls(targetHash) {
     const articles = window.JAZZING_ARTICLES || [];
-    const route = (targetHash || "#/ ")
+    const route = (targetHash || "#/")
       .replace(/^#\/?/, "")
       .replace(/\/$/, "")
       .trim();
@@ -170,10 +172,7 @@
   function revealNewPage(startOpacity) {
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        animateOpacity(startOpacity, 1, reduceMotion ? 0 : 190, "cubic-bezier(0.22, 1, 0.36, 1)", "both")
-          .then(function() {
-            main.style.opacity = "1";
-          });
+        animateOpacity(startOpacity, 1, reduceMotion ? 0 : 190, "cubic-bezier(0.22, 1, 0.36, 1)", "both");
       });
     });
   }
