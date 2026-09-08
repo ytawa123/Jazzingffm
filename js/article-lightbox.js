@@ -109,8 +109,20 @@
     preloadNeighbors();
   }
 
+  function syncArticleGallery(delta) {
+    const control = document.getElementById(
+      delta < 0 ? "galleryPrevious" : "galleryNext"
+    );
+
+    if (control && !control.hidden) {
+      control.click();
+    }
+  }
+
   function move(delta) {
     if (items.length < 2) return;
+
+    syncArticleGallery(delta);
     activeIndex = (activeIndex + delta + items.length) % items.length;
     render();
   }
