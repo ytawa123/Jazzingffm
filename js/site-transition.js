@@ -172,7 +172,7 @@
   function revealNewPage(startOpacity) {
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        animateOpacity(startOpacity, 1, reduceMotion ? 0 : 190, "cubic-bezier(0.22, 1, 0.36, 1)", "both");
+        animateOpacity(startOpacity, 1, reduceMotion ? 0 : 280, "cubic-bezier(0.22, 1, 0.36, 1)", "both");
       });
     });
   }
@@ -183,7 +183,7 @@
     preloadTargetHash(targetHash).then(function() {
       if (token !== navigationToken) return;
 
-      return animateOpacity(1, 0.16, reduceMotion ? 0 : 95, "ease-out", "forwards").then(function() {
+      return animateOpacity(1, 0.16, reduceMotion ? 0 : 140, "ease-out", "forwards").then(function() {
         if (token !== navigationToken) return;
 
         instantScrollTop();
@@ -196,7 +196,7 @@
   function navigatePage(targetUrl) {
     ++navigationToken;
 
-    animateOpacity(1, 0.3, reduceMotion ? 0 : 95, "ease-out", "forwards").then(function() {
+    animateOpacity(1, 0.3, reduceMotion ? 0 : 140, "ease-out", "forwards").then(function() {
       window.location.href = targetUrl;
     });
   }
