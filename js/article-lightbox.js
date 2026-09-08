@@ -1,7 +1,7 @@
 (function() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const overlayDuration = reduceMotion ? 0 : 480;
-  const imageFadeDuration = reduceMotion ? 0 : 420;
+  const imageFadeDuration = reduceMotion ? 0 : 320;
   let lightbox = null;
   let lightboxLayers = [];
   let lightboxPrevious = null;
@@ -14,6 +14,7 @@
   let touchStartX = null;
   let closeTimer = null;
   let imageRequest = 0;
+  let queuedIndex = null;
 
   function strings() {
     const isGerman = document.documentElement.lang === "de";
@@ -138,15 +139,21 @@
   }
 
   function showImage(index, animate) {
-    if (!galleryImages.length || transitionBusy) return;
+    if (!galleryImages.length) return;
 
     const nextIndex = (index + galleryImages.length) % galleryImages.length;
+    if (transitionBusy) {
+      queuedIndex = nextIndex;
+      return;
+    }
+
     const request = ++imageRequest;
 
     if (!animate || imageFadeDuration === 0) {
       lightboxLayers.forEach(clearLayer);
       activeIndex = nextIndex;
       activeLayerIndex = 0;
+      queuedIndex = null;
       fillLayer(lightboxLayers[activeLayerIndex], activeIndex);
       lightboxLayers[activeLayerIndex].classList.add("is-visible");
       setLiveStatus(lightboxLayers[activeLayerIndex]);
@@ -156,6 +163,7 @@
     if (nextIndex === activeIndex) return;
 
     transitionBusy = true;
+    activeIndex = nextIndex;
     const outgoingLayer = lightboxLayers[activeLayerIndex];
     const incomingLayerIndex = activeLayerIndex === 0 ? 1 : 0;
     const incomingLayer = lightboxLayers[incomingLayerIndex];
@@ -166,7 +174,6 @@
     prepareImage(layerImage(incomingLayer)).then(function() {
       if (request !== imageRequest) return;
 
-      activeIndex = nextIndex;
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           if (request !== imageRequest) return;
@@ -179,16 +186,34 @@
             clearLayer(outgoingLayer);
             activeLayerIndex = incomingLayerIndex;
             transitionBusy = false;
+
+            const pendingIndex = queuedIndex;
+            queuedIndex = null;
+            if (pendingIndex !== null && pendingIndex !== activeIndex) {
+              showImage(pendingIndex, true);
+            }
           }, imageFadeDuration);
         });
       });
     });
   }
 
+  function navigate(delta) {
+    if (!galleryImages.length) return;
+
+    const baseIndex = queuedIndex === null ? activeIndex : queuedIndex;
+    showImage(baseIndex + delta, true);
+  }
+
   function syncArticleGallery() {
     const activeImage = galleryImages[activeIndex];
     const gallery = activeImage && activeImage.closest(".article-gallery");
     if (!gallery) return;
+
+    if (window.JAZZING_GALLERY && typeof window.JAZZING_GALLERY.select === "function") {
+      window.JAZZING_GALLERY.select(activeIndex, { animate: false });
+      return;
+    }
 
     const track = gallery.querySelector(".article-gallery-track");
     const slides = track ? Array.from(track.children) : [];
@@ -200,6 +225,7 @@
           animation.cancel();
         });
       }
+      slide.style.removeProperty("opacity");
       slide.hidden = !isActive;
       slide.setAttribute("aria-hidden", isActive ? "false" : "true");
     });
@@ -220,12 +246,17 @@
     galleryImages = Array.from(gallery.querySelectorAll(".article-hero-image.has-photo img"));
     if (!galleryImages.length) return;
 
+    galleryImages.forEach(function(image) {
+      image.loading = "eager";
+    });
+
     createLightbox();
     updateLabels();
     window.clearTimeout(closeTimer);
     previousFocus = sourceImage;
     activeIndex = galleryImages.indexOf(sourceImage);
     if (activeIndex < 0) activeIndex = 0;
+    queuedIndex = null;
     showImage(activeIndex, false);
     lightbox.hidden = false;
     document.body.classList.add("article-lightbox-open");
@@ -244,6 +275,7 @@
     syncArticleGallery();
     imageRequest += 1;
     transitionBusy = false;
+    queuedIndex = null;
     lightbox.classList.remove("is-open");
     document.body.classList.remove("article-lightbox-open");
 
@@ -278,9 +310,9 @@
     if (!lightbox || lightbox.hidden) return;
 
     if (event.target.closest(".article-lightbox__previous")) {
-      showImage(activeIndex - 1, true);
+      navigate(-1);
     } else if (event.target.closest(".article-lightbox__next")) {
-      showImage(activeIndex + 1, true);
+      navigate(1);
     } else if (!event.target.closest(".article-lightbox__image")) {
       closeLightbox();
     }
@@ -302,10 +334,10 @@
       closeLightbox();
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      showImage(activeIndex - 1, true);
+      navigate(-1);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      showImage(activeIndex + 1, true);
+      navigate(1);
     }
   });
 
@@ -321,7 +353,7 @@
     touchStartX = null;
 
     if (Math.abs(distance) < 40) return;
-    showImage(activeIndex + (distance > 0 ? 1 : -1), true);
+    navigate(distance > 0 ? 1 : -1);
   }, { passive: true });
 
   const gallery = document.getElementById("articleGallery");
