@@ -1,9 +1,14 @@
-/* Page transitions are driven by js/site-transition.js so the dissolve is reliable on desktop. */
+/* Page transitions are opacity-only. Avoid blur/scale transforms because they
+   force the full page to re-rasterize and create visible shake during routing. */
 main {
   opacity: 1;
-  filter: blur(0);
-  transform: scale(1);
-  will-change: opacity, filter, transform;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main {
+    will-change: auto;
+  }
 }
 
 /* Homepage lead image: crop every source photo into one consistent portrait
