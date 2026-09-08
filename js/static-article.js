@@ -65,6 +65,18 @@
     });
   }
 
+  function fitImage(image) {
+    image.style.position = "absolute";
+    image.style.inset = "0";
+    image.style.width = "100%";
+    image.style.height = "100%";
+    image.style.maxWidth = "none";
+    image.style.maxHeight = "none";
+    image.style.objectFit = "contain";
+    image.style.objectPosition = "center";
+    image.style.display = "block";
+  }
+
   function renderGallery() {
     const images = Array.isArray(article.images) && article.images.length
       ? article.images
@@ -86,10 +98,12 @@
 
         slide.className = "article-hero-image has-photo";
         slide.hidden = !isActive;
+        slide.style.display = isActive ? "block" : "none";
         slide.setAttribute("aria-hidden", isActive ? "false" : "true");
         image.src = rootPath(path);
         image.alt = article.cardTitle[currentLang] + " — photo " + (index + 1) + " of " + images.length;
-        image.loading = index === 0 ? "eager" : "lazy";
+        image.loading = "eager";
+        fitImage(image);
         image.addEventListener("load", function() {
           slide.classList.add("is-loaded");
         }, { once: true });
@@ -159,6 +173,6 @@
   });
 
   localize();
-  loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
+  loadSharedScript("/js/gallery-transition.js?v=gallery33", "jazzing-gallery-transition");
   loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();
