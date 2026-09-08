@@ -1,14 +1,15 @@
 (function() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const overlayDuration = reduceMotion ? 0 : 480;
-  const imageFadeDuration = reduceMotion ? 0 : 300;
+  const imageFadeDuration = reduceMotion ? 0 : 420;
   let lightbox = null;
-  let lightboxImage = null;
-  let lightboxStatus = null;
+  let lightboxLayers = [];
   let lightboxPrevious = null;
   let lightboxNext = null;
   let galleryImages = [];
   let activeIndex = 0;
+  let activeLayerIndex = 0;
+  let transitionBusy = false;
   let previousFocus = null;
   let touchStartX = null;
   let closeTimer = null;
@@ -43,15 +44,24 @@
     lightbox.setAttribute("tabindex", "-1");
     lightbox.innerHTML =
       '<button class="article-lightbox__control article-lightbox__previous" type="button">‹</button>' +
-      '<figure class="article-lightbox__figure">' +
-        '<img class="article-lightbox__image" alt="" />' +
-        '<div class="article-lightbox__status" aria-live="polite"></div>' +
-      '</figure>' +
+      '<div class="article-lightbox__stage">' +
+        '<div class="article-lightbox__layer is-visible">' +
+          '<figure class="article-lightbox__frame">' +
+            '<img class="article-lightbox__image" alt="" />' +
+            '<div class="article-lightbox__status" aria-live="polite"></div>' +
+          '</figure>' +
+        '</div>' +
+        '<div class="article-lightbox__layer">' +
+          '<figure class="article-lightbox__frame">' +
+            '<img class="article-lightbox__image" alt="" />' +
+            '<div class="article-lightbox__status" aria-hidden="true"></div>' +
+          '</figure>' +
+        '</div>' +
+      '</div>' +
       '<button class="article-lightbox__control article-lightbox__next" type="button">›</button>';
 
     document.body.appendChild(lightbox);
-    lightboxImage = lightbox.querySelector(".article-lightbox__image");
-    lightboxStatus = lightbox.querySelector(".article-lightbox__status");
+    lightboxLayers = Array.from(lightbox.querySelectorAll(".article-lightbox__layer"));
     lightboxPrevious = lightbox.querySelector(".article-lightbox__previous");
     lightboxNext = lightbox.querySelector(".article-lightbox__next");
   }
@@ -64,70 +74,114 @@
     lightboxNext.setAttribute("aria-label", copy.next);
   }
 
-  function swapImage(request) {
-    if (request !== imageRequest || !galleryImages.length) return;
-
-    const sourceImage = galleryImages[activeIndex];
-    lightboxImage.src = sourceImage.currentSrc || sourceImage.src;
-    lightboxImage.alt = sourceImage.alt;
-    lightboxStatus.textContent = activeIndex + 1 + " / " + galleryImages.length;
-
+  function layerImage(layer) {
+    return layer.querySelector(".article-lightbox__image");
   }
 
-  function prepareImage(sourceImage) {
-    sourceImage.loading = "eager";
+  function layerStatus(layer) {
+    return layer.querySelector(".article-lightbox__status");
+  }
+
+  function fillLayer(layer, index) {
+    const sourceImage = galleryImages[index];
+    const image = layerImage(layer);
+    const status = layerStatus(layer);
+
+    image.src = sourceImage.currentSrc || sourceImage.src;
+    image.alt = sourceImage.alt;
+    status.textContent = index + 1 + " / " + galleryImages.length;
+  }
+
+  function clearLayer(layer) {
+    layer.classList.remove("is-visible");
+    layerImage(layer).removeAttribute("src");
+    layerImage(layer).alt = "";
+    layerStatus(layer).textContent = "";
+  }
+
+  function setLiveStatus(layer) {
+    lightboxLayers.forEach(function(candidate) {
+      const status = layerStatus(candidate);
+      const isActive = candidate === layer;
+      status.setAttribute("aria-hidden", isActive ? "false" : "true");
+      if (isActive) {
+        status.setAttribute("aria-live", "polite");
+      } else {
+        status.removeAttribute("aria-live");
+      }
+    });
+  }
+
+  function prepareImage(image) {
+    image.loading = "eager";
 
     function decode() {
-      if (sourceImage.naturalWidth > 0 && typeof sourceImage.decode === "function") {
-        return sourceImage.decode().catch(function() {});
+      if (image.naturalWidth > 0 && typeof image.decode === "function") {
+        return image.decode().catch(function() {});
       }
 
       return Promise.resolve();
     }
 
-    if (sourceImage.complete) return decode();
+    if (image.complete) return decode();
 
     return new Promise(function(resolve) {
       function finish() {
-        sourceImage.removeEventListener("load", finish);
-        sourceImage.removeEventListener("error", finish);
+        image.removeEventListener("load", finish);
+        image.removeEventListener("error", finish);
         resolve();
       }
 
-      sourceImage.addEventListener("load", finish, { once: true });
-      sourceImage.addEventListener("error", finish, { once: true });
+      image.addEventListener("load", finish, { once: true });
+      image.addEventListener("error", finish, { once: true });
     }).then(decode);
   }
 
-  function revealImage(request) {
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        if (request === imageRequest) lightboxImage.classList.remove("is-changing");
-      });
-    });
-  }
-
   function showImage(index, animate) {
-    if (!galleryImages.length) return;
+    if (!galleryImages.length || transitionBusy) return;
 
-    activeIndex = (index + galleryImages.length) % galleryImages.length;
+    const nextIndex = (index + galleryImages.length) % galleryImages.length;
     const request = ++imageRequest;
 
-    if (!animate || imageFadeDuration === 0 || !lightboxImage.getAttribute("src")) {
-      lightboxImage.classList.remove("is-changing");
-      swapImage(request);
+    if (!animate || imageFadeDuration === 0) {
+      lightboxLayers.forEach(clearLayer);
+      activeIndex = nextIndex;
+      activeLayerIndex = 0;
+      fillLayer(lightboxLayers[activeLayerIndex], activeIndex);
+      lightboxLayers[activeLayerIndex].classList.add("is-visible");
+      setLiveStatus(lightboxLayers[activeLayerIndex]);
       return;
     }
 
-    prepareImage(galleryImages[activeIndex]).then(function() {
+    if (nextIndex === activeIndex) return;
+
+    transitionBusy = true;
+    const outgoingLayer = lightboxLayers[activeLayerIndex];
+    const incomingLayerIndex = activeLayerIndex === 0 ? 1 : 0;
+    const incomingLayer = lightboxLayers[incomingLayerIndex];
+
+    clearLayer(incomingLayer);
+    fillLayer(incomingLayer, nextIndex);
+
+    prepareImage(layerImage(incomingLayer)).then(function() {
       if (request !== imageRequest) return;
 
-      lightboxImage.classList.add("is-changing");
-      window.setTimeout(function() {
-        if (request !== imageRequest) return;
-        swapImage(request);
-        revealImage(request);
-      }, imageFadeDuration);
+      activeIndex = nextIndex;
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          if (request !== imageRequest) return;
+          incomingLayer.classList.add("is-visible");
+          outgoingLayer.classList.remove("is-visible");
+          setLiveStatus(incomingLayer);
+
+          window.setTimeout(function() {
+            if (request !== imageRequest) return;
+            clearLayer(outgoingLayer);
+            activeLayerIndex = incomingLayerIndex;
+            transitionBusy = false;
+          }, imageFadeDuration);
+        });
+      });
     });
   }
 
@@ -189,7 +243,7 @@
 
     syncArticleGallery();
     imageRequest += 1;
-    lightboxImage.classList.remove("is-changing");
+    transitionBusy = false;
     lightbox.classList.remove("is-open");
     document.body.classList.remove("article-lightbox-open");
 
@@ -197,7 +251,7 @@
     window.clearTimeout(closeTimer);
     closeTimer = window.setTimeout(function() {
       lightbox.hidden = true;
-      lightboxImage.removeAttribute("src");
+      lightboxLayers.forEach(clearLayer);
       if (focusTarget && document.contains(focusTarget)) focusTarget.focus();
     }, overlayDuration);
   }
@@ -256,7 +310,7 @@
   });
 
   document.addEventListener("touchstart", function(event) {
-    if (!lightbox || lightbox.hidden || !event.target.closest(".article-lightbox__figure")) return;
+    if (!lightbox || lightbox.hidden || !event.target.closest(".article-lightbox__image")) return;
     touchStartX = event.touches[0].clientX;
   }, { passive: true });
 
