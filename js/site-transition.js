@@ -1,23 +1,4 @@
 (function() {
-  function loadArticleLightboxAssets() {
-    if (!document.querySelector('link[data-jazzing-article-lightbox]')) {
-      const stylesheet = document.createElement("link");
-      stylesheet.rel = "stylesheet";
-      stylesheet.href = "/css/article-lightbox.css?v=1";
-      stylesheet.setAttribute("data-jazzing-article-lightbox", "1");
-      document.head.appendChild(stylesheet);
-    }
-
-    if (!document.getElementById("jazzing-article-lightbox-script")) {
-      const script = document.createElement("script");
-      script.id = "jazzing-article-lightbox-script";
-      script.src = "/js/article-lightbox.js?v=1";
-      document.body.appendChild(script);
-    }
-  }
-
-  loadArticleLightboxAssets();
-
   const main = document.querySelector("main");
 
   if (!main || typeof main.animate !== "function") {
