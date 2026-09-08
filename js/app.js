@@ -143,7 +143,6 @@
     const articleCategory = document.getElementById("articleCategory");
     const articleTitle = document.getElementById("articleTitle");
     const articleByline = document.getElementById("articleByline");
-    const articleGallery = document.getElementById("articleGallery");
     const articleGalleryTrack = document.getElementById("articleGalleryTrack");
     const galleryPrevious = document.getElementById("galleryPrevious");
     const galleryNext = document.getElementById("galleryNext");

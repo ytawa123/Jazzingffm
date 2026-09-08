@@ -150,15 +150,6 @@
     document.body.appendChild(script);
   }
 
-  function loadSharedStyle(href, id) {
-    if (document.getElementById(id)) return;
-    const link = document.createElement("link");
-    link.id = id;
-    link.rel = "stylesheet";
-    link.href = href;
-    document.head.appendChild(link);
-  }
-
   langButtons.forEach(function(button) {
     button.addEventListener("click", function() {
       currentLang = button.getAttribute("data-lang-button");
@@ -168,8 +159,6 @@
   });
 
   localize();
-  loadSharedStyle("/css/article-lightbox.css?v=4", "jazzing-article-lightbox-style");
-  loadSharedScript("/js/article-lightbox.js?v=5", "jazzing-article-lightbox");
-  loadSharedScript("/js/gallery-transition.js?v=gallery33", "jazzing-gallery-transition");
+  loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
   loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();

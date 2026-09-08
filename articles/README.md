@@ -23,8 +23,6 @@ images/markus-harm/markus-harm-04.jpg
 
 Article galleries automatically use the shared previous/next arrow controls and display the current position, for example `1 / 7`.
 
-Clicking an article photo automatically opens the shared full-size lightbox. This applies to every current and future article; no article-specific lightbox setting is required.
-
 You normally do **not** need to touch `css/style.css` or `js/app.js` when publishing a new article.
 
 ## Sitemap
