@@ -8,7 +8,6 @@
   let lightboxNext = null;
   let galleryImages = [];
   let activeIndex = 0;
-  let requestedIndex = 0;
   let activeLayerIndex = 0;
   let transitionBusy = false;
   let previousFocus = null;
@@ -32,10 +31,6 @@
           previous: "Previous photo",
           next: "Next photo"
         };
-  }
-
-  function normalizeIndex(index) {
-    return ((index % galleryImages.length) + galleryImages.length) % galleryImages.length;
   }
 
   function createLightbox() {
@@ -124,6 +119,7 @@
       if (image.naturalWidth > 0 && typeof image.decode === "function") {
         return image.decode().catch(function() {});
       }
+
       return Promise.resolve();
     }
 
@@ -141,25 +137,25 @@
     }).then(decode);
   }
 
-  function setImageImmediately(index) {
-    lightboxLayers.forEach(clearLayer);
-    activeIndex = normalizeIndex(index);
-    requestedIndex = activeIndex;
-    activeLayerIndex = 0;
-    fillLayer(lightboxLayers[activeLayerIndex], activeIndex);
-    lightboxLayers[activeLayerIndex].classList.add("is-visible");
-    setLiveStatus(lightboxLayers[activeLayerIndex]);
-    transitionBusy = false;
-  }
-
-  function runRequestedImage() {
+  function showImage(index, animate) {
     if (!galleryImages.length || transitionBusy) return;
 
-    const nextIndex = normalizeIndex(requestedIndex);
+    const nextIndex = (index + galleryImages.length) % galleryImages.length;
+    const request = ++imageRequest;
+
+    if (!animate || imageFadeDuration === 0) {
+      lightboxLayers.forEach(clearLayer);
+      activeIndex = nextIndex;
+      activeLayerIndex = 0;
+      fillLayer(lightboxLayers[activeLayerIndex], activeIndex);
+      lightboxLayers[activeLayerIndex].classList.add("is-visible");
+      setLiveStatus(lightboxLayers[activeLayerIndex]);
+      return;
+    }
+
     if (nextIndex === activeIndex) return;
 
     transitionBusy = true;
-    const request = ++imageRequest;
     const outgoingLayer = lightboxLayers[activeLayerIndex];
     const incomingLayerIndex = activeLayerIndex === 0 ? 1 : 0;
     const incomingLayer = lightboxLayers[incomingLayerIndex];
@@ -170,67 +166,26 @@
     prepareImage(layerImage(incomingLayer)).then(function() {
       if (request !== imageRequest) return;
 
-      if (normalizeIndex(requestedIndex) !== nextIndex) {
-        clearLayer(incomingLayer);
-        transitionBusy = false;
-        runRequestedImage();
-        return;
-      }
-
       activeIndex = nextIndex;
-
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           if (request !== imageRequest) return;
-
           incomingLayer.classList.add("is-visible");
           outgoingLayer.classList.remove("is-visible");
           setLiveStatus(incomingLayer);
 
           window.setTimeout(function() {
             if (request !== imageRequest) return;
-
             clearLayer(outgoingLayer);
             activeLayerIndex = incomingLayerIndex;
             transitionBusy = false;
-
-            if (normalizeIndex(requestedIndex) !== activeIndex) {
-              runRequestedImage();
-            }
           }, imageFadeDuration);
         });
       });
     });
   }
 
-  function showImage(index, animate) {
-    if (!galleryImages.length) return;
-
-    requestedIndex = normalizeIndex(index);
-
-    if (!animate || imageFadeDuration === 0) {
-      imageRequest += 1;
-      setImageImmediately(requestedIndex);
-      return;
-    }
-
-    runRequestedImage();
-  }
-
-  function stepImage(delta) {
-    if (!galleryImages.length) return;
-    const baseIndex = transitionBusy ? requestedIndex : activeIndex;
-    showImage(baseIndex + delta, true);
-  }
-
   function syncArticleGallery() {
-    if (!galleryImages.length) return;
-
-    if (window.JAZZING_GALLERY && typeof window.JAZZING_GALLERY.showIndex === "function") {
-      window.JAZZING_GALLERY.showIndex(activeIndex, { animate: false });
-      return;
-    }
-
     const activeImage = galleryImages[activeIndex];
     const gallery = activeImage && activeImage.closest(".article-gallery");
     if (!gallery) return;
@@ -239,21 +194,19 @@
     const slides = track ? Array.from(track.children) : [];
 
     slides.forEach(function(slide, index) {
+      const isActive = index === activeIndex;
       if (typeof slide.getAnimations === "function") {
         slide.getAnimations().forEach(function(animation) {
           animation.cancel();
         });
       }
-      const isActive = index === activeIndex;
       slide.hidden = !isActive;
       slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-      slide.style.opacity = "";
     });
 
     if (track) {
       track.classList.remove("gallery-fade-out");
       track.dataset.fadeBusy = "false";
-      track.dataset.galleryTargetIndex = String(activeIndex);
     }
 
     const status = gallery.querySelector(".gallery-status");
@@ -267,17 +220,12 @@
     galleryImages = Array.from(gallery.querySelectorAll(".article-hero-image.has-photo img"));
     if (!galleryImages.length) return;
 
-    galleryImages.forEach(function(image) {
-      prepareImage(image);
-    });
-
     createLightbox();
     updateLabels();
     window.clearTimeout(closeTimer);
     previousFocus = sourceImage;
     activeIndex = galleryImages.indexOf(sourceImage);
     if (activeIndex < 0) activeIndex = 0;
-    requestedIndex = activeIndex;
     showImage(activeIndex, false);
     lightbox.hidden = false;
     document.body.classList.add("article-lightbox-open");
@@ -296,7 +244,6 @@
     syncArticleGallery();
     imageRequest += 1;
     transitionBusy = false;
-    requestedIndex = activeIndex;
     lightbox.classList.remove("is-open");
     document.body.classList.remove("article-lightbox-open");
 
@@ -331,9 +278,9 @@
     if (!lightbox || lightbox.hidden) return;
 
     if (event.target.closest(".article-lightbox__previous")) {
-      stepImage(-1);
+      showImage(activeIndex - 1, true);
     } else if (event.target.closest(".article-lightbox__next")) {
-      stepImage(1);
+      showImage(activeIndex + 1, true);
     } else if (!event.target.closest(".article-lightbox__image")) {
       closeLightbox();
     }
@@ -355,10 +302,10 @@
       closeLightbox();
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      stepImage(-1);
+      showImage(activeIndex - 1, true);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      stepImage(1);
+      showImage(activeIndex + 1, true);
     }
   });
 
@@ -374,7 +321,7 @@
     touchStartX = null;
 
     if (Math.abs(distance) < 40) return;
-    stepImage(distance > 0 ? 1 : -1);
+    showImage(activeIndex + (distance > 0 ? 1 : -1), true);
   }, { passive: true });
 
   const gallery = document.getElementById("articleGallery");
