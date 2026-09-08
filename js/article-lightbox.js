@@ -1,7 +1,7 @@
 (function() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const overlayDuration = reduceMotion ? 0 : 220;
-  const imageFadeDuration = reduceMotion ? 0 : 180;
+  const overlayDuration = reduceMotion ? 0 : 480;
+  const imageFadeDuration = reduceMotion ? 0 : 300;
   let lightbox = null;
   let lightboxImage = null;
   let lightboxStatus = null;
@@ -64,15 +64,6 @@
     lightboxNext.setAttribute("aria-label", copy.next);
   }
 
-  function revealChangedImage(request) {
-    if (request !== imageRequest) return;
-
-    requestAnimationFrame(function() {
-      if (request !== imageRequest) return;
-      lightboxImage.classList.remove("is-changing");
-    });
-  }
-
   function swapImage(request) {
     if (request !== imageRequest || !galleryImages.length) return;
 
@@ -81,20 +72,39 @@
     lightboxImage.alt = sourceImage.alt;
     lightboxStatus.textContent = activeIndex + 1 + " / " + galleryImages.length;
 
-    if (typeof lightboxImage.decode === "function") {
-      lightboxImage.decode().catch(function() {}).then(function() {
-        revealChangedImage(request);
-      });
-    } else if (lightboxImage.complete) {
-      revealChangedImage(request);
-    } else {
-      lightboxImage.addEventListener("load", function() {
-        revealChangedImage(request);
-      }, { once: true });
-      lightboxImage.addEventListener("error", function() {
-        revealChangedImage(request);
-      }, { once: true });
+  }
+
+  function prepareImage(sourceImage) {
+    sourceImage.loading = "eager";
+
+    function decode() {
+      if (sourceImage.naturalWidth > 0 && typeof sourceImage.decode === "function") {
+        return sourceImage.decode().catch(function() {});
+      }
+
+      return Promise.resolve();
     }
+
+    if (sourceImage.complete) return decode();
+
+    return new Promise(function(resolve) {
+      function finish() {
+        sourceImage.removeEventListener("load", finish);
+        sourceImage.removeEventListener("error", finish);
+        resolve();
+      }
+
+      sourceImage.addEventListener("load", finish, { once: true });
+      sourceImage.addEventListener("error", finish, { once: true });
+    }).then(decode);
+  }
+
+  function revealImage(request) {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        if (request === imageRequest) lightboxImage.classList.remove("is-changing");
+      });
+    });
   }
 
   function showImage(index, animate) {
@@ -109,10 +119,16 @@
       return;
     }
 
-    lightboxImage.classList.add("is-changing");
-    window.setTimeout(function() {
-      swapImage(request);
-    }, imageFadeDuration);
+    prepareImage(galleryImages[activeIndex]).then(function() {
+      if (request !== imageRequest) return;
+
+      lightboxImage.classList.add("is-changing");
+      window.setTimeout(function() {
+        if (request !== imageRequest) return;
+        swapImage(request);
+        revealImage(request);
+      }, imageFadeDuration);
+    });
   }
 
   function syncArticleGallery() {
@@ -144,7 +160,7 @@
   }
 
   function openLightbox(sourceImage) {
-    const gallery = sourceImage.closest('.article-gallery[data-photo-lightbox="true"]');
+    const gallery = sourceImage.closest(".article-gallery");
     if (!gallery) return;
 
     galleryImages = Array.from(gallery.querySelectorAll(".article-hero-image.has-photo img"));
@@ -189,7 +205,7 @@
   function decorateGalleryImages() {
     const copy = strings();
 
-    document.querySelectorAll('.article-gallery[data-photo-lightbox="true"] .article-hero-image.has-photo img').forEach(function(image) {
+    document.querySelectorAll(".article-gallery .article-hero-image.has-photo img").forEach(function(image) {
       image.setAttribute("role", "button");
       image.setAttribute("tabindex", "0");
       image.setAttribute("aria-label", copy.open);
@@ -197,7 +213,7 @@
   }
 
   document.addEventListener("click", function(event) {
-    const sourceImage = event.target.closest('.article-gallery[data-photo-lightbox="true"] .article-hero-image.has-photo img');
+    const sourceImage = event.target.closest(".article-gallery .article-hero-image.has-photo img");
 
     if (sourceImage) {
       event.preventDefault();
@@ -217,7 +233,7 @@
   });
 
   document.addEventListener("keydown", function(event) {
-    const sourceImage = event.target.closest && event.target.closest('.article-gallery[data-photo-lightbox="true"] .article-hero-image.has-photo img');
+    const sourceImage = event.target.closest && event.target.closest(".article-gallery .article-hero-image.has-photo img");
 
     if (sourceImage && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
@@ -258,7 +274,7 @@
   if (gallery) {
     new MutationObserver(decorateGalleryImages).observe(gallery, {
       attributes: true,
-      attributeFilter: ["data-photo-lightbox"],
+      attributeFilter: ["class"],
       childList: true,
       subtree: true
     });
