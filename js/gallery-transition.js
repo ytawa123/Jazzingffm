@@ -1,40 +1,43 @@
 (function() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const fadeDuration = reduceMotion ? 0 : 360;
+  const fadeDuration = reduceMotion ? 160 : 420;
   let touchStartX = null;
-
-  function normalizeIndex(index, total) {
-    return ((index % total) + total) % total;
-  }
 
   function getGalleryState() {
     const track = document.getElementById("articleGalleryTrack");
-    if (!track) return null;
+    if (!track) {
+      return null;
+    }
 
     const slides = Array.from(track.children);
-    if (!slides.length) return null;
+    if (slides.length < 2) {
+      return null;
+    }
 
     let activeIndex = slides.findIndex(function(slide) {
       return !slide.hidden;
     });
 
-    if (activeIndex < 0) activeIndex = 0;
+    if (activeIndex < 0) {
+      activeIndex = 0;
+    }
 
-    return {
-      track: track,
-      slides: slides,
-      activeIndex: activeIndex
-    };
+    return { track: track, slides: slides, activeIndex: activeIndex };
   }
 
   function updateStatus(index, total) {
     const status = document.querySelector("#articleGallery .gallery-status");
-    if (status) status.textContent = index + 1 + " / " + total;
+    if (status) {
+      status.textContent = index + 1 + " / " + total;
+    }
   }
 
   function prepareImage(slide) {
-    const image = slide && slide.querySelector("img");
-    if (!image) return Promise.resolve();
+    const image = slide.querySelector("img");
+
+    if (!image) {
+      return Promise.resolve();
+    }
 
     image.loading = "eager";
 
@@ -42,7 +45,7 @@
       slide.classList.add("is-loaded");
     }
 
-    function decode() {
+    if (image.complete) {
       if (image.naturalWidth > 0 && typeof image.decode === "function") {
         return image.decode().catch(function() {}).then(reveal);
       }
@@ -51,207 +54,75 @@
       return Promise.resolve();
     }
 
-    if (image.complete) return decode();
-
     return new Promise(function(resolve) {
       function finish() {
         image.removeEventListener("load", finish);
         image.removeEventListener("error", finish);
+        reveal();
         resolve();
       }
 
       image.addEventListener("load", finish, { once: true });
       image.addEventListener("error", finish, { once: true });
-    }).then(decode);
-  }
-
-  function cancelAnimations(slide) {
-    if (!slide || typeof slide.getAnimations !== "function") return;
-    slide.getAnimations().forEach(function(animation) {
-      animation.cancel();
     });
-    slide.style.opacity = "";
-  }
-
-  function setVisibleSlide(state, index) {
-    const targetIndex = normalizeIndex(index, state.slides.length);
-
-    state.slides.forEach(function(slide, slideIndex) {
-      cancelAnimations(slide);
-      const isActive = slideIndex === targetIndex;
-      slide.hidden = !isActive;
-      slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-    });
-
-    state.track.dataset.fadeBusy = "false";
-    state.track.dataset.galleryTargetIndex = String(targetIndex);
-    state.track.classList.remove("gallery-fade-out");
-    updateStatus(targetIndex, state.slides.length);
-  }
-
-  function getRequestedIndex(track, fallback, total) {
-    const value = Number(track.dataset.galleryTargetIndex);
-    return normalizeIndex(Number.isInteger(value) ? value : fallback, total);
-  }
-
-  function runRequestedTransition(animate) {
-    const state = getGalleryState();
-    if (!state || state.slides.length < 2) return;
-    if (state.track.dataset.fadeBusy === "true") return;
-
-    const requestedIndex = getRequestedIndex(state.track, state.activeIndex, state.slides.length);
-
-    if (requestedIndex === state.activeIndex) {
-      setVisibleSlide(state, state.activeIndex);
-      return;
-    }
-
-    state.track.dataset.fadeBusy = "true";
-    const outgoingSlide = state.slides[state.activeIndex];
-    const incomingSlide = state.slides[requestedIndex];
-
-    prepareImage(incomingSlide).then(function() {
-      const freshState = getGalleryState();
-      if (!freshState || freshState.track !== state.track || !state.track.contains(incomingSlide)) {
-        state.track.dataset.fadeBusy = "false";
-        return;
-      }
-
-      const latestRequested = getRequestedIndex(
-        state.track,
-        requestedIndex,
-        freshState.slides.length
-      );
-
-      if (latestRequested !== requestedIndex) {
-        state.track.dataset.fadeBusy = "false";
-        runRequestedTransition(true);
-        return;
-      }
-
-      if (!animate || fadeDuration === 0 || typeof outgoingSlide.animate !== "function") {
-        setVisibleSlide(freshState, requestedIndex);
-        return;
-      }
-
-      incomingSlide.hidden = false;
-      incomingSlide.setAttribute("aria-hidden", "false");
-      outgoingSlide.setAttribute("aria-hidden", "true");
-
-      const outgoingAnimation = outgoingSlide.animate(
-        [{ opacity: 1 }, { opacity: 0 }],
-        {
-          duration: fadeDuration,
-          easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-          fill: "forwards"
-        }
-      );
-
-      const incomingAnimation = incomingSlide.animate(
-        [{ opacity: 0 }, { opacity: 1 }],
-        {
-          duration: fadeDuration,
-          easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-          fill: "forwards"
-        }
-      );
-
-      Promise.all([
-        outgoingAnimation.finished.catch(function() {}),
-        incomingAnimation.finished.catch(function() {})
-      ]).then(function() {
-        const finalState = getGalleryState();
-        if (!finalState || finalState.track !== state.track) return;
-
-        const queuedIndex = getRequestedIndex(
-          state.track,
-          requestedIndex,
-          finalState.slides.length
-        );
-
-        setVisibleSlide(finalState, requestedIndex);
-
-        if (queuedIndex !== requestedIndex) {
-          state.track.dataset.galleryTargetIndex = String(queuedIndex);
-          runRequestedTransition(true);
-        }
-      });
-    });
-  }
-
-  function showIndex(index, animate) {
-    const state = getGalleryState();
-    if (!state) return;
-
-    const targetIndex = normalizeIndex(index, state.slides.length);
-    state.track.dataset.galleryTargetIndex = String(targetIndex);
-
-    if (state.slides.length < 2 || animate === false) {
-      setVisibleSlide(state, targetIndex);
-      return;
-    }
-
-    runRequestedTransition(true);
   }
 
   function changeSlide(delta) {
     const state = getGalleryState();
-    if (!state || state.slides.length < 2) return;
+    if (!state || state.track.dataset.fadeBusy === "true") {
+      return;
+    }
 
-    const baseIndex = getRequestedIndex(
-      state.track,
-      state.activeIndex,
-      state.slides.length
-    );
-    showIndex(baseIndex + delta, true);
-  }
+    const nextIndex =
+      (state.activeIndex + delta + state.slides.length) % state.slides.length;
 
-  function initializeTrack(track) {
-    if (!track) return;
+    if (nextIndex === state.activeIndex) {
+      return;
+    }
 
-    const slides = Array.from(track.children);
-    if (!slides.length) return;
+    state.track.dataset.fadeBusy = "true";
+    state.track.style.transitionDuration = fadeDuration + "ms";
+    state.track.classList.add("gallery-fade-out");
 
-    let activeIndex = slides.findIndex(function(slide) {
-      return !slide.hidden;
-    });
-    if (activeIndex < 0) activeIndex = 0;
+    window.setTimeout(function() {
+      prepareImage(state.slides[nextIndex]).then(function() {
+        state.slides.forEach(function(slide, index) {
+          const isActive = index === nextIndex;
+          slide.hidden = !isActive;
+          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
 
-    slides.forEach(function(slide, index) {
-      const isActive = index === activeIndex;
-      slide.hidden = !isActive;
-      slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-      prepareImage(slide);
-    });
+        updateStatus(nextIndex, state.slides.length);
 
-    track.dataset.fadeBusy = "false";
-    track.dataset.galleryTargetIndex = String(activeIndex);
-    updateStatus(activeIndex, slides.length);
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            state.track.classList.remove("gallery-fade-out");
+
+            window.setTimeout(function() {
+              state.track.dataset.fadeBusy = "false";
+            }, fadeDuration + 40);
+          });
+        });
+      });
+    }, fadeDuration + 40);
   }
 
   const initialTrack = document.getElementById("articleGalleryTrack");
-  if (initialTrack) {
-    initializeTrack(initialTrack);
-    new MutationObserver(function() {
-      initializeTrack(initialTrack);
-    }).observe(initialTrack, { childList: true });
-  }
+  const initialSlide = initialTrack && Array.from(initialTrack.children).find(function(slide) {
+    return !slide.hidden;
+  });
 
-  window.JAZZING_GALLERY = {
-    showIndex: function(index, options) {
-      showIndex(index, !(options && options.animate === false));
-    },
-    getActiveIndex: function() {
-      const state = getGalleryState();
-      return state ? state.activeIndex : 0;
-    }
-  };
+  if (initialSlide) {
+    prepareImage(initialSlide);
+  }
 
   document.addEventListener(
     "click",
     function(event) {
       const button = event.target.closest("#galleryPrevious, #galleryNext");
-      if (!button) return;
+      if (!button) {
+        return;
+      }
 
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -264,7 +135,10 @@
     "touchstart",
     function(event) {
       const track = event.target.closest("#articleGalleryTrack");
-      if (!track || !event.touches.length) return;
+      if (!track || !event.touches.length) {
+        return;
+      }
+
       touchStartX = event.touches[0].clientX;
     },
     { capture: true, passive: true }
@@ -274,12 +148,16 @@
     "touchend",
     function(event) {
       const track = event.target.closest("#articleGalleryTrack");
-      if (!track || touchStartX === null || !event.changedTouches.length) return;
+      if (!track || touchStartX === null || !event.changedTouches.length) {
+        return;
+      }
 
       const distance = touchStartX - event.changedTouches[0].clientX;
       touchStartX = null;
 
-      if (Math.abs(distance) < 40) return;
+      if (Math.abs(distance) < 40) {
+        return;
+      }
 
       event.stopImmediatePropagation();
       changeSlide(distance > 0 ? 1 : -1);
