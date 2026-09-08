@@ -168,8 +168,8 @@
   });
 
   localize();
-  loadSharedStyle("/css/article-lightbox.css?v=4", "jazzing-article-lightbox-style");
-  loadSharedScript("/js/article-lightbox.js?v=4", "jazzing-article-lightbox");
-  loadSharedScript("/js/gallery-transition.js?v=gallery32", "jazzing-gallery-transition");
+  loadSharedStyle("/css/article-lightbox.css?v=5", "jazzing-article-lightbox-style");
+  loadSharedScript("/js/article-lightbox.js?v=5", "jazzing-article-lightbox");
+  loadSharedScript("/js/gallery-transition.js?v=gallery33", "jazzing-gallery-transition");
   loadSharedScript("/js/site-transition.js?v=4", "jazzing-site-transition");
 })();
