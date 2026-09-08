@@ -97,6 +97,49 @@ window.JAZZING_ARTICLES = [
       "en": "<p>Mustermann Jazzing2 uses the voice as melody, texture and sometimes as pure rhythm. Her work sits between song form and open improvisation, always close to the feeling of a room and the people listening inside it.</p>\n<p class=\"question\">JazzingFfm: What makes a vocal phrase feel honest to you?</p>\n<p>Mustermann Jazzing2: It has to have a reason to arrive. I like phrases that sound as if they were found in the moment, even when the material is composed. The voice reveals very quickly when something is only decorative.</p>\n<p class=\"question\">JazzingFfm: How do you build trust with a band?</p>\n<p>Mustermann Jazzing2: By listening before I add anything. If everyone is trying to prove something, the music gets crowded. Trust begins when the band can leave space and still feel connected.</p>",
       "de": "<p>Mustermann Jazzing2 nutzt die Stimme als Melodie, Textur und manchmal als reinen Rhythmus. Ihre Arbeit bewegt sich zwischen Songform und offener Improvisation, immer nah am Raum und an den Menschen, die darin zuhören.</p>\n<p class=\"question\">JazzingFfm: Wann fühlt sich eine gesungene Phrase für dich ehrlich an?</p>\n<p>Mustermann Jazzing2: Sie muss einen Grund haben, aufzutauchen. Ich mag Phrasen, die wirken, als wären sie im Moment gefunden worden, selbst wenn das Material komponiert ist. Die Stimme zeigt sehr schnell, wenn etwas nur Dekoration ist.</p>\n<p class=\"question\">JazzingFfm: Wie entsteht Vertrauen in einer Band?</p>\n<p>Mustermann Jazzing2: Indem man zuhört, bevor man etwas hinzufügt. Wenn alle etwas beweisen wollen, wird die Musik eng. Vertrauen beginnt, wenn die Band Raum lassen kann und trotzdem verbunden bleibt.</p>"
     }
+  },
+  {
+    "slug": "build-test",
+    "category": "interviews",
+    "categoryLabel": {
+      "en": "Interviews",
+      "de": "Interviews"
+    },
+    "title": {
+      "en": "Interview | Build Test",
+      "de": "Interview | Build Test"
+    },
+    "cardTitle": {
+      "en": "Build Test",
+      "de": "Build Test"
+    },
+    "cardSubtitle": {
+      "en": "generated article test",
+      "de": "generierter Artikeltest"
+    },
+    "date": {
+      "en": "1st January 2026",
+      "de": "1. Januar 2026"
+    },
+    "images": [
+      "images/mustermann-jazzing1/mustermann-jazzing1-01.jpg"
+    ],
+    "caption": {
+      "en": "Build test image.",
+      "de": "Build-Test-Bild."
+    },
+    "excerpt": {
+      "en": "Temporary generator test.",
+      "de": "Temporärer Generator-Test."
+    },
+    "imageLabel": {
+      "en": "Build test",
+      "de": "Build Test"
+    },
+    "body": {
+      "en": "<p>Temporary build test.</p><p class=\"question\">JazzingFfm: Test?</p><p>Build Test: Yes.</p>",
+      "de": "<p>Temporärer Build-Test.</p><p class=\"question\">JazzingFfm: Test?</p><p>Build Test: Ja.</p>"
+    }
   }
 ];
 
@@ -108,5 +151,9 @@ window.JAZZING_ARTICLE_BIOS = {
   "mustermann-jazzing2": {
     "en": "Mustermann Jazzing2 is a vocalist working between song form and open improvisation. She uses the voice as melody, texture and rhythm, with a strong focus on listening and shared musical space.",
     "de": "Mustermann Jazzing2 ist Sängerin und arbeitet zwischen Songform und offener Improvisation. Sie nutzt die Stimme als Melodie, Textur und Rhythmus – mit einem besonderen Fokus auf Zuhören und gemeinsamen musikalischen Raum."
+  },
+  "build-test": {
+    "en": "Temporary build test.",
+    "de": "Temporärer Build-Test."
   }
 };
