@@ -20,6 +20,14 @@
   <link rel="stylesheet" href="css/article-caption-gap.css?v=caption38" />
   <link rel="stylesheet" href="css/site-polish.css?v=15" />
   <link rel="stylesheet" href="css/article-lightbox.css?v=1" />
+  <style>html.jazzing-transition-entry main { opacity: 0; }</style>
+  <script>
+    try {
+      if (sessionStorage.getItem("jazzingffm-transition-entry") === "1") {
+        document.documentElement.classList.add("jazzing-transition-entry");
+      }
+    } catch (error) {}
+  </script>
 </head>
 
 <body>
@@ -221,7 +229,7 @@
   <script src="js/app.js?v=brand39"></script>
   <script src="js/gallery-transition.js?v=gallery33"></script>
   <script src="js/article-lightbox.js?v=2"></script>
-  <script src="js/site-transition.js?v=6"></script>
+  <script src="js/site-transition.js?v=7"></script>
   <script src="js/home-labels.js?v=2"></script>
 
 </body>
