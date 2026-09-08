@@ -9,10 +9,8 @@
   opacity: 0;
 }
 
-.article-gallery .article-hero-image.has-photo {
-  align-items: center;
-  display: flex;
-  justify-content: center;
+.article-gallery .article-hero-image.has-photo[hidden] {
+  display: none;
 }
 
 .article-gallery .article-hero-image.has-photo img {
