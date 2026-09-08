@@ -143,6 +143,7 @@
     const articleCategory = document.getElementById("articleCategory");
     const articleTitle = document.getElementById("articleTitle");
     const articleByline = document.getElementById("articleByline");
+    const articleGallery = document.getElementById("articleGallery");
     const articleGalleryTrack = document.getElementById("articleGalleryTrack");
     const galleryPrevious = document.getElementById("galleryPrevious");
     const galleryNext = document.getElementById("galleryNext");
@@ -591,6 +592,7 @@
       articleTitle.textContent =
         article.cardTitle[currentLang] + " " + article.cardSubtitle[currentLang];
       articleByline.textContent = article.date[currentLang];
+      articleGallery.dataset.photoLightbox = article.slug === "mustermann-jazzing1" ? "true" : "false";
       renderArticleGallery(article, copy);
       articleCaption.textContent = article.caption[currentLang];
       articleBody.innerHTML = article.body[currentLang];
