@@ -10,9 +10,18 @@ The public website remains static. `scripts/build_site.py` converts these JSON f
 
 The generator deliberately does **not** modify the existing gallery, lightbox, routing, transition, typography or localization JavaScript.
 
+Gallery originals remain under `images/<slug>/`. The build creates optimized WebP copies under `images/web/<slug>/` (maximum 2200 px on the long edge) and publishes those smaller copies to the website. Keep listing the original JPEG paths in the article JSON; the generator maps them to the WebP copies automatically.
+
 ## Adding an article
 
-Create one JSON file in `content/articles/`, add its images under `images/<slug>/`, and push the branch. GitHub Actions runs the generator and commits the generated website files back to the same branch automatically.
+Create one JSON file in `content/articles/`, add its original `.jpg`, `.JPG`, `.jpeg` or `.JPEG` images under `images/<slug>/`, and push the branch. GitHub Actions optimizes the images, runs the generator and commits the generated website files back to the same branch automatically.
+
+For a local build, run these commands in order:
+
+```bash
+bash scripts/optimize_gallery_images.sh
+python scripts/build_site.py
+```
 
 Required top-level fields:
 

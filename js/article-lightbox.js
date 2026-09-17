@@ -74,7 +74,7 @@
     ).map(function(image) {
       return {
         element: image,
-        src: image.currentSrc || image.src,
+        src: image.currentSrc || image.getAttribute("src") || image.dataset.src,
         alt: image.alt || ""
       };
     }).filter(function(item) {
@@ -82,16 +82,15 @@
     });
   }
 
-  function preloadNeighbors() {
+  function preloadNext() {
     if (items.length < 2) return;
 
-    [
-      (activeIndex - 1 + items.length) % items.length,
-      (activeIndex + 1) % items.length
-    ].forEach(function(index) {
-      const preload = new Image();
-      preload.src = items[index].src;
-    });
+    const item = items[(activeIndex + 1) % items.length];
+    if (!item.element.getAttribute("src")) {
+      item.element.fetchPriority = "low";
+      item.element.loading = "eager";
+      item.element.src = item.src;
+    }
   }
 
   function render() {
@@ -106,7 +105,7 @@
     previousButton.hidden = !hasMultiple;
     nextButton.hidden = !hasMultiple;
 
-    preloadNeighbors();
+    preloadNext();
   }
 
   function syncArticleGallery(delta) {

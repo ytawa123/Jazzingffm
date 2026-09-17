@@ -100,9 +100,17 @@
         slide.hidden = !isActive;
         slide.style.display = isActive ? "block" : "none";
         slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-        image.src = rootPath(path);
+        image.dataset.src = rootPath(path);
+        if (isActive) {
+          image.src = rootPath(path);
+          image.loading = "eager";
+          image.fetchPriority = "high";
+        } else {
+          image.loading = "lazy";
+          image.fetchPriority = "low";
+        }
+        image.decoding = "async";
         image.alt = article.cardTitle[currentLang] + " — photo " + (index + 1) + " of " + images.length;
-        image.loading = "eager";
         fitImage(image);
         image.addEventListener("load", function() {
           slide.classList.add("is-loaded");
@@ -173,6 +181,6 @@
   });
 
   localize();
-  loadSharedScript("/js/gallery-transition.js?v=gallery33", "jazzing-gallery-transition");
+  loadSharedScript("/js/gallery-transition.js?v=gallery35", "jazzing-gallery-transition");
   loadSharedScript("/js/site-transition.js?v=9", "jazzing-site-transition");
 })();
