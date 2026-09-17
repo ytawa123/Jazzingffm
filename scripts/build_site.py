@@ -71,9 +71,23 @@ def validate_article(article, path):
         if not image.exists():
             raise SystemExit(f"{path}: image does not exist: {image_path}")
 
+        web_image = ROOT / optimized_image_path(image_path)
+        if not web_image.exists():
+            raise SystemExit(
+                f"{path}: optimized image does not exist: {web_image.relative_to(ROOT)}. "
+                "Run scripts/optimize_gallery_images.sh first."
+            )
+
     seo = article["seo"]
     if not seo.get("description") or not seo.get("headline"):
         raise SystemExit(f"{path}: seo.description and seo.headline are required")
+
+
+def optimized_image_path(image_path):
+    path = Path(image_path)
+    if path.suffix.lower() not in (".jpg", ".jpeg"):
+        return image_path
+    return (Path("images/web") / path.relative_to("images")).with_suffix(".webp").as_posix()
 
 
 def runtime_article(article):
@@ -85,7 +99,7 @@ def runtime_article(article):
         "cardTitle": article["cardTitle"],
         "cardSubtitle": article["cardSubtitle"],
         "date": {"en": article["date"]["en"], "de": article["date"]["de"]},
-        "images": article["images"],
+        "images": [optimized_image_path(path) for path in article["images"]],
         "caption": article["caption"],
         "excerpt": article["excerpt"],
         "imageLabel": article["imageLabel"],
@@ -140,6 +154,11 @@ def first_image(article):
     return article["images"][0] if article["images"] else ""
 
 
+def first_web_image(article):
+    first = first_image(article)
+    return optimized_image_path(first) if first else ""
+
+
 def bold_static_speaker(body, musician_name):
     return body.replace(
         f"<p>{musician_name}:",
@@ -155,6 +174,7 @@ def static_page(article):
     article_title = f"{name} {article['cardSubtitle']['en']}"
     canonical = canonical_for(article)
     first = first_image(article)
+    first_web = first_web_image(article)
     first_absolute = f"https://jazzingffm.de/{first}" if first else "https://jazzingffm.de/favicon.png"
     category_label = article["categoryLabel"]["en"]
     category_active = "interviews" if article["category"] == "interviews" else "features"
@@ -175,9 +195,10 @@ def static_page(article):
         "image": first_absolute,
     }, ensure_ascii=False, separators=(",", ":"))
 
-    if first:
+    if first_web:
         initial_gallery = (
-            f'<div class="article-hero-image has-photo"><img src="/{html.escape(first, quote=True)}" '
+            f'<div class="article-hero-image has-photo"><img src="/{html.escape(first_web, quote=True)}" '
+            f'data-src="/{html.escape(first_web, quote=True)}" fetchpriority="high" loading="eager" decoding="async" '
             f'alt="{html.escape(article["caption"]["en"], quote=True)}" /></div>'
         )
     else:
@@ -231,7 +252,7 @@ def static_page(article):
     </article></div></section>
   </main>
   <footer class="site-footer"><div class="footer-main"><div class="footer-left"><div class="copyright"><p>© 2026 JAZZINGFFM. ALL RIGHTS RESERVED</p><div class="footer-meta"><p id="footerLove">MADE WITH LOVE IN FRANKFURT</p><span class="footer-separator" aria-hidden="true">•</span><nav class="footer-legal" aria-label="Legal"><a href="/impressum/">Impressum</a><span class="footer-separator" aria-hidden="true">•</span><a href="/datenschutz/">Datenschutz</a></nav></div></div></div><div class="footer-partner"><span id="footerPartnerLabel">In cooperation with</span><a href="https://www.jazz-frankfurt.de/" target="_blank" rel="noopener noreferrer" aria-label="Jazz-Initiative Frankfurt am Main e.V."><img src="/JIF_logo.png" alt="Jazz-Initiative Frankfurt am Main e.V." /></a></div></div></footer>
-  <script src="/data/articles.js"></script><script src="/articles/{slug}.js?v={int(article['version'])}"></script><script src="/js/static-article.js?v=10"></script><script src="/js/article-lightbox.js?v=2"></script>
+  <script src="/data/articles.js"></script><script src="/articles/{slug}.js?v={int(article['version'])}"></script><script src="/js/static-article.js?v=14"></script><script src="/js/article-lightbox.js?v=3"></script>
 </body>
 </html>
 '''

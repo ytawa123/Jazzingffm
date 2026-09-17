@@ -405,18 +405,26 @@
         galleryImages.forEach(function(imagePath, index) {
           const slide = document.createElement("div");
           const image = document.createElement("img");
+          const isFirst = index === 0;
 
           slide.className = "article-hero-image has-photo";
-          slide.hidden = index !== 0;
-          image.src = imagePath;
+          slide.hidden = !isFirst;
+          image.dataset.src = imagePath;
+          if (isFirst) {
+            image.src = imagePath;
+            image.loading = "eager";
+            image.fetchPriority = "high";
+          } else {
+            image.loading = "lazy";
+            image.fetchPriority = "low";
+          }
+          image.decoding = "async";
           image.alt =
             article.cardTitle[currentLang] +
             " — photo " +
             (index + 1) +
             " of " +
             galleryImages.length;
-          image.loading = "eager";
-
           image.addEventListener("load", function() {
             slide.classList.add("is-loaded");
           }, { once: true });

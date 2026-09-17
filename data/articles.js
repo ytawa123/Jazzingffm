@@ -25,13 +25,13 @@ window.JAZZING_ARTICLES = [
       "de": "31. Juli 2026"
     },
     "images": [
-      "images/mustermann-jazzing1/mustermann-jazzing1-01.jpg",
-      "images/mustermann-jazzing1/mustermann-jazzing1-02.jpg",
-      "images/mustermann-jazzing1/mustermann-jazzing1-03.jpg",
-      "images/mustermann-jazzing1/mustermann-jazzing1-04.jpg",
-      "images/mustermann-jazzing1/mustermann-jazzing1-05.JPG",
-      "images/mustermann-jazzing1/mustermann-jazzing1-06.JPG",
-      "images/mustermann-jazzing1/mustermann-jazzing1-07.JPG"
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-01.webp",
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-02.webp",
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-03.webp",
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-04.webp",
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-05.webp",
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-06.webp",
+      "images/web/mustermann-jazzing1/mustermann-jazzing1-07.webp"
     ],
     "caption": {
       "en": "Mustermann Jazzing1 photographed in Frankfurt. Photo placeholder.",
@@ -74,12 +74,12 @@ window.JAZZING_ARTICLES = [
       "de": "24. Juli 2026"
     },
     "images": [
-      "images/mustermann-jazzing2/mustermann-jazzing2-01.jpg",
-      "images/mustermann-jazzing2/mustermann-jazzing2-02.jpg",
-      "images/mustermann-jazzing2/mustermann-jazzing2-03.jpg",
-      "images/mustermann-jazzing2/mustermann-jazzing2-04.jpg",
-      "images/mustermann-jazzing2/mustermann-jazzing2-05.JPG",
-      "images/mustermann-jazzing2/mustermann-jazzing2-06.JPG"
+      "images/web/mustermann-jazzing2/mustermann-jazzing2-01.webp",
+      "images/web/mustermann-jazzing2/mustermann-jazzing2-02.webp",
+      "images/web/mustermann-jazzing2/mustermann-jazzing2-03.webp",
+      "images/web/mustermann-jazzing2/mustermann-jazzing2-04.webp",
+      "images/web/mustermann-jazzing2/mustermann-jazzing2-05.webp",
+      "images/web/mustermann-jazzing2/mustermann-jazzing2-06.webp"
     ],
     "caption": {
       "en": "Mustermann Jazzing2 after rehearsal in Frankfurt. Photo placeholder.",
