@@ -74,7 +74,8 @@
     ).map(function(image) {
       return {
         element: image,
-        src: image.currentSrc || image.src,
+        src: image.currentSrc || image.src || image.dataset.src || "",
+        fallback: image.dataset.fallback || "",
         alt: image.alt || ""
       };
     }).filter(function(item) {
@@ -98,6 +99,11 @@
     if (!items.length) return;
 
     const item = items[activeIndex];
+    lightboxImage.onerror = function() {
+      if (!item.fallback) return;
+      lightboxImage.onerror = null;
+      lightboxImage.src = item.fallback;
+    };
     lightboxImage.src = item.src;
     lightboxImage.alt = item.alt;
     status.textContent = activeIndex + 1 + " / " + items.length;
