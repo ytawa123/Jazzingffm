@@ -49,6 +49,10 @@
     return path && path.charAt(0) === "/" ? path : "/" + path;
   }
 
+  function webPath(path) {
+    return rootPath(path).replace(/\.(jpe?g|png)$/i, ".webp");
+  }
+
   function setLanguageButtons() {
     langButtons.forEach(function(button) {
       button.classList.toggle("active", button.getAttribute("data-lang-button") === currentLang);
@@ -77,6 +81,36 @@
     image.style.display = "block";
   }
 
+  function configureImage(image, slide, path, index, total) {
+    const original = rootPath(path);
+    const optimized = webPath(path);
+    let fallbackUsed = false;
+
+    image.dataset.src = optimized;
+    image.dataset.fallback = original;
+    image.alt = article.cardTitle[currentLang] + " — photo " + (index + 1) + " of " + total;
+    image.loading = index === 0 ? "eager" : "lazy";
+    image.fetchPriority = index === 0 ? "high" : "low";
+    fitImage(image);
+
+    image.addEventListener("load", function() {
+      slide.classList.add("is-loaded");
+    });
+
+    image.addEventListener("error", function() {
+      if (!fallbackUsed && image.dataset.fallback) {
+        fallbackUsed = true;
+        image.src = image.dataset.fallback;
+        return;
+      }
+      slide.classList.add("is-loaded");
+    });
+
+    if (index === 0) {
+      image.src = optimized;
+    }
+  }
+
   function renderGallery() {
     const images = Array.isArray(article.images) && article.images.length
       ? article.images
@@ -100,19 +134,7 @@
         slide.hidden = !isActive;
         slide.style.display = isActive ? "block" : "none";
         slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-        image.src = rootPath(path);
-        image.alt = article.cardTitle[currentLang] + " — photo " + (index + 1) + " of " + images.length;
-        image.loading = "eager";
-        fitImage(image);
-        image.addEventListener("load", function() {
-          slide.classList.add("is-loaded");
-        }, { once: true });
-        image.addEventListener("error", function() {
-          slide.classList.add("is-loaded");
-        }, { once: true });
-        if (image.complete && image.naturalWidth > 0) {
-          slide.classList.add("is-loaded");
-        }
+        configureImage(image, slide, path, index, images.length);
         slide.appendChild(image);
         galleryTrack.appendChild(slide);
       });
@@ -126,6 +148,7 @@
     galleryStatus.hidden = !hasMultiple;
     galleryStatus.textContent = hasMultiple ? "1 / " + slides.length : "";
     galleryTrack.dataset.fadeBusy = "false";
+    window.dispatchEvent(new Event("jazzing:gallery-rendered"));
   }
 
   function localize() {
@@ -173,6 +196,6 @@
   });
 
   localize();
-  loadSharedScript("/js/gallery-transition.js?v=gallery33", "jazzing-gallery-transition");
+  loadSharedScript("/js/gallery-transition.js?v=gallery35", "jazzing-gallery-transition");
   loadSharedScript("/js/site-transition.js?v=9", "jazzing-site-transition");
 })();
