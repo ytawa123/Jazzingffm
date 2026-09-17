@@ -1,5 +1,6 @@
 (function() {
   let touchStartX = null;
+  let preloadTimer = null;
 
   function fitImage(slide) {
     const image = slide && slide.querySelector("img");
@@ -14,7 +15,53 @@
     image.style.objectFit = "contain";
     image.style.objectPosition = "center";
     image.style.display = "block";
-    image.loading = "eager";
+  }
+
+  function bindFallback(image) {
+    if (!image || image.dataset.galleryFallbackBound === "true") return;
+    image.dataset.galleryFallbackBound = "true";
+
+    image.addEventListener("error", function() {
+      const fallback = image.dataset.fallback;
+      if (!fallback || image.dataset.galleryFallbackUsed === "true") return;
+      image.dataset.galleryFallbackUsed = "true";
+      image.src = fallback;
+    });
+  }
+
+  function ensureImage(slide, priority) {
+    const image = slide && slide.querySelector("img");
+    if (!image) return;
+
+    fitImage(slide);
+    bindFallback(image);
+
+    if (priority === "high") {
+      image.loading = "eager";
+      image.fetchPriority = "high";
+    } else {
+      image.loading = "lazy";
+      image.fetchPriority = "low";
+    }
+
+    if (!image.getAttribute("src") && image.dataset.src) {
+      image.src = image.dataset.src;
+    }
+  }
+
+  function scheduleNext(slides, activeIndex) {
+    if (preloadTimer !== null) {
+      window.clearTimeout(preloadTimer);
+      preloadTimer = null;
+    }
+
+    if (slides.length < 2) return;
+
+    preloadTimer = window.setTimeout(function() {
+      const nextIndex = (activeIndex + 1) % slides.length;
+      ensureImage(slides[nextIndex], "low");
+      preloadTimer = null;
+    }, 120);
   }
 
   function getGalleryState() {
@@ -43,6 +90,8 @@
   }
 
   function setVisibleSlide(slides, activeIndex) {
+    ensureImage(slides[activeIndex], "high");
+
     slides.forEach(function(slide, index) {
       const isActive = index === activeIndex;
       slide.hidden = !isActive;
@@ -50,6 +99,8 @@
       slide.setAttribute("aria-hidden", isActive ? "false" : "true");
       fitImage(slide);
     });
+
+    scheduleNext(slides, activeIndex);
   }
 
   function changeSlide(delta) {
@@ -59,6 +110,7 @@
     const nextIndex =
       (state.activeIndex + delta + state.slides.length) % state.slides.length;
 
+    ensureImage(state.slides[nextIndex], "high");
     setVisibleSlide(state.slides, nextIndex);
     updateStatus(nextIndex, state.slides.length);
   }
@@ -71,7 +123,32 @@
     updateStatus(state.activeIndex, state.slides.length);
   }
 
+  function preloadForControl(button) {
+    const state = getGalleryState();
+    if (!state || !button) return;
+
+    const delta = button.id === "galleryPrevious" ? -1 : 1;
+    const index =
+      (state.activeIndex + delta + state.slides.length) % state.slides.length;
+    ensureImage(state.slides[index], "low");
+  }
+
   normalizeCurrentGallery();
+  window.addEventListener("jazzing:gallery-rendered", normalizeCurrentGallery);
+
+  document.addEventListener(
+    "pointerover",
+    function(event) {
+      const button = event.target.closest("#galleryPrevious, #galleryNext");
+      if (button) preloadForControl(button);
+    },
+    { passive: true }
+  );
+
+  document.addEventListener("focusin", function(event) {
+    const button = event.target.closest("#galleryPrevious, #galleryNext");
+    if (button) preloadForControl(button);
+  });
 
   document.addEventListener(
     "click",
