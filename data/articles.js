@@ -50,8 +50,8 @@ window.JAZZING_ARTICLES = [
       "images/web/fathan-nauv/fathan10.webp"
     ],
     "caption": {
-      "en": "Fathan Nauv during an improvisation session with two contemporary dancers. © Yuta Tawarada",
-      "de": "Fathan Nauv bei einer Improvisationssession mit zwei Tänzern aus dem Contemporary Dance. © Yuta Tawarada"
+      "en": "Fathan Nauv during an improvisation session with two contemporary dancers.\n© Yuta Tawarada",
+      "de": "Fathan Nauv bei einer Improvisationssession mit zwei Tänzern aus dem Contemporary Dance.\n© Yuta Tawarada"
     },
     "excerpt": {
       "en": "Fathan Nauv on musical influences, Frankfurt’s jazz scene, versatility and developing an identity of his own.",
