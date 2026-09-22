@@ -15,3 +15,9 @@ body .article-body p.question {
 body .article-body p:not(.question):has(> strong:first-child) {
   font-family: Georgia, "Times New Roman", serif;
 }
+
+
+/* Explicit interview answer paragraphs keep the musician serif voice without altering text. */
+body .article-body p.answer {
+  font-family: Georgia, "Times New Roman", serif;
+}

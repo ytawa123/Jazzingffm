@@ -194,8 +194,10 @@
     }
 
     function getLatestArticle() {
-      // ARTICLES stays ordered from newest to oldest; the first entry leads the homepage.
-      return ARTICLES[0];
+      // Hidden preview articles remain directly accessible but never lead the homepage.
+      return ARTICLES.find(function(article) {
+        return article.listed !== false;
+      });
     }
 
     function renderHomeFeature() {
@@ -335,7 +337,7 @@
       let posts;
 
       posts = ARTICLES.filter(function(article) {
-        return article.category === category;
+        return article.category === category && article.listed !== false;
       });
 
       if (posts.length === 0) {
