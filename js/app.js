@@ -193,6 +193,26 @@
       });
     }
 
+    function renderArticleTitle(article) {
+      const lines = article.titleLines && article.titleLines[currentLang];
+      if (!Array.isArray(lines) || lines.length < 2) {
+        articleTitle.textContent =
+          article.cardTitle[currentLang] + " " + article.cardSubtitle[currentLang];
+        articleTitle.classList.remove("has-title-lines");
+        return;
+      }
+
+      articleTitle.classList.add("has-title-lines");
+      articleTitle.innerHTML = lines.map(function(line, index) {
+        const className = index === 0 ? "article-title-name" : "article-title-subline";
+        return '<span class="' + className + '"></span>';
+      }).join("");
+
+      Array.from(articleTitle.children).forEach(function(span, index) {
+        span.textContent = lines[index];
+      });
+    }
+
     function getLatestArticle() {
       // Hidden preview articles remain directly accessible but never lead the homepage.
       return ARTICLES.find(function(article) {
@@ -598,8 +618,7 @@
 
       articleCategory.href = "#/" + articleCategoryRoute;
 
-      articleTitle.textContent =
-        article.cardTitle[currentLang] + " " + article.cardSubtitle[currentLang];
+      renderArticleTitle(article);
       articleByline.textContent = article.date[currentLang];
       renderArticleGallery(article, copy);
       articleCaption.textContent = article.caption[currentLang];

@@ -55,6 +55,25 @@
     });
   }
 
+  function renderArticleTitle() {
+    const lines = article.titleLines && article.titleLines[currentLang];
+    if (!Array.isArray(lines) || lines.length < 2) {
+      renderArticleTitle();
+      articleTitle.classList.remove("has-title-lines");
+      return;
+    }
+
+    articleTitle.classList.add("has-title-lines");
+    articleTitle.innerHTML = lines.map(function(line, index) {
+      const className = index === 0 ? "article-title-name" : "article-title-subline";
+      return '<span class="' + className + '"></span>';
+    }).join("");
+
+    Array.from(articleTitle.children).forEach(function(span, index) {
+      span.textContent = lines[index];
+    });
+  }
+
   function boldSpeakerNames() {
     const musicianName = article.cardTitle[currentLang];
     articleBody.querySelectorAll("p:not(.question)").forEach(function(paragraph) {

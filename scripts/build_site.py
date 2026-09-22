@@ -115,6 +115,7 @@ def runtime_article(article):
         "category": article["category"],
         "categoryLabel": article["categoryLabel"],
         "title": article["title"],
+        "titleLines": article.get("titleLines"),
         "cardTitle": article["cardTitle"],
         "cardSubtitle": article["cardSubtitle"],
         "date": {"en": article["date"]["en"], "de": article["date"]["de"]},
@@ -187,6 +188,16 @@ def static_page(article):
     kind = page_type(article)
     name = article["cardTitle"]["en"]
     article_title = f"{name} {article['cardSubtitle']['en']}"
+    title_lines = article.get("titleLines", {}).get("en")
+    if isinstance(title_lines, list) and len(title_lines) >= 2:
+        article_title_html = "".join(
+            f'<span class="{"article-title-name" if index == 0 else "article-title-subline"}">{html.escape(line)}</span>'
+            for index, line in enumerate(title_lines)
+        )
+        article_title_class = "article-title has-title-lines"
+    else:
+        article_title_html = html.escape(article_title)
+        article_title_class = "article-title"
     canonical = canonical_for(article)
     first = first_image(article)
     first_absolute = f"https://jazzingffm.de/{first}" if first else "https://jazzingffm.de/favicon.png"
@@ -238,7 +249,7 @@ def static_page(article):
   <link rel="apple-touch-icon" href="/tab-icon.png" />
   <link rel="stylesheet" href="/css/style.css?v=caption37" />
   <link rel="stylesheet" href="/css/gallery-transition.css?v=gallery34" />
-  <link rel="stylesheet" href="/css/article-caption-gap.css?v=caption39" />
+  <link rel="stylesheet" href="/css/article-caption-gap.css?v=caption40" />
   <link rel="stylesheet" href="/css/site-polish.css?v=15" />
   <link rel="stylesheet" href="/css/article-lightbox.css?v=1" />
   <script type="application/ld+json">{json_ld}</script>
@@ -257,7 +268,7 @@ def static_page(article):
   <main>
     <section class="page active"><div class="container article-page"><article class="article-shell">
       <a id="articleCategory" class="article-category" href="/#/{route}">{html.escape(category_label)}</a>
-      <h1 id="articleTitle" class="article-title">{html.escape(article_title)}</h1>
+      <h1 id="articleTitle" class="{article_title_class}">{article_title_html}</h1>
       <p id="articleByline" class="byline">{html.escape(article['date']['en'])}</p>
       <hr class="thin-line" />
       <div id="articleGallery" class="article-gallery"><div id="articleGalleryTrack" class="article-gallery-track">{initial_gallery}</div><button id="galleryPrevious" class="gallery-control previous" type="button" aria-label="Previous photo">‹</button><button id="galleryNext" class="gallery-control next" type="button" aria-label="Next photo">›</button><div id="galleryStatus" class="gallery-status" aria-live="polite"></div></div>
@@ -267,7 +278,7 @@ def static_page(article):
     </article></div></section>
   </main>
   <footer class="site-footer"><div class="footer-main"><div class="footer-left"><div class="copyright"><p>© 2026 JAZZINGFFM. ALL RIGHTS RESERVED</p><div class="footer-meta"><p id="footerLove">MADE WITH LOVE IN FRANKFURT</p><span class="footer-separator" aria-hidden="true">•</span><nav class="footer-legal" aria-label="Legal"><a href="/impressum/">Impressum</a><span class="footer-separator" aria-hidden="true">•</span><a href="/datenschutz/">Datenschutz</a></nav></div></div></div><div class="footer-partner"><span id="footerPartnerLabel">In cooperation with</span><a href="https://www.jazz-frankfurt.de/" target="_blank" rel="noopener noreferrer" aria-label="Jazz-Initiative Frankfurt am Main e.V."><img src="/JIF_logo.png" alt="Jazz-Initiative Frankfurt am Main e.V." /></a></div></div></footer>
-  <script src="/data/articles.js"></script><script src="/articles/{slug}.js?v={int(article['version'])}"></script><script src="/js/static-article.js?v=14"></script><script src="/js/article-lightbox.js?v=3"></script>
+  <script src="/data/articles.js"></script><script src="/articles/{slug}.js?v={int(article['version'])}"></script><script src="/js/static-article.js?v=15"></script><script src="/js/article-lightbox.js?v=3"></script>
 </body>
 </html>
 '''
