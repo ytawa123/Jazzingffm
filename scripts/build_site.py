@@ -238,7 +238,7 @@ def static_page(article):
   <link rel="apple-touch-icon" href="/tab-icon.png" />
   <link rel="stylesheet" href="/css/style.css?v=caption37" />
   <link rel="stylesheet" href="/css/gallery-transition.css?v=gallery34" />
-  <link rel="stylesheet" href="/css/article-caption-gap.css?v=caption38" />
+  <link rel="stylesheet" href="/css/article-caption-gap.css?v=caption39" />
   <link rel="stylesheet" href="/css/site-polish.css?v=15" />
   <link rel="stylesheet" href="/css/article-lightbox.css?v=1" />
   <script type="application/ld+json">{json_ld}</script>
