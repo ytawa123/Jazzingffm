@@ -1,14 +1,7 @@
 .article-gallery-track {
   background: #050505;
-  opacity: 1;
   overflow: hidden;
   position: relative;
-  transition: opacity 420ms ease;
-  will-change: opacity;
-}
-
-.article-gallery-track.gallery-fade-out {
-  opacity: 0;
 }
 
 /* Exactly one slide is allowed to render. The hidden attribute must always win. */

@@ -3,26 +3,10 @@
   let preloadHandle = null;
   let preloadTimer = null;
 
-  function fitImage(slide) {
-    const image = slide && slide.querySelector("img");
-    if (!image) return;
-
-    image.style.position = "absolute";
-    image.style.inset = "0";
-    image.style.width = "100%";
-    image.style.height = "100%";
-    image.style.maxWidth = "none";
-    image.style.maxHeight = "none";
-    image.style.objectFit = "contain";
-    image.style.objectPosition = "center";
-    image.style.display = "block";
-  }
-
   function ensureImageLoaded(slide, priority) {
     const image = slide && slide.querySelector("img");
     if (!image) return Promise.resolve();
 
-    fitImage(slide);
     image.fetchPriority = priority === "high" ? "high" : "low";
 
     return new Promise(function(resolve) {
@@ -57,8 +41,6 @@
     const slides = Array.from(track.children);
     if (!slides.length) return null;
 
-    slides.forEach(fitImage);
-
     let activeIndex = slides.findIndex(function(slide) {
       return !slide.hidden && slide.style.display !== "none";
     });
@@ -81,7 +63,6 @@
       slide.hidden = !isActive;
       slide.style.display = isActive ? "block" : "none";
       slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-      fitImage(slide);
     });
   }
 
