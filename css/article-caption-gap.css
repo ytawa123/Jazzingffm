@@ -21,3 +21,33 @@ body .article-body p:not(.question):has(> strong:first-child) {
 body .article-body p.answer {
   font-family: Georgia, "Times New Roman", serif;
 }
+
+
+/* Three-line interview headline: artist name large, descriptor lines medium. */
+.article-title.has-title-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08em;
+}
+
+.article-title.has-title-lines .article-title-name,
+.article-title.has-title-lines .article-title-subline {
+  display: block;
+}
+
+.article-title.has-title-lines .article-title-name {
+  font-size: 1em;
+  line-height: 0.94;
+}
+
+.article-title.has-title-lines .article-title-subline {
+  font-size: 0.52em;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+@media (max-width: 680px) {
+  .article-title.has-title-lines .article-title-subline {
+    font-size: 0.58em;
+  }
+}
