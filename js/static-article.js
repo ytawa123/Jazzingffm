@@ -184,7 +184,7 @@
 
     articleCategory.textContent = article.categoryLabel[currentLang];
     articleCategory.href = "/#/" + route;
-    articleTitle.textContent = article.cardTitle[currentLang] + " " + article.cardSubtitle[currentLang];
+    renderArticleTitle();
     articleByline.textContent = article.date[currentLang];
     articleCaption.textContent = article.caption[currentLang];
     articleBody.innerHTML = article.body[currentLang];

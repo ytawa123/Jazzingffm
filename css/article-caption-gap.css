@@ -5,6 +5,7 @@
 
 #articleCaption.caption {
   margin-top: 4px;
+  white-space: pre-line;
 }
 
 /* Interview speaker typography: JazzingFfm in typewriter, musician in serif. */
