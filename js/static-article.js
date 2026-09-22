@@ -55,13 +55,30 @@
     });
   }
 
-  function renderArticleTitle() {
-    const lines = article.titleLines && article.titleLines[currentLang];
-    if (!Array.isArray(lines) || lines.length < 2) {
-      renderArticleTitle();
-      articleTitle.classList.remove("has-title-lines");
-      return;
+  function getArticleTitleLines() {
+    const configured = article.titleLines && article.titleLines[currentLang];
+    if (Array.isArray(configured) && configured.length >= 2) {
+      return configured;
     }
+
+    const name = article.cardTitle[currentLang];
+    const subtitle = article.cardSubtitle[currentLang] || "";
+    const separator = " — ";
+    const separatorIndex = subtitle.indexOf(separator);
+
+    if (separatorIndex >= 0) {
+      return [
+        name,
+        subtitle.slice(0, separatorIndex),
+        subtitle.slice(separatorIndex + separator.length)
+      ];
+    }
+
+    return [name, subtitle];
+  }
+
+  function renderArticleTitle() {
+    const lines = getArticleTitleLines();
 
     articleTitle.classList.add("has-title-lines");
     articleTitle.innerHTML = lines.map(function(line, index) {
