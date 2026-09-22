@@ -1,6 +1,6 @@
 {
   "slug": "fathan-nauv",
-  "version": 1,
+  "version": 2,
   "listed": false,
   "category": "interviews",
   "categoryLabel": {
@@ -16,8 +16,8 @@
     "de": "Fathan Nauv"
   },
   "cardSubtitle": {
-    "en": "Versatile, but Never Arbitrary: On Influences, Frankfurt’s Jazz Scene and Musical Identity",
-    "de": "Flexibel, aber nie beliebig: über Einflüsse, Frankfurter Jazzszene und musikalische Identität"
+    "en": "Versatile, but Never Arbitrary — On Influences, Frankfurt’s Jazz Scene and Musical Identity",
+    "de": "Flexibel, aber nie beliebig — über Einflüsse, Frankfurter Jazzszene und musikalische Identität"
   },
   "date": {
     "iso": "2026-09-22",
@@ -62,13 +62,13 @@
   },
   "titleLines": {
     "en": [
-      "Fathan Nauv —",
-      "Versatile, but Never Arbitrary:",
+      "Fathan Nauv",
+      "Versatile, but Never Arbitrary",
       "On Influences, Frankfurt’s Jazz Scene and Musical Identity"
     ],
     "de": [
-      "Fathan Nauv —",
-      "Flexibel, aber nie beliebig:",
+      "Fathan Nauv",
+      "Flexibel, aber nie beliebig",
       "über Einflüsse, Frankfurter Jazzszene und musikalische Identität"
     ]
   }
