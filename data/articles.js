@@ -25,7 +25,18 @@ window.JAZZING_ARTICLES = [
       "en": "22nd September 2026",
       "de": "22. September 2026"
     },
-    "images": [],
+    "images": [
+      "images/web/fathan-nauv/fathan1.webp",
+      "images/web/fathan-nauv/fathan2.webp",
+      "images/web/fathan-nauv/fathan3.webp",
+      "images/web/fathan-nauv/fathan4.webp",
+      "images/web/fathan-nauv/fathan5.webp",
+      "images/web/fathan-nauv/fathan6.webp",
+      "images/web/fathan-nauv/fathan7.webp",
+      "images/web/fathan-nauv/fathan8.webp",
+      "images/web/fathan-nauv/fathan9.webp",
+      "images/web/fathan-nauv/fathan10.webp"
+    ],
     "caption": {
       "en": "Fathan Nauv during an improvisation session with two contemporary dancers.",
       "de": "Fathan Nauv bei einer Improvisationssession mit zwei Tänzern aus dem Contemporary Dance."
