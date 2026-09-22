@@ -204,7 +204,7 @@
 
       articleTitle.classList.add("has-title-lines");
       articleTitle.innerHTML = lines.map(function(line, index) {
-        const className = index === 0 ? "article-title-name" : "article-title-subline";
+        const className = index < 2 ? "article-title-primary" : "article-title-subline";
         return '<span class="' + className + '"></span>';
       }).join("");
 

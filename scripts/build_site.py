@@ -191,7 +191,7 @@ def static_page(article):
     title_lines = article.get("titleLines", {}).get("en")
     if isinstance(title_lines, list) and len(title_lines) >= 2:
         article_title_html = "".join(
-            f'<span class="{"article-title-name" if index == 0 else "article-title-subline"}">{html.escape(line)}</span>'
+            f'<span class="{"article-title-primary" if index < 2 else "article-title-subline"}">{html.escape(line)}</span>'
             for index, line in enumerate(title_lines)
         )
         article_title_class = "article-title has-title-lines"
@@ -249,7 +249,7 @@ def static_page(article):
   <link rel="apple-touch-icon" href="/tab-icon.png" />
   <link rel="stylesheet" href="/css/style.css?v=caption37" />
   <link rel="stylesheet" href="/css/gallery-transition.css?v=gallery34" />
-  <link rel="stylesheet" href="/css/article-caption-gap.css?v=caption40" />
+  <link rel="stylesheet" href="/css/article-caption-gap.css?v=caption41" />
   <link rel="stylesheet" href="/css/site-polish.css?v=15" />
   <link rel="stylesheet" href="/css/article-lightbox.css?v=1" />
   <script type="application/ld+json">{json_ld}</script>
@@ -278,7 +278,7 @@ def static_page(article):
     </article></div></section>
   </main>
   <footer class="site-footer"><div class="footer-main"><div class="footer-left"><div class="copyright"><p>© 2026 JAZZINGFFM. ALL RIGHTS RESERVED</p><div class="footer-meta"><p id="footerLove">MADE WITH LOVE IN FRANKFURT</p><span class="footer-separator" aria-hidden="true">•</span><nav class="footer-legal" aria-label="Legal"><a href="/impressum/">Impressum</a><span class="footer-separator" aria-hidden="true">•</span><a href="/datenschutz/">Datenschutz</a></nav></div></div></div><div class="footer-partner"><span id="footerPartnerLabel">In cooperation with</span><a href="https://www.jazz-frankfurt.de/" target="_blank" rel="noopener noreferrer" aria-label="Jazz-Initiative Frankfurt am Main e.V."><img src="/JIF_logo.png" alt="Jazz-Initiative Frankfurt am Main e.V." /></a></div></div></footer>
-  <script src="/data/articles.js"></script><script src="/articles/{slug}.js?v={int(article['version'])}"></script><script src="/js/static-article.js?v=15"></script><script src="/js/article-lightbox.js?v=3"></script>
+  <script src="/data/articles.js?v=2"></script><script src="/articles/{slug}.js?v={int(article['version'])}"></script><script src="/js/static-article.js?v=16"></script><script src="/js/article-lightbox.js?v=3"></script>
 </body>
 </html>
 '''
