@@ -492,9 +492,6 @@
       const slides = Array.from(articleGalleryTrack.children);
       const slideCount = slides.length;
       const hasMultiplePhotos = slideCount > 1;
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      let activeIndex = 0;
-      let isAnimating = false;
 
       galleryPrevious.hidden = !hasMultiplePhotos;
       galleryNext.hidden = !hasMultiplePhotos;
@@ -502,119 +499,11 @@
       galleryPrevious.setAttribute("aria-label", copy.article.previousPhoto);
       galleryNext.setAttribute("aria-label", copy.article.nextPhoto);
 
-      function updateStatus() {
-        galleryStatus.textContent = activeIndex + 1 + " / " + slideCount;
-      }
-
-      function setVisibleSlide(index) {
-        activeIndex = (index + slideCount) % slideCount;
-        slides.forEach(function(slide, slideIndex) {
-          const isActive = slideIndex === activeIndex;
-          slide.hidden = !isActive;
-          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-        });
-        updateStatus();
-      }
-
-      function showSlide(index) {
-        if (isAnimating || slideCount < 1) {
-          return;
-        }
-
-        const nextIndex = (index + slideCount) % slideCount;
-        if (nextIndex === activeIndex) {
-          return;
-        }
-
-        const currentSlide = slides[activeIndex];
-        const nextSlide = slides[nextIndex];
-
-        if (reduceMotion || typeof currentSlide.animate !== "function") {
-          setVisibleSlide(nextIndex);
-          return;
-        }
-
-        isAnimating = true;
-
-        const fadeOut = currentSlide.animate(
-          [
-            { opacity: 1 },
-            { opacity: 0 }
-          ],
-          {
-            duration: 240,
-            easing: "ease-in",
-            fill: "forwards"
-          }
-        );
-
-        fadeOut.finished.then(function() {
-          currentSlide.hidden = true;
-          currentSlide.setAttribute("aria-hidden", "true");
-
-          activeIndex = nextIndex;
-          nextSlide.hidden = false;
-          nextSlide.setAttribute("aria-hidden", "false");
-
-          const fadeIn = nextSlide.animate(
-            [
-              { opacity: 0 },
-              { opacity: 1 }
-            ],
-            {
-              duration: 320,
-              easing: "ease-out",
-              fill: "forwards"
-            }
-          );
-
-          fadeIn.finished.then(function() {
-            currentSlide.getAnimations().forEach(function(animation) {
-              animation.cancel();
-            });
-            nextSlide.getAnimations().forEach(function(animation) {
-              animation.cancel();
-            });
-            updateStatus();
-            isAnimating = false;
-          });
-        });
-      }
-
-      galleryPrevious.onclick = function(event) {
-        event.preventDefault();
-        showSlide(activeIndex - 1);
-      };
-
-      galleryNext.onclick = function(event) {
-        event.preventDefault();
-        showSlide(activeIndex + 1);
-      };
-
-      let touchStartX = null;
-
-      articleGalleryTrack.ontouchstart = function(event) {
-        touchStartX = event.touches[0].clientX;
-      };
-
-      articleGalleryTrack.ontouchend = function(event) {
-        if (touchStartX === null || !hasMultiplePhotos) {
-          touchStartX = null;
-          return;
-        }
-
-        const swipeDistance = touchStartX - event.changedTouches[0].clientX;
-
-        if (swipeDistance > 40) {
-          showSlide(activeIndex + 1);
-        } else if (swipeDistance < -40) {
-          showSlide(activeIndex - 1);
-        }
-
-        touchStartX = null;
-      };
-
-      setVisibleSlide(0);
+      slides.forEach(function(slide, index) {
+        const isActive = index === 0;
+        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+      });
+      galleryStatus.textContent = hasMultiplePhotos ? "1 / " + slideCount : "";
     }
 
     function renderArticle(slug) {

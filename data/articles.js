@@ -47,7 +47,12 @@ window.JAZZING_ARTICLES = [
       "images/web/fathan-nauv/fathan7.webp",
       "images/web/fathan-nauv/fathan8.webp",
       "images/web/fathan-nauv/fathan9.webp",
-      "images/web/fathan-nauv/fathan10.webp"
+      "images/web/fathan-nauv/fathan10.webp",
+      "images/web/fathan-nauv/fathan11.webp",
+      "images/web/fathan-nauv/fathan12.webp",
+      "images/web/fathan-nauv/fathan13.webp",
+      "images/web/fathan-nauv/fathan14.webp",
+      "images/web/fathan-nauv/fathan15.webp"
     ],
     "caption": {
       "en": "Fathan Nauv during an improvisation session with two contemporary dancers.\n© Yuta Tawarada",

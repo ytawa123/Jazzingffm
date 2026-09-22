@@ -1,11 +1,51 @@
-/* Small breathing room between article photo and caption/counter row. */
+/* Keep the caption and counter on one compact row below the gallery. */
 .article-gallery .gallery-status {
+  bottom: auto;
+  color: var(--muted);
+  font-size: 14px;
+  left: auto;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  text-align: right;
   top: calc(100% + 4px);
+  white-space: nowrap;
 }
 
 #articleCaption.caption {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 0;
+  margin-right: 86px;
   margin-top: 4px;
+  min-height: 1.4em;
   white-space: pre-line;
+}
+
+#articleBody.article-body {
+  margin-top: 20px;
+}
+
+#articleBody.article-body > :first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  .article-gallery .gallery-status,
+  #articleCaption.caption {
+    font-size: 13px;
+  }
+
+  #articleCaption.caption {
+    margin-right: 64px;
+  }
+
+  #articleBody.article-body {
+    margin-top: 16px;
+  }
 }
 
 /* Interview speaker typography: JazzingFfm in typewriter, musician in serif. */
