@@ -15,13 +15,13 @@ window.JAZZING_ARTICLES = [
     },
     "titleLines": {
       "en": [
-        "Fathan Nauv —",
-        "Versatile, but Never Arbitrary:",
+        "Fathan Nauv",
+        "Versatile, but Never Arbitrary",
         "On Influences, Frankfurt’s Jazz Scene and Musical Identity"
       ],
       "de": [
-        "Fathan Nauv —",
-        "Flexibel, aber nie beliebig:",
+        "Fathan Nauv",
+        "Flexibel, aber nie beliebig",
         "über Einflüsse, Frankfurter Jazzszene und musikalische Identität"
       ]
     },
@@ -30,8 +30,8 @@ window.JAZZING_ARTICLES = [
       "de": "Fathan Nauv"
     },
     "cardSubtitle": {
-      "en": "Versatile, but Never Arbitrary: On Influences, Frankfurt’s Jazz Scene and Musical Identity",
-      "de": "Flexibel, aber nie beliebig: über Einflüsse, Frankfurter Jazzszene und musikalische Identität"
+      "en": "Versatile, but Never Arbitrary — On Influences, Frankfurt’s Jazz Scene and Musical Identity",
+      "de": "Flexibel, aber nie beliebig — über Einflüsse, Frankfurter Jazzszene und musikalische Identität"
     },
     "date": {
       "en": "22nd September 2026",
