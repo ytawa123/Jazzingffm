@@ -18,7 +18,7 @@ ROUTE_BY_CATEGORY = {
     "highlights": "features",
 }
 
-REQUIRED_I18N = ("title", "cardTitle", "cardSubtitle", "caption", "excerpt", "imageLabel", "body", "bio")
+REQUIRED_I18N = ("title", "cardTitle", "cardSubtitle", "caption", "excerpt", "imageLabel", "body")
 
 
 def load_articles():
@@ -59,6 +59,10 @@ def validate_article(article, path):
         if not isinstance(value, dict) or not value.get("en") or not value.get("de"):
             raise SystemExit(f"{path}: {key} must contain non-empty en/de values")
 
+    bio = article.get("bio")
+    if not isinstance(bio, dict) or "en" not in bio or "de" not in bio:
+        raise SystemExit(f"{path}: bio must contain en/de values (they may be blank for previews)")
+
     date = article["date"]
     if not all(date.get(key) for key in ("iso", "en", "de")):
         raise SystemExit(f"{path}: date must contain iso/en/de")
@@ -66,17 +70,13 @@ def validate_article(article, path):
     if not isinstance(article["images"], list):
         raise SystemExit(f"{path}: images must be a list")
 
+    listed = article.get("listed", True)
     for image_path in article["images"]:
         image = ROOT / image_path
         if not image.exists():
-            raise SystemExit(f"{path}: image does not exist: {image_path}")
-
-        web_image = ROOT / optimized_image_path(image_path)
-        if not web_image.exists():
-            raise SystemExit(
-                f"{path}: optimized image does not exist: {web_image.relative_to(ROOT)}. "
-                "Run scripts/optimize_gallery_images.sh first."
-            )
+            if listed:
+                raise SystemExit(f"{path}: image does not exist: {image_path}")
+            print(f"preview warning: image not uploaded yet: {image_path}", file=sys.stderr)
 
     seo = article["seo"]
     if not seo.get("description") or not seo.get("headline"):
@@ -90,16 +90,35 @@ def optimized_image_path(image_path):
     return (Path("images/web") / path.relative_to("images")).with_suffix(".webp").as_posix()
 
 
+def runtime_image_path(image_path):
+    source = ROOT / image_path
+    if not source.exists():
+        return None
+    web_path = optimized_image_path(image_path)
+    if (ROOT / web_path).exists():
+        return web_path
+    return image_path
+
+
+def available_images(article):
+    return [
+        runtime_path
+        for image_path in article["images"]
+        if (runtime_path := runtime_image_path(image_path))
+    ]
+
+
 def runtime_article(article):
     return {
         "slug": article["slug"],
+        "listed": article.get("listed", True),
         "category": article["category"],
         "categoryLabel": article["categoryLabel"],
         "title": article["title"],
         "cardTitle": article["cardTitle"],
         "cardSubtitle": article["cardSubtitle"],
         "date": {"en": article["date"]["en"], "de": article["date"]["de"]},
-        "images": [optimized_image_path(path) for path in article["images"]],
+        "images": available_images(article),
         "caption": article["caption"],
         "excerpt": article["excerpt"],
         "imageLabel": article["imageLabel"],
@@ -151,12 +170,8 @@ def canonical_for(article):
 
 
 def first_image(article):
-    return article["images"][0] if article["images"] else ""
-
-
-def first_web_image(article):
-    first = first_image(article)
-    return optimized_image_path(first) if first else ""
+    images = available_images(article)
+    return images[0] if images else ""
 
 
 def bold_static_speaker(body, musician_name):
@@ -174,8 +189,8 @@ def static_page(article):
     article_title = f"{name} {article['cardSubtitle']['en']}"
     canonical = canonical_for(article)
     first = first_image(article)
-    first_web = first_web_image(article)
     first_absolute = f"https://jazzingffm.de/{first}" if first else "https://jazzingffm.de/favicon.png"
+    robots = "index, follow" if article.get("listed", True) else "noindex, nofollow"
     category_label = article["categoryLabel"]["en"]
     category_active = "interviews" if article["category"] == "interviews" else "features"
     interviews_class = ' class="active"' if category_active == "interviews" else ""
@@ -195,10 +210,10 @@ def static_page(article):
         "image": first_absolute,
     }, ensure_ascii=False, separators=(",", ":"))
 
-    if first_web:
+    if first:
         initial_gallery = (
-            f'<div class="article-hero-image has-photo"><img src="/{html.escape(first_web, quote=True)}" '
-            f'data-src="/{html.escape(first_web, quote=True)}" fetchpriority="high" loading="eager" decoding="async" '
+            f'<div class="article-hero-image has-photo"><img src="/{html.escape(first, quote=True)}" '
+            f'data-src="/{html.escape(first, quote=True)}" fetchpriority="high" loading="eager" decoding="async" '
             f'alt="{html.escape(article["caption"]["en"], quote=True)}" /></div>'
         )
     else:
@@ -211,7 +226,7 @@ def static_page(article):
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{html.escape(page_title)}</title>
   <meta name="description" content="{description}" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="{robots}" />
   <link rel="canonical" href="{canonical}" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="{html.escape(page_title, quote=True)}" />
