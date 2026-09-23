@@ -6,8 +6,8 @@ window.JAZZING_ARTICLES = [
     "listed": false,
     "category": "interviews",
     "categoryLabel": {
-      "en": "JazzingFfm. — INTERVIEW 01",
-      "de": "JazzingFfm. — INTERVIEW 01"
+      "en": "Interview",
+      "de": "Interview"
     },
     "title": {
       "en": "Interview | Fathan Nauv. Versatile, but Never Arbitrary: On Influences, Frankfurt’s Jazz Scene and Musical Identity",
